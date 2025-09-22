@@ -149,14 +149,7 @@ export default function Entry({ onComplete }: EntryProps) {
   
   // Don't render until client-side
   if (!isClient) {
-    return (
-      <div className="fixed inset-0 bg-houma-black z-[9999] flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-houma-gold text-sm tracking-widest mb-4">Loading...</div>
-          <div className="w-8 h-8 border-2 border-houma-gold border-t-transparent rounded-full animate-spin mx-auto"></div>
-        </div>
-      </div>
-    )
+    return null
   }
   
   // Use fallback if 3D not supported

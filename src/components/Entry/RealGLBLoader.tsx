@@ -12,7 +12,6 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
   const [isClient, setIsClient] = useState(false)
   const [glbLoaded, setGlbLoaded] = useState(false)
   const [glbError, setGlbError] = useState(false)
-  const [loadingProgress, setLoadingProgress] = useState(0)
   const [chestVisible, setChestVisible] = useState(true)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const sceneRef = useRef<any>(null)
@@ -39,7 +38,7 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
         
         // Dynamically import Three.js
         const THREE = await import('three')
-        const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader')
+        const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js')
         
         if (!canvasRef.current) return
         
@@ -91,7 +90,7 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
         loader.setPath('/Resources/GLB_Models/')
         loader.load(
           'logo_basic_pbr.glb',
-          (gltf) => {
+          (gltf: any) => {
             console.log('✅ GLB loaded successfully!', gltf)
             
             // Clone and enhance the model
@@ -128,15 +127,14 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
             setGlbLoaded(true)
             setCanInteract(true)
             
-            // Start render loop
+            // Start render loop immediately
             animate()
           },
-          (progress) => {
-            const percent = (progress.loaded / progress.total) * 100
-            setLoadingProgress(percent)
-            console.log(`📊 Loading progress: ${percent.toFixed(1)}% (${progress.loaded}/${progress.total} bytes)`)
+          (progress: any) => {
+            // Progress tracking removed for smooth transition
+            console.log(`📊 Loading progress: ${((progress.loaded / progress.total) * 100).toFixed(1)}%`)
           },
-          (error) => {
+          (error: any) => {
             console.error('❌ GLB loading failed:', error)
             console.error('Error details:', error.message)
             console.error('Trying alternative path...')
@@ -145,7 +143,7 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
             loader.setPath('/')
             loader.load(
               'Resources/GLB_Models/logo_basic_pbr.glb',
-              (gltf) => {
+              (gltf: any) => {
                 console.log('✅ GLB loaded with alternative path!', gltf)
                 // Same processing as above
                 const chest = gltf.scene.clone()
@@ -182,12 +180,11 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
                 setCanInteract(true)
                 animate()
               },
-              (progress) => {
-                const percent = (progress.loaded / progress.total) * 100
-                setLoadingProgress(percent)
-                console.log(`📊 Alt path progress: ${percent.toFixed(1)}%`)
+              (progress: any) => {
+                // Progress tracking removed for smooth transition
+                console.log(`📊 Alt path progress: ${((progress.loaded / progress.total) * 100).toFixed(1)}%`)
               },
-              (altError) => {
+              (altError: any) => {
                 console.error('❌ Alternative path also failed:', altError)
                 setGlbError(true)
                 setCanInteract(true)
@@ -290,39 +287,7 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
          }}
        />
       
-      {/* Loading Progress */}
-      {!glbLoaded && !glbError && loadingProgress > 0 && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-          <div className="text-center">
-            <div className="text-[#D4AF37] text-lg tracking-[0.3em] mb-4 uppercase font-light">
-              Loading Chest Model
-            </div>
-            <div className="w-64 h-1 bg-[#D4AF37]/20 rounded-full overflow-hidden mb-2">
-              <div 
-                className="h-full bg-[#D4AF37] transition-all duration-300 ease-out"
-                style={{ width: `${loadingProgress}%` }}
-              />
-            </div>
-            <div className="text-[#D4AF37]/70 text-sm">
-              {loadingProgress.toFixed(1)}% ({Math.round(loadingProgress * 53542668 / 100 / 1024 / 1024)}MB / 53MB)
-            </div>
-          </div>
-        </div>
-      )}
       
-      {/* Fallback if GLB fails */}
-      {glbError && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-[#D4AF37] text-lg tracking-[0.3em] mb-4 uppercase font-light">
-              GLB Model Unavailable
-            </div>
-            <div className="text-[#D4AF37]/70 text-sm">
-              Using fallback mode
-            </div>
-          </div>
-        </div>
-      )}
       
       {/* Interaction Hint - Properly Centered */}
       <AnimatePresence>
