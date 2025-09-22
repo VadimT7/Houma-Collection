@@ -16,8 +16,6 @@ dist/
 /build
 
 # Environment variables
-.env
-.env.local
 .env.development.local
 .env.test.local
 .env.production.local
@@ -122,7 +120,6 @@ temp/
 .sentryclirc
 
 # Local development
-.env.local
 .env.development.local
 .env.test.local
 .env.production.local
@@ -169,3 +166,4 @@ next-env.d.ts
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+config.bat
