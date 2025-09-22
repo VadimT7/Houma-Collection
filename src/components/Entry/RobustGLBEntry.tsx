@@ -190,7 +190,7 @@ export default function RobustGLBEntry({ onComplete }: RobustGLBEntryProps) {
   const [isReady, setIsReady] = useState(false)
   
   const messages = [
-    "You are entering HOUMA",
+    "Welcome to HOUMA",
     "Not everyone is allowed inside",
     "This is more than fashion",
     "This is heritage. This is power",

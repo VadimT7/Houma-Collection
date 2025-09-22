@@ -21,7 +21,7 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
   const chestRef = useRef<any>(null)
   
   const messages = [
-    "You are entering HOUMA",
+    "Welcome to HOUMA",
     "Not everyone is allowed inside",
     "This is more than fashion",
     "This is heritage. This is power",
@@ -74,10 +74,10 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
          fillLight.position.set(-3, 2, 3)
          scene.add(fillLight)
         
-        // Camera position - much further back to see the full chest
-        camera.position.set(0, 2, 8)
-        camera.lookAt(0, 0, 0)
-        cameraRef.current = camera
+         // Camera position - normal view since model is moved lower
+         camera.position.set(0, 1, 4)
+         camera.lookAt(-0.1, 0.5, 0)
+         cameraRef.current = camera
         
         // Load GLB with proper error handling
         const loader = new GLTFLoader()
@@ -90,7 +90,7 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
         
         loader.setPath('/Resources/GLB_Models/')
         loader.load(
-          'chest.glb',
+          'logo_basic_pbr.glb',
           (gltf) => {
             console.log('✅ GLB loaded successfully!', gltf)
             
@@ -106,10 +106,10 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
             
              chest.scale.set(scale, scale, scale)
              
-             // Center the chest at origin
+             // Center the chest at origin and move it lower
              const center = box.getCenter(new THREE.Vector3())
              chest.position.sub(center.multiplyScalar(scale))
-             chest.position.set(0, 0, 0) // Ensure it's exactly centered
+             chest.position.set(0, -1.5, 0) // Move the model lower in the scene
              
              // Keep original materials - no color corrections
              chest.traverse((child: any) => {
@@ -144,7 +144,7 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
             // Try alternative path
             loader.setPath('/')
             loader.load(
-              'Resources/GLB_Models/chest.glb',
+              'Resources/GLB_Models/logo_basic_pbr.glb',
               (gltf) => {
                 console.log('✅ GLB loaded with alternative path!', gltf)
                 // Same processing as above
@@ -159,10 +159,10 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
                 
                  chest.scale.set(scale, scale, scale)
                  
-                 // Center the chest at origin
+                 // Center the chest at origin and move it lower
                  const center = box.getCenter(new THREE.Vector3())
                  chest.position.sub(center.multiplyScalar(scale))
-                 chest.position.set(0, 0, 0) // Ensure it's exactly centered
+                 chest.position.set(0, -1.5, 0) // Move the model lower in the scene
                  
                  chest.traverse((child: any) => {
                    if (child instanceof THREE.Mesh) {
@@ -226,42 +226,27 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
     setIsUnlocked(true)
     setCanInteract(false)
     
-     // Animate chest - shake then fade out
+     // Animate chest - just fade out smoothly
      if (chestRef.current) {
-       // Shake animation first
-       const startTime = Date.now()
-       const shake = () => {
-         const elapsed = Date.now() - startTime
-         if (elapsed < 1000) {
-           chestRef.current.rotation.x = Math.sin(elapsed * 0.1) * 0.05
-           chestRef.current.rotation.y = Math.sin(elapsed * 0.1) * 0.1
-           requestAnimationFrame(shake)
-         } else {
-           // Reset rotation and start fade out
-           chestRef.current.rotation.set(0, 0, 0)
-           
-           // Smooth fade out animation
-           const fadeStart = Date.now()
-           const fadeOut = () => {
-             const fadeElapsed = Date.now() - fadeStart
-             if (fadeElapsed < 1500) {
-               const opacity = Math.max(0, 1 - (fadeElapsed / 1500))
-               chestRef.current.traverse((child: any) => {
-                 if (child.material) {
-                   child.material.transparent = true
-                   child.material.opacity = opacity
-                 }
-               })
-               requestAnimationFrame(fadeOut)
-             } else {
-               // Hide chest completely
-               setChestVisible(false)
+       // Smooth fade out animation
+       const fadeStart = Date.now()
+       const fadeOut = () => {
+         const fadeElapsed = Date.now() - fadeStart
+         if (fadeElapsed < 1500) {
+           const opacity = Math.max(0, 1 - (fadeElapsed / 1500))
+           chestRef.current.traverse((child: any) => {
+             if (child.material) {
+               child.material.transparent = true
+               child.material.opacity = opacity
              }
-           }
-           fadeOut()
+           })
+           requestAnimationFrame(fadeOut)
+         } else {
+           // Hide chest completely
+           setChestVisible(false)
          }
        }
-       shake()
+       fadeOut()
      }
     
     // Start message sequence after a shorter delay
@@ -281,7 +266,7 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
           }, 4000) // 4 seconds for the final message to have more impact
         }
       }, 3500) // Increased from 2500ms to 3500ms for better pacing
-    }, 1000) // Wait only 1 second for chest to fade out
+    }, 500) // Reduced from 1000ms to 500ms for faster transition
   }
   
   // Don't render until client-side

@@ -12,7 +12,7 @@ export default function CSSAnimatedChest({ isUnlocked, onUnlockComplete }: Chest
   const [currentMessage, setCurrentMessage] = useState(0)
   
   const messages = [
-    "You are entering HOUMA.",
+    "Welcome to HOUMA.",
     "Not everyone is allowed inside.",
     "This is more than fashion.",
     "This is heritage. This is power.",

@@ -19,7 +19,7 @@ function ChestModel({ isUnlocked }: { isUnlocked: boolean }) {
   // Load the GLB model with error handling
   let gltf = null
   try {
-    gltf = useLoader(GLTFLoader, '/Resources/GLB_Models/chest.glb')
+    gltf = useLoader(GLTFLoader, '/Resources/GLB_Models/logo_basic_pbr.glb')
   } catch (error) {
     console.error('GLB loading failed:', error)
     setLoadError(true)
@@ -296,7 +296,7 @@ export default function GLBEntry({ onComplete }: GLBEntryProps) {
   const [hasError, setHasError] = useState(false)
   
   const messages = [
-    "You are entering HOUMA",
+    "Welcome to HOUMA",
     "Not everyone is allowed inside",
     "This is more than fashion",
     "This is heritage. This is power",

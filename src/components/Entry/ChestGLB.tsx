@@ -38,7 +38,7 @@ function FallbackChest() {
 // GLB Chest Model Component
 function ChestModel({ isUnlocked, onUnlockComplete }: { isUnlocked: boolean, onUnlockComplete: () => void }) {
   const chestRef = useRef<THREE.Group>(null)
-  const { scene } = useGLTF('/Resources/GLB_Models/chest.glb')
+  const { scene } = useGLTF('/Resources/GLB_Models/logo_basic_pbr.glb')
   const { camera } = useThree()
   const [glowIntensity, setGlowIntensity] = useState(0.5)
   
@@ -296,4 +296,4 @@ export default function ChestGLB({ isUnlocked, onUnlockComplete }: ChestScenePro
 }
 
 // Preload model
-useGLTF.preload('/Resources/GLB_Models/chest.glb')
+useGLTF.preload('/Resources/GLB_Models/logo_basic_pbr.glb')

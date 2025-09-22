@@ -20,7 +20,7 @@
 ## 🚀 What's Working Now
 
 ### Chest Animation
-- **GLB Model**: Tries to load your `chest.glb` first
+- **GLB Model**: Tries to load your `logo_basic_pbr.glb` first
 - **Fallback**: If GLB fails, shows beautiful procedural chest
 - **Animations**: Shake, glow, lid opening, particle burst
 - **Camera**: Smooth zoom and fly-through effect

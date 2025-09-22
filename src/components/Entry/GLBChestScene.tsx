@@ -20,7 +20,7 @@ function GLBChest({ isUnlocked, onUnlockComplete }: GLBChestSceneProps) {
   // Try to load the GLB model
   let gltf = null
   try {
-    gltf = useLoader(GLTFLoader, '/Resources/GLB_Models/chest.glb')
+    gltf = useLoader(GLTFLoader, '/Resources/GLB_Models/logo_basic_pbr.glb')
   } catch (error) {
     console.error('Failed to load GLB model:', error)
     setLoadError(true)

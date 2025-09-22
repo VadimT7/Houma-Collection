@@ -82,7 +82,7 @@ export default function Entry({ onComplete }: EntryProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   
   const messages = [
-    "You are entering HOUMA.",
+    "Welcome to HOUMA.",
     "Not everyone is allowed inside.",
     "This is more than fashion.",
     "This is heritage. This is power.",

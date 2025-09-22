@@ -152,7 +152,7 @@ function GLBChestWithFallback({ isUnlocked, onUnlockComplete }: { isUnlocked: bo
   let gltf
   try {
     if (useGLB && !glbError) {
-      gltf = useGLTF('/Resources/GLB_Models/chest.glb')
+      gltf = useGLTF('/Resources/GLB_Models/logo_basic_pbr.glb')
     }
   } catch (error) {
     console.log('GLB failed, using procedural chest')
@@ -417,4 +417,4 @@ export default function WorkingChestScene({ isUnlocked, onUnlockComplete }: Ches
 }
 
 // Preload model
-useGLTF.preload('/Resources/GLB_Models/chest.glb')
+useGLTF.preload('/Resources/GLB_Models/logo_basic_pbr.glb')

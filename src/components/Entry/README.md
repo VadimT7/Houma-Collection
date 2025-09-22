@@ -42,7 +42,7 @@ src/components/Entry/
 └── README.md             # This file
 
 public/Resources/GLB_Models/
-└── chest.glb              # 3D chest model file
+└── logo_basic_pbr.glb              # 3D chest model file
 ```
 
 ## Customization Guide
@@ -95,7 +95,7 @@ In `Entry.tsx`:
 
 ```typescript
 const messages = [
-  "You are entering HOUMA.",
+  "Welcome to HOUMA.",
   "Not everyone is allowed inside.",
   "This is more than fashion.",
   "This is heritage. This is power.",

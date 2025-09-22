@@ -4,7 +4,7 @@
 
 ### Problem Solved
 - ✅ **SSR Error Fixed**: The Three.js components now load properly on the client side
-- ✅ **GLB Model Integrated**: Your `chest.glb` file is now properly loaded and animated
+- ✅ **GLB Model Integrated**: Your `logo_basic_pbr.glb` file is now properly loaded and animated
 - ✅ **Loading States**: Proper fallback while the 3D model loads
 - ✅ **Error Handling**: Graceful fallback if the GLB fails to load
 
@@ -37,7 +37,7 @@
 ## 🎨 What You're Getting
 
 ### GLB Chest Features
-- **Real 3D Model**: Your `chest.glb` file from `/public/Resources/GLB_Models/`
+- **Real 3D Model**: Your `logo_basic_pbr.glb` file from `/public/Resources/GLB_Models/`
 - **Enhanced Materials**: Metallic and roughness settings applied
 - **Dynamic Lighting**: Golden glow that intensifies when unlocking
 - **Particle System**: 1500 golden particles burst when opened
@@ -73,7 +73,7 @@ In `ChestGLB.tsx`, lines 78-105 contain all animation timings
 ## 🔍 Troubleshooting
 
 ### If Chest Not Showing
-1. Check that `chest.glb` exists in `/public/Resources/GLB_Models/`
+1. Check that `logo_basic_pbr.glb` exists in `/public/Resources/GLB_Models/`
 2. Check browser console for errors
 3. Try hard refresh (Ctrl+Shift+R)
 

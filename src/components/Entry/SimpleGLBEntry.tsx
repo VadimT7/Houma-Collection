@@ -12,7 +12,7 @@ export default function SimpleGLBEntry({ onComplete }: SimpleGLBEntryProps) {
   const [isClient, setIsClient] = useState(false)
   
   const messages = [
-    "You are entering HOUMA",
+    "Welcome to HOUMA",
     "Not everyone is allowed inside",
     "This is more than fashion",
     "This is heritage. This is power",

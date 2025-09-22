@@ -28,7 +28,7 @@ function GLBLoader({ isUnlocked, onLoadComplete }: { isUnlocked: boolean, onLoad
       const loader = new GLTFLoader()
     
       loader.load(
-        '/Resources/GLB_Models/chest.glb',
+        '/Resources/GLB_Models/logo_basic_pbr.glb',
         (loadedGltf) => {
           console.log('✅ GLB loaded successfully:', loadedGltf)
           setGltf(loadedGltf)
@@ -235,7 +235,7 @@ export default function RealGLBEntry({ onComplete }: RealGLBEntryProps) {
   const [isClient, setIsClient] = useState(false)
   
   const messages = [
-    "You are entering HOUMA",
+    "Welcome to HOUMA",
     "Not everyone is allowed inside",
     "This is more than fashion",
     "This is heritage. This is power",
