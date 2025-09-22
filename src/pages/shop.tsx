@@ -1,0 +1,321 @@
+import React, { useState, useMemo } from 'react'
+import Head from 'next/head'
+import { motion, AnimatePresence } from 'framer-motion'
+import ProductCard from '@/components/ProductCard'
+import { products, categories, collections } from '@/lib/products'
+import { ChevronDownIcon, AdjustmentsHorizontalIcon, Squares2X2Icon, ListBulletIcon } from '@heroicons/react/24/outline'
+import { cn } from '@/lib/utils'
+
+const ShopPage = () => {
+  const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [selectedCollection, setSelectedCollection] = useState<string>('all')
+  const [sortBy, setSortBy] = useState<string>('featured')
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [showFilters, setShowFilters] = useState(false)
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000])
+
+  // Filter and sort products
+  const filteredProducts = useMemo(() => {
+    let filtered = [...products]
+
+    // Category filter
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(p => p.category === selectedCategory)
+    }
+
+    // Collection filter
+    if (selectedCollection !== 'all') {
+      filtered = filtered.filter(p => p.collection === selectedCollection)
+    }
+
+    // Price range filter
+    filtered = filtered.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1])
+
+    // Sorting
+    switch (sortBy) {
+      case 'price-low':
+        filtered.sort((a, b) => a.price - b.price)
+        break
+      case 'price-high':
+        filtered.sort((a, b) => b.price - a.price)
+        break
+      case 'name':
+        filtered.sort((a, b) => a.name.localeCompare(b.name))
+        break
+      case 'featured':
+      default:
+        filtered.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
+    }
+
+    return filtered
+  }, [selectedCategory, selectedCollection, sortBy, priceRange])
+
+  const sortOptions = [
+    { value: 'featured', label: 'Featured' },
+    { value: 'price-low', label: 'Price: Low to High' },
+    { value: 'price-high', label: 'Price: High to Low' },
+    { value: 'name', label: 'Name A-Z' },
+  ]
+
+  return (
+    <>
+      <Head>
+        <title>Shop - HOUMA | Luxury Streetwear Collection</title>
+        <meta name="description" content="Explore HOUMA's complete collection of luxury streetwear. Premium pieces inspired by North African heritage." />
+      </Head>
+
+      {/* Hero Section */}
+      <section className="pt-32 pb-16 bg-gradient-luxury relative overflow-hidden">
+        <div className="absolute inset-0 pattern-overlay opacity-20" />
+        
+        <motion.div
+          className="houma-container relative"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="text-center">
+            <p className="text-houma-gold text-xs tracking-[0.3em] mb-4">EXPLORE</p>
+            <h1 className="text-5xl md:text-7xl font-display tracking-wider text-houma-white mb-6">
+              THE COLLECTION
+            </h1>
+            <p className="text-lg text-houma-white/70 max-w-2xl mx-auto">
+              Each piece tells a story of heritage reimagined. Discover luxury streetwear that honors tradition while defining the future.
+            </p>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Filters Bar */}
+      <section className="sticky top-20 lg:top-24 bg-houma-black/95 backdrop-blur-xl border-b border-houma-gold/20 z-40">
+        <div className="houma-container">
+          <div className="flex items-center justify-between py-4">
+            {/* Left: Filter Toggle */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2 text-houma-white hover:text-houma-gold transition-colors"
+            >
+              <AdjustmentsHorizontalIcon className="w-5 h-5" />
+              <span className="text-sm tracking-wider">FILTERS</span>
+            </button>
+
+            {/* Center: Result Count */}
+            <p className="text-sm text-houma-white/50">
+              {filteredProducts.length} PRODUCTS
+            </p>
+
+            {/* Right: Sort and View Options */}
+            <div className="flex items-center gap-4">
+              {/* Sort Dropdown */}
+              <div className="relative">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="appearance-none bg-transparent text-houma-white text-sm tracking-wider 
+                           pr-8 focus:outline-none cursor-pointer hover:text-houma-gold transition-colors"
+                >
+                  {sortOptions.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDownIcon className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-houma-white/50 pointer-events-none" />
+              </div>
+
+              {/* View Mode Toggle */}
+              <div className="flex gap-1">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={cn(
+                    'p-2 transition-colors',
+                    viewMode === 'grid' ? 'text-houma-gold' : 'text-houma-white/50 hover:text-houma-white'
+                  )}
+                >
+                  <Squares2X2Icon className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={cn(
+                    'p-2 transition-colors',
+                    viewMode === 'list' ? 'text-houma-gold' : 'text-houma-white/50 hover:text-houma-white'
+                  )}
+                >
+                  <ListBulletIcon className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <section className="py-12">
+        <div className="houma-container">
+          <div className="flex gap-8">
+            {/* Filters Sidebar */}
+            <AnimatePresence>
+              {showFilters && (
+                <motion.aside
+                  className="w-64 flex-shrink-0"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="space-y-8">
+                    {/* Categories */}
+                    <div>
+                      <h3 className="text-xs font-light tracking-[0.3em] text-houma-gold mb-4">
+                        CATEGORIES
+                      </h3>
+                      <div className="space-y-2">
+                        <button
+                          onClick={() => setSelectedCategory('all')}
+                          className={cn(
+                            'block w-full text-left text-sm transition-colors',
+                            selectedCategory === 'all' 
+                              ? 'text-houma-gold' 
+                              : 'text-houma-white/70 hover:text-houma-white'
+                          )}
+                        >
+                          All Categories
+                        </button>
+                        {categories.map(category => (
+                          <button
+                            key={category}
+                            onClick={() => setSelectedCategory(category)}
+                            className={cn(
+                              'block w-full text-left text-sm transition-colors',
+                              selectedCategory === category 
+                                ? 'text-houma-gold' 
+                                : 'text-houma-white/70 hover:text-houma-white'
+                            )}
+                          >
+                            {category}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Collections */}
+                    <div>
+                      <h3 className="text-xs font-light tracking-[0.3em] text-houma-gold mb-4">
+                        COLLECTIONS
+                      </h3>
+                      <div className="space-y-2">
+                        <button
+                          onClick={() => setSelectedCollection('all')}
+                          className={cn(
+                            'block w-full text-left text-sm transition-colors',
+                            selectedCollection === 'all' 
+                              ? 'text-houma-gold' 
+                              : 'text-houma-white/70 hover:text-houma-white'
+                          )}
+                        >
+                          All Collections
+                        </button>
+                        {collections.map(collection => (
+                          <button
+                            key={collection}
+                            onClick={() => setSelectedCollection(collection)}
+                            className={cn(
+                              'block w-full text-left text-sm transition-colors',
+                              selectedCollection === collection 
+                                ? 'text-houma-gold' 
+                                : 'text-houma-white/70 hover:text-houma-white'
+                            )}
+                          >
+                            {collection}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Price Range */}
+                    <div>
+                      <h3 className="text-xs font-light tracking-[0.3em] text-houma-gold mb-4">
+                        PRICE RANGE
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between text-sm text-houma-white/70">
+                          <span>${priceRange[0]}</span>
+                          <span>${priceRange[1]}</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="0"
+                          max="1000"
+                          value={priceRange[1]}
+                          onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+                          className="w-full accent-houma-gold"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Clear Filters */}
+                    <button
+                      onClick={() => {
+                        setSelectedCategory('all')
+                        setSelectedCollection('all')
+                        setPriceRange([0, 1000])
+                      }}
+                      className="text-sm text-houma-white/50 hover:text-houma-gold transition-colors"
+                    >
+                      Clear All Filters
+                    </button>
+                  </div>
+                </motion.aside>
+              )}
+            </AnimatePresence>
+
+            {/* Products Grid/List */}
+            <div className="flex-1">
+              <AnimatePresence mode="wait">
+                {filteredProducts.length === 0 ? (
+                  <motion.div
+                    className="text-center py-20"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    <p className="text-houma-white/50 text-lg mb-4">No products found</p>
+                    <button
+                      onClick={() => {
+                        setSelectedCategory('all')
+                        setSelectedCollection('all')
+                        setPriceRange([0, 1000])
+                      }}
+                      className="houma-button"
+                    >
+                      <span>CLEAR FILTERS</span>
+                    </button>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    className={cn(
+                      'grid gap-6',
+                      viewMode === 'grid' 
+                        ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' 
+                        : 'grid-cols-1'
+                    )}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {filteredProducts.map((product, index) => (
+                      <ProductCard key={product.id} product={product} index={index} />
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  )
+}
+
+export default ShopPage

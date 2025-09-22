@@ -1,0 +1,78 @@
+You are tasked with building the ultimate, no-compromise, jaw-dropping, luxury-streetwear website for a clothing brand called Houma.
+
+Context:
+
+Houma is a streetwear brand for young adults, with strong cultural DNA from the Middle East and North Africa (Tunisia/Algeria/Morocco). The site must not feel generic: it must scream authentic culture + futuristic modernity + high fashion edge.
+
+The brand assets (logos, imagery, etc.) are available in the Resources folder (Logos-and-Images folder for logos and stylish designer drawings that include the logo, and Models for real pictures with models for the showcase). Use them everywhere they make sense.
+
+Think: the single most iconic online store, the kind of design that feels like a 500,000 USD flagship digital experience, blending luxury fashion sensibility with street culture energy.
+
+Tone: one-of-a-kind, bold, intelligent, artistic. Not cookie-cutter. Not “just another Shopify theme.”
+
+Requirements:
+
+Frontend stack & design
+
+Use React + Next.js (or the modern equivalent in Cursor).
+
+Apply TailwindCSS with custom, finely tuned design tokens for Houma’s brand identity.
+
+Make the animations, the transitions the craziest possible. It's a site that never existed. Complicate it but make it hella cool!
+Aesthetic: sleek modern minimalism with luxury fashion vibes (deep blacks, subtle shadows, gradients, metallic hints), fused with streetwear rawness (bold typography, cultural textures, calligraphy-inspired elements, North African pattern overlays).
+
+Use responsive layouts that feel handcrafted for desktop, tablet, and mobile.
+
+Pages
+
+Homepage: Hero section with video or immersive brand imagery. Dynamic carousel of collections. Teasers for drops. Bold tagline introducing Houma as the cultural streetwear voice of MENA.
+
+Shop/Collections: Filterable, fast grid of products with hover animations (zoom, color change, shadow depth). Smooth transition to product detail.
+
+Product Detail Page: Large imagery with zoom. Cultural storytelling integrated (fabric origins, cultural inspiration, etc.). Clear “Add to Cart” with micro-animation.
+
+About/Culture Page: Deeply expressive, telling the Houma story, mixing typography, imagery, and animations reflecting Tunisia/Algeria/Morocco. This must feel like a manifesto.
+
+Lookbook/Editorial: Magazine-like layout for showcasing drops and cultural editorials. Bold layouts, immersive images, scrolling effects.
+
+Contact/Support Page: Minimal, functional, sleek.
+
+Checkout/Cart: Stripe integration. Flawless UX, minimal friction, mobile-friendly, with Houma’s branding embedded in every detail.
+
+Functionality
+
+Stripe Payments integration for seamless checkout.
+
+Responsive, blazing fast, SEO-ready.
+
+Modular components for easy expansion.
+
+Global navigation bar and immersive mega-menu.
+
+Sticky cart preview, smooth transitions to checkout.
+
+Visual/Branding Notes
+
+Typography: fusion of modern sans serif (luxury) + expressive, culture-inspired fonts (for accents).
+
+Palette: deep black, off-white, gold accents, hints of desert tones.
+
+Shadows: sleek and expensive (not heavy or cartoony).
+
+Transitions: everything should feel alive, like a billion-dollar runway show compressed into a website.
+
+Attitude & Experience
+
+This is not a template. It is a flagship experience.
+
+Every scroll should feel intentional, every animation purposeful, every element like part of Houma’s cultural art installation.
+
+You are essentially creating a digital architecture masterpiece that communicates Houma’s uniqueness and value.
+
+Deliverables:
+
+Full Next.js/Tailwind codebase implementing all pages and flows described above.
+
+Proper use of the Resources folder for logos/images.
+
+Include notes or inline comments where customization hooks exist.

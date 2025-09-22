@@ -1,0 +1,216 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cairo:wght@200;300;400;500;600;700;800;900&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --houma-black: 10, 10, 10;
+    --houma-gold: 212, 175, 55;
+    --houma-white: 250, 250, 248;
+  }
+
+  * {
+    @apply border-houma-smoke;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-houma-black text-houma-white overflow-x-hidden;
+    font-family: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    @apply bg-houma-gold text-houma-black;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-houma-black;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-houma-gold rounded-full;
+    transition: background 0.3s;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-houma-gold-light;
+  }
+}
+
+@layer components {
+  .houma-container {
+    @apply max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-20;
+  }
+
+  .houma-heading {
+    @apply font-display uppercase tracking-wider;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .houma-arabic {
+    @apply font-arabic;
+    direction: rtl;
+  }
+
+  .houma-link {
+    @apply relative inline-block;
+  }
+
+  .houma-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-[1px] bg-houma-gold transition-all duration-300;
+  }
+
+  .houma-link:hover::after {
+    @apply w-full;
+  }
+
+  .houma-button {
+    @apply relative px-8 py-4 bg-transparent border border-houma-gold text-houma-gold 
+           uppercase tracking-widest transition-all duration-500 overflow-hidden;
+  }
+
+  .houma-button::before {
+    content: '';
+    @apply absolute inset-0 bg-houma-gold transform -translate-x-full transition-transform duration-500;
+  }
+
+  .houma-button:hover::before {
+    @apply translate-x-0;
+  }
+
+  .houma-button:hover {
+    @apply text-houma-black;
+  }
+
+  .houma-button span {
+    @apply relative z-10;
+  }
+
+  .luxury-shadow {
+    box-shadow: 
+      0 4px 6px -1px rgba(212, 175, 55, 0.1),
+      0 2px 4px -1px rgba(212, 175, 55, 0.06),
+      0 20px 25px -5px rgba(0, 0, 0, 0.5),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  .gold-glow {
+    box-shadow: 
+      0 0 20px rgba(212, 175, 55, 0.3),
+      0 0 40px rgba(212, 175, 55, 0.2),
+      0 0 60px rgba(212, 175, 55, 0.1);
+  }
+
+  .text-gradient-gold {
+    @apply bg-gradient-to-r from-houma-gold via-houma-gold-light to-houma-gold bg-clip-text text-transparent;
+    background-size: 200% auto;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  .parallax-bg {
+    @apply relative overflow-hidden;
+  }
+
+  .parallax-bg::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-houma-black via-houma-smoke to-houma-black opacity-50;
+    transform: translateZ(0);
+    will-change: transform;
+  }
+
+  /* Noise texture overlay */
+  .noise-overlay {
+    position: relative;
+  }
+
+  .noise-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(212, 175, 55, 0.01) 35px, rgba(212, 175, 55, 0.01) 70px),
+      repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(212, 175, 55, 0.01) 35px, rgba(212, 175, 55, 0.01) 70px);
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  /* Moroccan-inspired pattern overlay */
+  .pattern-overlay {
+    position: relative;
+  }
+
+  .pattern-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(212, 175, 55, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+  }
+}
+
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+
+  .text-stroke {
+    -webkit-text-stroke: 1px currentColor;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-stroke-gold {
+    -webkit-text-stroke: 1px #D4AF37;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .mask-gradient {
+    mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+  }
+
+  .animate-in {
+    animation: fadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
+
+/* Loading animation */
+@keyframes loading-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading-pulse {
+  animation: loading-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
