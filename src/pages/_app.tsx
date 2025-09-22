@@ -2,6 +2,7 @@ import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { useState, useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
+import { motion, AnimatePresence } from 'framer-motion'
 import Layout from '@/components/Layout'
 import dynamic from 'next/dynamic'
 
@@ -22,6 +23,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const [showEntry, setShowEntry] = useState(false)
   const [entryComplete, setEntryComplete] = useState(false)
   const [isClient, setIsClient] = useState(false)
+  const [showHomepage, setShowHomepage] = useState(false)
 
   useEffect(() => {
     // Ensure we're on the client side
@@ -40,17 +42,36 @@ export default function App({ Component, pageProps }: AppProps) {
     sessionStorage.setItem('houma-entry-shown', 'true')
     setEntryComplete(true)
     setShowEntry(false)
+    
+    // Smooth zoom-in transition to homepage
+    setTimeout(() => {
+      setShowHomepage(true)
+    }, 100)
   }
 
   return (
     <>
       {isClient && showEntry && <Entry onComplete={handleEntryComplete} />}
       
-      {entryComplete && (
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      )}
+      <AnimatePresence>
+        {entryComplete && (
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ 
+              scale: showHomepage ? 1 : 0.8, 
+              opacity: showHomepage ? 1 : 0 
+            }}
+            transition={{ 
+              duration: 2,
+              ease: [0.22, 1, 0.36, 1]
+            }}
+          >
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       <Toaster
         position="bottom-center"

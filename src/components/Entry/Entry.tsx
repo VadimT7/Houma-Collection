@@ -14,7 +14,7 @@ const DynamicCanvas = dynamic(() => import('./DynamicCanvas'), {
   ssr: false
 })
 
-const SimpleGLBEntry = dynamic(() => import('./SimpleGLBEntry'), {
+const RealGLBLoader = dynamic(() => import('./RealGLBLoader'), {
   ssr: false
 })
 
@@ -169,6 +169,6 @@ export default function Entry({ onComplete }: EntryProps) {
     return null // No loading screen at all
   }
 
-  // Return the Simple GLB Entry component (no Three.js SSR issues)
-  return <SimpleGLBEntry onComplete={onComplete} />
+  // Return the REAL GLB Loader component
+  return <RealGLBLoader onComplete={onComplete} />
 }
