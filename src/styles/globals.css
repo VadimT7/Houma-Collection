@@ -162,6 +162,51 @@
       radial-gradient(circle at 40% 40%, rgba(212, 175, 55, 0.03) 0%, transparent 50%);
     pointer-events: none;
   }
+
+  /* Luxury gradient animation */
+  @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Section transition animations */
+  @keyframes sectionSlideIn {
+    0% {
+      opacity: 0;
+      transform: translateY(60px) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes luxuryFadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes goldGlow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(212, 175, 55, 0.4);
+    }
+  }
 }
 
 @layer utilities {

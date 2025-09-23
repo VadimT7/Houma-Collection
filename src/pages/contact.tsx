@@ -1,12 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Head from 'next/head'
-import { motion } from 'framer-motion'
+import Image from 'next/image'
+import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { 
   EnvelopeIcon, 
   PhoneIcon, 
   MapPinIcon,
-  ClockIcon
+  ClockIcon,
+  PaperAirplaneIcon,
+  SparklesIcon,
+  StarIcon
 } from '@heroicons/react/24/outline'
 
 const ContactPage = () => {
@@ -16,6 +20,13 @@ const ContactPage = () => {
     subject: '',
     message: '',
   })
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false)
+  const [showParticles, setShowParticles] = useState(false)
+  const [isFormFocused, setIsFormFocused] = useState(false)
+  const [videoBlurred, setVideoBlurred] = useState(false)
+  const [showContent, setShowContent] = useState(false)
+  const [showScrollHint, setShowScrollHint] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -36,6 +47,38 @@ const ContactPage = () => {
     })
   }
 
+  // Cinematic video transition sequence
+  useEffect(() => {
+    if (isVideoLoaded) {
+      // Let video play for 1 second before starting blur
+      const blurTimer = setTimeout(() => {
+        setVideoBlurred(true)
+      }, 1000)
+      
+      // Show content 0.5 seconds after blur starts
+      const contentTimer = setTimeout(() => {
+        setShowContent(true)
+      }, 1500)
+      
+      // Show particles 2 seconds after video loads
+      const particlesTimer = setTimeout(() => {
+        setShowParticles(true)
+      }, 2000)
+      
+      // Show scroll hint 3-4 seconds after content appears (4.5-5.5 seconds total)
+      const scrollHintTimer = setTimeout(() => {
+        setShowScrollHint(true)
+      }, 4500)
+      
+      return () => {
+        clearTimeout(blurTimer)
+        clearTimeout(contentTimer)
+        clearTimeout(particlesTimer)
+        clearTimeout(scrollHintTimer)
+      }
+    }
+  }, [isVideoLoaded])
+
   const contactInfo = [
     {
       icon: EnvelopeIcon,
@@ -46,16 +89,6 @@ const ContactPage = () => {
       icon: PhoneIcon,
       title: 'PHONE',
       details: ['+216 71 234 567', '+33 1 23 45 67 89'],
-    },
-    {
-      icon: MapPinIcon,
-      title: 'STORES',
-      details: ['Tunis, Tunisia', 'Paris, France', 'Casablanca, Morocco'],
-    },
-    {
-      icon: ClockIcon,
-      title: 'HOURS',
-      details: ['Mon-Fri: 9AM - 8PM', 'Sat-Sun: 10AM - 6PM'],
     },
   ]
 
@@ -85,49 +118,215 @@ const ContactPage = () => {
         <meta name="description" content="Contact HOUMA for inquiries, support, or collaboration. We're here to help with your luxury streetwear needs." />
       </Head>
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-16 bg-gradient-luxury relative overflow-hidden">
-        <div className="absolute inset-0 pattern-overlay opacity-10" />
-        
+      {/* Cinematic Hero Section */}
+      <section className="relative h-screen overflow-hidden">
+        {/* Video Background */}
+        <div className="absolute inset-0">
+          <video
+            ref={videoRef}
+            className={`w-full h-full object-cover filter brightness-30 transition-all duration-2000 ease-out ${
+              videoBlurred ? 'blur-[3px]' : 'blur-0'
+            }`}
+            autoPlay
+            muted
+            loop
+            playsInline
+            onLoadedData={() => setIsVideoLoaded(true)}
+          >
+            <source src="/Resources/Logos-and-Images/Logo-Tapestry.mp4" type="video/mp4" />
+          </video>
+          
+          {/* Luxury Overlays */}
+          <div className="absolute inset-0 bg-gradient-to-br from-houma-black/80 via-houma-black/60 to-houma-black/90" />
+          <div className="absolute inset-0 bg-gradient-to-t from-houma-black via-transparent to-houma-black/50" />
+          
+          {/* Golden Light Effects */}
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-houma-gold/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-houma-gold/8 rounded-full blur-3xl animate-pulse delay-1000" />
+          <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-houma-gold/6 rounded-full blur-2xl animate-pulse delay-500" />
+        </div>
+
+        {/* Floating Particles */}
+        <AnimatePresence>
+          {showParticles && (
+            <div className="absolute inset-0 pointer-events-none">
+              {[...Array(20)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-1 h-1 bg-houma-gold/40 rounded-full"
+                  initial={{ 
+                    opacity: 0, 
+                    x: Math.random() * window.innerWidth, 
+                    y: window.innerHeight + 20 
+                  }}
+                  animate={{ 
+                    opacity: [0, 1, 0], 
+                    y: -20,
+                    x: Math.random() * window.innerWidth * 0.3
+                  }}
+                  transition={{ 
+                    duration: Math.random() * 3 + 2,
+                    repeat: Infinity,
+                    delay: Math.random() * 2
+                  }}
+                />
+              ))}
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* Content */}
+        <div className="relative h-full flex items-center justify-center">
         <motion.div
-          className="houma-container relative"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <div className="text-center">
-            <p className="text-houma-gold text-xs tracking-[0.3em] mb-4">CONNECT</p>
-            <h1 className="text-5xl md:text-7xl font-display tracking-wider text-houma-white mb-6">
+            className="houma-container text-center"
+            initial={{ opacity: 0, y: 80 }}
+            animate={{ opacity: showContent ? 1 : 0, y: showContent ? 0 : 80 }}
+            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {/* Arabic Text */}
+            <motion.p
+              className="houma-arabic text-2xl md:text-3xl text-houma-gold/80 mb-6 font-amiri"
+              initial={{ opacity: 0, scale: 0.5, y: 20 }}
+              animate={{ 
+                opacity: showContent ? 1 : 0, 
+                scale: showContent ? 1 : 0.5,
+                y: showContent ? 0 : 20
+              }}
+              transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            >
+              تواصل معنا
+            </motion.p>
+            
+            {/* Main Title */}
+            <motion.h1
+              className="text-6xl md:text-8xl lg:text-9xl font-display tracking-wider text-houma-white mb-8"
+              initial={{ opacity: 0, y: 60, scale: 0.8 }}
+              animate={{ 
+                opacity: showContent ? 1 : 0, 
+                y: showContent ? 0 : 60,
+                scale: showContent ? 1 : 0.8
+              }}
+              transition={{ duration: 1.5, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            >
               GET IN TOUCH
-            </h1>
-            <p className="text-lg text-houma-white/70 max-w-2xl mx-auto">
-              Have a question? Need assistance? Want to collaborate? We're here to help.
-            </p>
+            </motion.h1>
+            
+            {/* Subtitle */}
+            <motion.div
+              className="max-w-3xl mx-auto mb-12"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ 
+                opacity: showContent ? 1 : 0, 
+                y: showContent ? 0 : 40
+              }}
+              transition={{ duration: 1.2, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <p className="text-xl md:text-2xl text-houma-white/90 mb-4 font-light">
+                Where tradition meets innovation
+              </p>
+              <p className="text-lg text-houma-white/70 font-light">
+                Experience the luxury of connection. Every message is a journey into the heart of Houma.
+              </p>
+            </motion.div>
+
+            {/* Decorative Elements */}
+            <motion.div
+              className="flex items-center justify-center gap-8 mt-12"
+              initial={{ opacity: 0, scale: 0.6, y: 20 }}
+              animate={{ 
+                opacity: showContent ? 1 : 0, 
+                scale: showContent ? 1 : 0.6,
+                y: showContent ? 0 : 20
+              }}
+              transition={{ duration: 1.2, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="w-16 h-px bg-gradient-to-r from-transparent via-houma-gold to-transparent" />
+              <SparklesIcon className="w-6 h-6 text-houma-gold animate-pulse" />
+              <div className="w-16 h-px bg-gradient-to-r from-transparent via-houma-gold to-transparent" />
+            </motion.div>
+          </motion.div>
           </div>
-        </motion.div>
+
+        {/* Scroll Indicator */}
+        <AnimatePresence>
+          {showScrollHint && (
+            <motion.div
+              className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ 
+                opacity: 1, 
+                scale: 1,
+                y: [0, 10, 0] 
+              }}
+              transition={{ 
+                opacity: { duration: 0.8 },
+                scale: { duration: 0.8 },
+                y: { repeat: Infinity, duration: 2 }
+              }}
+            >
+              <div className="w-px h-16 bg-gradient-to-b from-houma-gold to-transparent" />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </section>
 
-      {/* Contact Form & Info */}
-      <section className="py-20">
-        <div className="houma-container">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-16">
+      {/* Luxury Contact Form Section */}
+      <section className="py-32 relative overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0 pattern-overlay opacity-5" />
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-houma-gold/30 to-transparent" />
+        
+        <div className="houma-container relative">
+          {/* Section Header */}
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <p className="text-houma-gold text-xs tracking-[0.3em] mb-4">CONNECT</p>
+            <h2 className="text-4xl md:text-6xl font-display tracking-wider text-houma-white mb-6">
+              BEGIN THE JOURNEY
+            </h2>
+            <p className="text-lg text-houma-white/70 max-w-2xl mx-auto font-light">
+              Every conversation is an invitation to explore the depths of luxury and culture.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
             {/* Contact Form */}
             <motion.div
-              className="lg:col-span-3"
+              className="lg:col-span-2"
               initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
+              whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
             >
-              <h2 className="text-2xl font-display tracking-wider text-houma-white mb-8">
-                SEND US A MESSAGE
-              </h2>
+              <div className="relative">
+                {/* Form Container with Luxury Border */}
+                <div className="relative p-8 md:p-12 bg-houma-smoke/20 backdrop-blur-sm 
+                              border border-houma-gold/20 luxury-shadow">
+                  {/* Decorative Corner Elements */}
+                  <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-houma-gold/40" />
+                  <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-houma-gold/40" />
+                  <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-houma-gold/40" />
+                  <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-houma-gold/40" />
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="name" className="block text-xs text-houma-white/50 tracking-[0.2em] mb-2">
+                  <div className="flex items-center gap-4 mb-8">
+                    <PaperAirplaneIcon className="w-6 h-6 text-houma-gold" />
+                    <h3 className="text-2xl font-display tracking-wider text-houma-white">
+                SEND US A MESSAGE
+                    </h3>
+                  </div>
+
+                  <form onSubmit={handleSubmit} className="space-y-8" onFocus={() => setIsFormFocused(true)} onBlur={() => setIsFormFocused(false)}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="group">
+                        <label htmlFor="name" className="block text-xs text-houma-gold tracking-[0.2em] mb-3 group-focus-within:text-houma-gold-light">
                       NAME *
                     </label>
+                        <div className="relative">
                     <input
                       type="text"
                       id="name"
@@ -135,15 +334,20 @@ const ContactPage = () => {
                       value={formData.name}
                       onChange={handleInputChange}
                       required
-                      className="w-full bg-transparent border-b border-houma-white/20 text-houma-white 
-                               py-2 px-0 focus:outline-none focus:border-houma-gold transition-colors duration-300"
-                    />
+                            className="w-full bg-transparent border-b-2 border-houma-white/20 text-houma-white 
+                                     py-3 px-0 focus:outline-none focus:border-houma-gold transition-all duration-500
+                                     placeholder-houma-white/30"
+                            placeholder="Your name"
+                          />
+                          <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-houma-gold transition-all duration-500 group-focus-within:w-full" />
+                        </div>
                   </div>
 
-                  <div>
-                    <label htmlFor="email" className="block text-xs text-houma-white/50 tracking-[0.2em] mb-2">
+                      <div className="group">
+                        <label htmlFor="email" className="block text-xs text-houma-gold tracking-[0.2em] mb-3 group-focus-within:text-houma-gold-light">
                       EMAIL *
                     </label>
+                        <div className="relative">
                     <input
                       type="email"
                       id="email"
@@ -151,39 +355,48 @@ const ContactPage = () => {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className="w-full bg-transparent border-b border-houma-white/20 text-houma-white 
-                               py-2 px-0 focus:outline-none focus:border-houma-gold transition-colors duration-300"
-                    />
+                            className="w-full bg-transparent border-b-2 border-houma-white/20 text-houma-white 
+                                     py-3 px-0 focus:outline-none focus:border-houma-gold transition-all duration-500
+                                     placeholder-houma-white/30"
+                            placeholder="your@email.com"
+                          />
+                          <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-houma-gold transition-all duration-500 group-focus-within:w-full" />
+                        </div>
                   </div>
                 </div>
 
-                <div>
-                  <label htmlFor="subject" className="block text-xs text-houma-white/50 tracking-[0.2em] mb-2">
+                    <div className="group">
+                      <label htmlFor="subject" className="block text-xs text-houma-gold tracking-[0.2em] mb-3 group-focus-within:text-houma-gold-light">
                     SUBJECT *
                   </label>
+                      <div className="relative">
                   <select
                     id="subject"
                     name="subject"
                     value={formData.subject}
                     onChange={handleInputChange}
                     required
-                    className="w-full bg-transparent border-b border-houma-white/20 text-houma-white 
-                             py-2 px-0 focus:outline-none focus:border-houma-gold transition-colors duration-300"
-                  >
-                    <option value="">Select a subject</option>
-                    <option value="general">General Inquiry</option>
-                    <option value="order">Order Support</option>
-                    <option value="returns">Returns & Exchanges</option>
-                    <option value="wholesale">Wholesale Inquiry</option>
-                    <option value="press">Press & Media</option>
-                    <option value="collaboration">Collaboration</option>
+                          className="w-full bg-transparent border-b-2 border-houma-white/20 text-houma-white 
+                                   py-3 px-0 focus:outline-none focus:border-houma-gold transition-all duration-500
+                                   appearance-none cursor-pointer"
+                        >
+                          <option value="" className="bg-houma-black">Select a subject</option>
+                          <option value="general" className="bg-houma-black">General Inquiry</option>
+                          <option value="order" className="bg-houma-black">Order Support</option>
+                          <option value="returns" className="bg-houma-black">Returns & Exchanges</option>
+                          <option value="wholesale" className="bg-houma-black">Wholesale Inquiry</option>
+                          <option value="press" className="bg-houma-black">Press & Media</option>
+                          <option value="collaboration" className="bg-houma-black">Collaboration</option>
                   </select>
+                        <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-houma-gold transition-all duration-500 group-focus-within:w-full" />
+                      </div>
                 </div>
 
-                <div>
-                  <label htmlFor="message" className="block text-xs text-houma-white/50 tracking-[0.2em] mb-2">
+                    <div className="group">
+                      <label htmlFor="message" className="block text-xs text-houma-gold tracking-[0.2em] mb-3 group-focus-within:text-houma-gold-light">
                     MESSAGE *
                   </label>
+                      <div className="relative">
                   <textarea
                     id="message"
                     name="message"
@@ -191,192 +404,340 @@ const ContactPage = () => {
                     onChange={handleInputChange}
                     required
                     rows={6}
-                    className="w-full bg-transparent border-b border-houma-white/20 text-houma-white 
-                             py-2 px-0 focus:outline-none focus:border-houma-gold transition-colors duration-300 
-                             resize-none"
-                  />
+                          className="w-full bg-transparent border-b-2 border-houma-white/20 text-houma-white 
+                                   py-3 px-0 focus:outline-none focus:border-houma-gold transition-all duration-500 
+                                   resize-none placeholder-houma-white/30"
+                          placeholder="Share your thoughts, dreams, or inquiries..."
+                        />
+                        <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-houma-gold transition-all duration-500 group-focus-within:w-full" />
+                      </div>
                 </div>
 
-                <button
+                    <motion.button
                   type="submit"
-                  className="houma-button min-w-[200px]"
-                >
-                  <span>SEND MESSAGE</span>
-                </button>
+                      className="houma-button min-w-[240px] group relative overflow-hidden"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <span className="relative z-10 flex items-center gap-3">
+                        <PaperAirplaneIcon className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
+                        SEND MESSAGE
+                      </span>
+                    </motion.button>
               </form>
+                </div>
+              </div>
             </motion.div>
 
-            {/* Contact Info */}
+            {/* Luxury Contact Info */}
             <motion.div
-              className="lg:col-span-2"
+              className="lg:col-span-1"
               initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
+              whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
             >
-              <h2 className="text-2xl font-display tracking-wider text-houma-white mb-8">
-                CONTACT INFO
-              </h2>
+              <div className="sticky top-24">
+                {/* Arabic Section */}
+                <div className="text-center mb-12">
+                  <motion.p
+                    className="houma-arabic text-3xl text-houma-gold/80 mb-4 font-amiri"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8 }}
+                    viewport={{ once: true }}
+                  >
+                    تواصل معنا
+                  </motion.p>
+                  <div className="w-16 h-px bg-houma-gold mx-auto" />
+                </div>
 
-              <div className="space-y-8">
+                <div className="space-y-10">
                 {contactInfo.map((info, index) => (
                   <motion.div
                     key={info.title}
+                      className="group"
                     initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                      whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
+                      viewport={{ once: true }}
                   >
+                      <div className="relative p-6 bg-houma-smoke/10 backdrop-blur-sm 
+                                    border border-houma-gold/10 hover:border-houma-gold/30 
+                                    transition-all duration-500 group-hover:bg-houma-smoke/20">
                     <div className="flex items-start gap-4">
-                      <info.icon className="w-5 h-5 text-houma-gold mt-1" />
-                      <div>
-                        <h3 className="text-xs text-houma-gold tracking-[0.2em] mb-2">
+                          <div className="p-2 bg-houma-gold/10 rounded-full group-hover:bg-houma-gold/20 
+                                        transition-colors duration-500">
+                            <info.icon className="w-5 h-5 text-houma-gold" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-xs text-houma-gold tracking-[0.2em] mb-3 font-medium">
                           {info.title}
                         </h3>
-                        {info.details.map((detail) => (
-                          <p key={detail} className="text-sm text-houma-white/70 mb-1">
+                            <div className="space-y-1">
+                              {info.details.map((detail, detailIndex) => (
+                                <p key={detail} className="text-sm text-houma-white/80 group-hover:text-houma-white 
+                                                          transition-colors duration-300 leading-relaxed">
                             {detail}
                           </p>
                         ))}
+                            </div>
+                          </div>
                       </div>
                     </div>
                   </motion.div>
                 ))}
               </div>
 
-              {/* Social Links */}
-              <div className="mt-12 pt-8 border-t border-houma-white/10">
-                <h3 className="text-xs text-houma-gold tracking-[0.2em] mb-4">
-                  FOLLOW US
+                {/* Luxury Social Section */}
+                <motion.div
+                  className="mt-16 pt-8 border-t border-houma-gold/20"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.4 }}
+                  viewport={{ once: true }}
+                >
+                  <div className="text-center mb-6">
+                    <h3 className="text-xs text-houma-gold tracking-[0.2em] mb-2">
+                      FOLLOW OUR JOURNEY
                 </h3>
-                <div className="flex gap-4">
-                  {['Instagram', 'Twitter', 'Facebook', 'YouTube'].map((social) => (
-                    <a
+                    <div className="w-8 h-px bg-houma-gold mx-auto" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {['Instagram', 'Twitter', 'Facebook', 'YouTube'].map((social, index) => (
+                      <motion.a
                       key={social}
                       href={`https://${social.toLowerCase()}.com`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-houma-white/50 hover:text-houma-gold transition-colors duration-300"
-                    >
+                        className="group flex items-center justify-center gap-2 p-3 
+                                 bg-houma-smoke/10 border border-houma-gold/10 
+                                 hover:border-houma-gold/40 hover:bg-houma-gold/5
+                                 transition-all duration-500"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: index * 0.1 }}
+                        viewport={{ once: true }}
+                      >
+                        <StarIcon className="w-4 h-4 text-houma-gold/60 group-hover:text-houma-gold 
+                                           transition-colors duration-300" />
+                        <span className="text-xs text-houma-white/70 group-hover:text-houma-white 
+                                        transition-colors duration-300 tracking-wide">
                       {social}
-                    </a>
+                        </span>
+                      </motion.a>
                   ))}
                 </div>
+                </motion.div>
               </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-20 bg-gradient-luxury">
-        <div className="houma-container">
+
+      {/* Luxury FAQ Section */}
+      <section className="py-32 bg-gradient-luxury relative overflow-hidden">
+        <div className="absolute inset-0 pattern-overlay opacity-10" />
+        
+        <div className="houma-container relative">
           <motion.div
-            className="text-center mb-12"
+            className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
             <p className="text-houma-gold text-xs tracking-[0.3em] mb-4">SUPPORT</p>
-            <h2 className="text-3xl font-display tracking-wider text-houma-white">
+            <h2 className="text-4xl md:text-6xl font-display tracking-wider text-houma-white mb-6">
               FREQUENTLY ASKED QUESTIONS
             </h2>
+            <div className="w-24 h-px bg-houma-gold mx-auto" />
           </motion.div>
 
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-4xl mx-auto">
             {faqItems.map((item, index) => (
               <motion.div
                 key={item.question}
-                className="border-b border-houma-white/10 pb-6 mb-6 last:border-0"
+                className="group mb-8 last:mb-0"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <h3 className="text-lg text-houma-white mb-3">
+                <div className="relative p-8 bg-houma-smoke/10 backdrop-blur-sm 
+                              border border-houma-gold/10 group-hover:border-houma-gold/30 
+                              transition-all duration-500 group-hover:bg-houma-smoke/20">
+                  {/* Decorative Corner Elements */}
+                  <div className="absolute top-4 left-4 w-6 h-6 border-l border-t border-houma-gold/30 
+                                group-hover:border-houma-gold/60 transition-colors duration-500" />
+                  <div className="absolute top-4 right-4 w-6 h-6 border-r border-t border-houma-gold/30 
+                                group-hover:border-houma-gold/60 transition-colors duration-500" />
+                  <div className="absolute bottom-4 left-4 w-6 h-6 border-l border-b border-houma-gold/30 
+                                group-hover:border-houma-gold/60 transition-colors duration-500" />
+                  <div className="absolute bottom-4 right-4 w-6 h-6 border-r border-b border-houma-gold/30 
+                                group-hover:border-houma-gold/60 transition-colors duration-500" />
+                  
+                  <h3 className="text-xl font-display text-houma-white mb-4 group-hover:text-houma-gold 
+                                transition-colors duration-300">
                   {item.question}
                 </h3>
-                <p className="text-sm text-houma-white/60 leading-relaxed">
+                  <p className="text-base text-houma-white/70 leading-relaxed font-light">
                   {item.answer}
                 </p>
+                </div>
               </motion.div>
             ))}
           </div>
 
-          <div className="text-center mt-12">
-            <p className="text-sm text-houma-white/50 mb-4">
+          <motion.div
+            className="text-center mt-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            viewport={{ once: true }}
+          >
+            <div className="relative inline-block">
+              <p className="text-base text-houma-white/60 mb-6 font-light">
               Can't find what you're looking for?
             </p>
-            <a
+              <motion.a
               href="mailto:support@houma.com"
-              className="text-houma-gold hover:text-houma-gold-light transition-colors duration-300"
+                className="text-houma-gold hover:text-houma-gold-light transition-colors duration-300 
+                         text-lg font-medium relative group"
+                whileHover={{ scale: 1.05 }}
             >
               support@houma.com
-            </a>
+                <div className="absolute bottom-0 left-0 w-0 h-px bg-houma-gold-light 
+                              group-hover:w-full transition-all duration-500" />
+              </motion.a>
           </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Map Section */}
-      <section className="py-20">
-        <div className="houma-container">
+      {/* Luxury Store Locations Section */}
+      <section className="py-20 relative overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0 pattern-overlay opacity-5" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-houma-gold/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-houma-gold/3 rounded-full blur-3xl" />
+        
+        <div className="houma-container relative">
           <motion.div
-            className="text-center mb-12"
+            className="text-center mb-20"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
             <p className="text-houma-gold text-xs tracking-[0.3em] mb-4">VISIT</p>
-            <h2 className="text-3xl font-display tracking-wider text-houma-white mb-8">
+            <h2 className="text-4xl md:text-6xl font-display tracking-wider text-houma-white mb-8">
               OUR FLAGSHIP STORES
             </h2>
+            <p className="text-lg text-houma-white/70 max-w-2xl mx-auto font-light">
+              Experience Houma in person at our carefully curated locations around the world.
+            </p>
+            <div className="w-24 h-px bg-houma-gold mx-auto mt-6" />
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {[
+              {
+                city: 'TUNIS',
+                arabic: 'تونس',
+                address: 'Avenue Habib Bourguiba',
+                location: 'Tunis 1001, Tunisia',
+                phone: '+216 71 234 567',
+                description: 'Where it all began. Our flagship store in the heart of Tunisia.',
+                image: 'Logo_page-0004.jpg'
+              },
+              {
+                city: 'PARIS',
+                arabic: 'باريس',
+                address: 'Rue Saint-Honoré',
+                location: '75001 Paris, France',
+                phone: '+33 1 23 45 67 89',
+                description: 'Bridging cultures in the fashion capital of the world.',
+                image: 'Logo_page-0005.jpg'
+              },
+              {
+                city: 'CASABLANCA',
+                arabic: 'الدار البيضاء',
+                address: 'Boulevard Mohammed V',
+                location: 'Casablanca 20000, Morocco',
+                phone: '+212 5 22 34 56 78',
+                description: 'Where the Atlantic meets the Atlas, tradition meets modernity.',
+                image: 'Logo_page-0006.jpg'
+              }
+            ].map((store, index) => (
             <motion.div
-              className="text-center"
-              initial={{ opacity: 0, y: 20 }}
+                key={store.city}
+                className="group text-center"
+                initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+                transition={{ duration: 0.8, delay: index * 0.2 }}
               viewport={{ once: true }}
             >
-              <h3 className="text-xl font-display text-houma-white mb-2">TUNIS</h3>
-              <p className="text-sm text-houma-white/60">
-                Avenue Habib Bourguiba<br />
-                Tunis 1001, Tunisia<br />
-                +216 71 234 567
-              </p>
+                <div className="relative mb-8">
+                  <div className="aspect-[4/3] relative overflow-hidden bg-houma-smoke/20 
+                                border border-houma-gold/20 group-hover:border-houma-gold/40 
+                                transition-all duration-700">
+                    <Image
+                      src={`/Resources/Logos-and-Images/${store.image}`}
+                      alt={store.city}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-houma-black/90 via-transparent to-transparent" />
+                    
+                    {/* Arabic Text Overlay */}
+                    <div className="absolute top-4 right-4">
+                      <p className="houma-arabic text-lg text-houma-gold font-amiri">
+                        {store.arabic}
+                      </p>
+                    </div>
+                    
+                    {/* City Name Overlay */}
+                    <div className="absolute bottom-4 left-4">
+                      <h3 className="text-2xl font-display text-houma-white tracking-wider">
+                        {store.city}
+                      </h3>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <p className="text-sm text-houma-white/70 leading-relaxed font-light">
+                    {store.description}
+                  </p>
+                  
+                  <div className="space-y-2">
+                    <p className="text-sm text-houma-white/90 font-medium">
+                      {store.address}
+                    </p>
+                    <p className="text-sm text-houma-white/70">
+                      {store.location}
+                    </p>
+                    <p className="text-sm text-houma-gold">
+                      {store.phone}
+                    </p>
+                  </div>
+                  
+                  <motion.button
+                    className="mt-6 px-6 py-2 border border-houma-gold/30 text-houma-gold 
+                             hover:border-houma-gold hover:bg-houma-gold/5 
+                             transition-all duration-500 text-sm tracking-wide"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    VISIT STORE
+                  </motion.button>
+                </div>
             </motion.div>
-
-            <motion.div
-              className="text-center"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              viewport={{ once: true }}
-            >
-              <h3 className="text-xl font-display text-houma-white mb-2">PARIS</h3>
-              <p className="text-sm text-houma-white/60">
-                Rue Saint-Honoré<br />
-                75001 Paris, France<br />
-                +33 1 23 45 67 89
-              </p>
-            </motion.div>
-
-            <motion.div
-              className="text-center"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <h3 className="text-xl font-display text-houma-white mb-2">CASABLANCA</h3>
-              <p className="text-sm text-houma-white/60">
-                Boulevard Mohammed V<br />
-                Casablanca 20000, Morocco<br />
-                +212 5 22 34 56 78
-              </p>
-            </motion.div>
+            ))}
           </div>
         </div>
       </section>

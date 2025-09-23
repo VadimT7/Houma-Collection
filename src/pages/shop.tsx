@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import Head from 'next/head'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import ProductCard from '@/components/ProductCard'
 import { products, categories, collections } from '@/lib/products'
@@ -65,24 +66,46 @@ const ShopPage = () => {
       </Head>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-16 bg-gradient-luxury relative overflow-hidden">
-        <div className="absolute inset-0 pattern-overlay opacity-20" />
-        
+      <section className="relative h-screen overflow-hidden">
         <motion.div
-          className="houma-container relative"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          className="absolute inset-0"
+          initial={{ scale: 1.2 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="text-center">
-            <p className="text-houma-gold text-xs tracking-[0.3em] mb-4">EXPLORE</p>
-            <h1 className="text-5xl md:text-7xl font-display tracking-wider text-houma-white mb-6">
+          <Image
+            src="/Resources/Logos-and-Images/Logo_page-0004.jpg"
+            alt="HOUMA Shop"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-houma-black/60 via-houma-black/40 to-houma-black" />
+        </motion.div>
+
+        <div className="relative h-full flex items-center justify-center text-center">
+          <motion.div
+            className="houma-container"
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <p className="text-houma-gold text-xs tracking-[0.3em] mb-6">EXPLORE</p>
+            <h1 className="text-6xl md:text-8xl font-display tracking-wider text-houma-white mb-6">
               THE COLLECTION
             </h1>
-            <p className="text-lg text-houma-white/70 max-w-2xl mx-auto">
+            <p className="text-xl text-houma-white/80 max-w-2xl mx-auto">
               Each piece tells a story of heritage reimagined. Discover luxury streetwear that honors tradition while defining the future.
             </p>
-          </div>
+          </motion.div>
+        </div>
+
+        <motion.div
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+        >
+          <div className="w-px h-16 bg-gradient-to-b from-houma-gold to-transparent" />
         </motion.div>
       </section>
 

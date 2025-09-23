@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
 import { loadStripe } from '@stripe/stripe-js'
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import toast from 'react-hot-toast'
 import { 
   ShieldCheckIcon, 
@@ -14,11 +15,12 @@ import {
 } from '@heroicons/react/24/outline'
 import { useCart } from '@/lib/store'
 import { formatPrice, getImagePath } from '@/lib/utils'
+import PaymentForm from '@/components/PaymentForm'
 
-// Initialize Stripe (you'll need to add your publishable key)
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_YOUR_KEY')
+// Initialize Stripe
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
-const CheckoutPage = () => {
+const CheckoutForm = () => {
   const router = useRouter()
   const { items, getTotalPrice, clearCart } = useCart()
   const [isProcessing, setIsProcessing] = useState(false)
@@ -82,23 +84,22 @@ const CheckoutPage = () => {
       setStep('review')
       return
     }
+  }
 
-    // Process payment
-    setIsProcessing(true)
-    
+  const handlePaymentSuccess = async (paymentIntent: any) => {
     try {
-      // Here you would normally process the payment with Stripe
-      // This is a simplified example
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
-      toast.success('Order placed successfully!')
+      // Here you could save the order to your database
+      // For now, we'll just show success and redirect
+      toast.success('Payment successful! Order placed.')
       clearCart()
-      router.push('/order-confirmation')
+      router.push(`/order-confirmation?payment_intent=${paymentIntent.id}`)
     } catch (error) {
-      toast.error('Payment failed. Please try again.')
-    } finally {
-      setIsProcessing(false)
+      toast.error('Order processing failed. Please contact support.')
     }
+  }
+
+  const handlePaymentError = (error: string) => {
+    toast.error(`Payment failed: ${error}`)
   }
 
   const renderStepIndicator = () => (
@@ -349,95 +350,13 @@ const CheckoutPage = () => {
                         PAYMENT INFORMATION
                       </h2>
 
-                      <div className="space-y-6">
-                        <div className="p-4 bg-houma-smoke/30 border border-houma-gold/20 rounded">
-                          <div className="flex items-center gap-3 mb-2">
-                            <CreditCardIcon className="w-5 h-5 text-houma-gold" />
-                            <span className="text-sm text-houma-white">Credit / Debit Card</span>
-                          </div>
-                          <p className="text-xs text-houma-white/50">
-                            All transactions are secure and encrypted
-                          </p>
-                        </div>
-
-                        <div>
-                          <label className="block text-xs text-houma-white/50 tracking-[0.2em] mb-2">
-                            CARD NUMBER *
-                          </label>
-                          <input
-                            type="text"
-                            name="cardNumber"
-                            value={billingInfo.cardNumber}
-                            onChange={handleBillingChange}
-                            placeholder="1234 5678 9012 3456"
-                            required
-                            className="w-full bg-transparent border border-houma-white/20 text-houma-white 
-                                     px-4 py-3 focus:outline-none focus:border-houma-gold transition-colors"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-xs text-houma-white/50 tracking-[0.2em] mb-2">
-                            CARDHOLDER NAME *
-                          </label>
-                          <input
-                            type="text"
-                            name="cardName"
-                            value={billingInfo.cardName}
-                            onChange={handleBillingChange}
-                            required
-                            className="w-full bg-transparent border border-houma-white/20 text-houma-white 
-                                     px-4 py-3 focus:outline-none focus:border-houma-gold transition-colors"
-                          />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-xs text-houma-white/50 tracking-[0.2em] mb-2">
-                              EXPIRY DATE *
-                            </label>
-                            <input
-                              type="text"
-                              name="expiryDate"
-                              value={billingInfo.expiryDate}
-                              onChange={handleBillingChange}
-                              placeholder="MM/YY"
-                              required
-                              className="w-full bg-transparent border border-houma-white/20 text-houma-white 
-                                       px-4 py-3 focus:outline-none focus:border-houma-gold transition-colors"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-xs text-houma-white/50 tracking-[0.2em] mb-2">
-                              CVV *
-                            </label>
-                            <input
-                              type="text"
-                              name="cvv"
-                              value={billingInfo.cvv}
-                              onChange={handleBillingChange}
-                              placeholder="123"
-                              required
-                              className="w-full bg-transparent border border-houma-white/20 text-houma-white 
-                                       px-4 py-3 focus:outline-none focus:border-houma-gold transition-colors"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="checkbox"
-                            name="sameAsShipping"
-                            checked={billingInfo.sameAsShipping}
-                            onChange={handleBillingChange}
-                            className="w-4 h-4 bg-transparent border-houma-white/20 text-houma-gold 
-                                     focus:ring-houma-gold"
-                          />
-                          <label className="text-sm text-houma-white/70">
-                            Billing address same as shipping
-                          </label>
-                        </div>
-                      </div>
+                      <PaymentForm
+                        amount={total}
+                        onSuccess={handlePaymentSuccess}
+                        onError={handlePaymentError}
+                        isProcessing={isProcessing}
+                        setIsProcessing={setIsProcessing}
+                      />
                     </motion.div>
                   )}
 
@@ -473,8 +392,8 @@ const CheckoutPage = () => {
                             PAYMENT METHOD
                           </h3>
                           <p className="text-sm text-houma-white/70">
-                            Card ending in {billingInfo.cardNumber.slice(-4)}<br />
-                            {billingInfo.cardName}
+                            Credit/Debit Card<br />
+                            Secure payment via Stripe
                           </p>
                         </div>
                       </div>
@@ -482,29 +401,30 @@ const CheckoutPage = () => {
                   )}
 
                   {/* Navigation Buttons */}
-                  <div className="flex justify-between mt-8">
-                    {step !== 'shipping' && (
+                  {step !== 'review' && (
+                    <div className="flex justify-between mt-8">
+                      {step !== 'shipping' && (
+                        <button
+                          type="button"
+                          onClick={() => setStep(step === 'payment' ? 'shipping' : 'payment')}
+                          className="flex items-center gap-2 text-houma-white/70 hover:text-houma-gold 
+                                   transition-colors"
+                        >
+                          <ChevronLeftIcon className="w-4 h-4" />
+                          Back
+                        </button>
+                      )}
+                      
                       <button
-                        type="button"
-                        onClick={() => setStep(step === 'payment' ? 'shipping' : 'payment')}
-                        className="flex items-center gap-2 text-houma-white/70 hover:text-houma-gold 
-                                 transition-colors"
+                        type="submit"
+                        disabled={isProcessing}
+                        className="ml-auto bg-houma-gold text-houma-black px-8 py-4 uppercase tracking-widest 
+                                 hover:bg-houma-gold-light transition-all duration-300 disabled:opacity-50"
                       >
-                        <ChevronLeftIcon className="w-4 h-4" />
-                        Back
+                        {isProcessing ? 'Processing...' : 'Continue'}
                       </button>
-                    )}
-                    
-                    <button
-                      type="submit"
-                      disabled={isProcessing}
-                      className="ml-auto bg-houma-gold text-houma-black px-8 py-4 uppercase tracking-widest 
-                               hover:bg-houma-gold-light transition-all duration-300 disabled:opacity-50"
-                    >
-                      {isProcessing ? 'Processing...' : 
-                       step === 'review' ? 'Place Order' : 'Continue'}
-                    </button>
-                  </div>
+                    </div>
+                  )}
                 </form>
               </div>
 
@@ -582,6 +502,14 @@ const CheckoutPage = () => {
         </div>
       </section>
     </>
+  )
+}
+
+const CheckoutPage = () => {
+  return (
+    <Elements stripe={stripePromise}>
+      <CheckoutForm />
+    </Elements>
   )
 }
 

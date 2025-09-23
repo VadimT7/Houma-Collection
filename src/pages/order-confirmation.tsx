@@ -9,16 +9,23 @@ import { ArrowRightIcon, HomeIcon, ShoppingBagIcon } from '@heroicons/react/24/o
 const OrderConfirmation = () => {
   const router = useRouter()
   const [orderNumber, setOrderNumber] = useState('')
+  const [paymentIntentId, setPaymentIntentId] = useState('')
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
+    // Get payment intent ID from URL if available
+    const { payment_intent } = router.query
+    if (payment_intent) {
+      setPaymentIntentId(payment_intent as string)
+    }
+    
     // Generate a random order number
     const orderNum = `HOUMA-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
     setOrderNumber(orderNum)
     
     // Trigger visibility after a brief delay
     setTimeout(() => setIsVisible(true), 300)
-  }, [])
+  }, [router.query])
 
   return (
     <>
@@ -389,11 +396,23 @@ const OrderConfirmation = () => {
                   <span className="text-houma-white text-lg">3-5 Business Days</span>
                 </motion.div>
                 
+                {paymentIntentId && (
+                  <motion.div 
+                    className="flex justify-between items-center py-4 border-b border-houma-white/5"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 1.8 + 3 * 0.1, duration: 0.6 }}
+                  >
+                    <span className="text-houma-white/60 text-lg">Payment ID</span>
+                    <span className="text-houma-gold font-mono text-sm">{paymentIntentId}</span>
+                  </motion.div>
+                )}
+                
                 <motion.div 
                   className="flex justify-between items-center py-4"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 1.8 + 3 * 0.1, duration: 0.6 }}
+                  transition={{ delay: 1.8 + 4 * 0.1, duration: 0.6 }}
                 >
                   <span className="text-houma-white/60 text-lg">Email Confirmation</span>
                   <span className="text-houma-white text-lg">Sent</span>
