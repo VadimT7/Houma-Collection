@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, Suspense } from 'react'
-import { useFrame, useLoader } from '@react-three/fiber'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { useFrame } from '@react-three/fiber'
+import { useGLTF } from '@react-three/drei'
 import { OrbitControls } from '@react-three/drei'
 import { motion } from 'framer-motion'
 import { gsap } from 'gsap'
@@ -18,9 +18,9 @@ function GLBChest({ isUnlocked, onUnlockComplete }: GLBChestSceneProps) {
   const [loadError, setLoadError] = useState(false)
   
   // Try to load the GLB model
-  let gltf = null
+  let gltf: any = null
   try {
-    gltf = useLoader(GLTFLoader, '/Resources/GLB_Models/logo_basic_pbr.glb')
+    gltf = useGLTF('/Resources/GLB_Models/logo_basic_pbr.glb')
   } catch (error) {
     console.error('Failed to load GLB model:', error)
     setLoadError(true)
@@ -35,7 +35,7 @@ function GLBChest({ isUnlocked, onUnlockComplete }: GLBChestSceneProps) {
   const chestScene = gltf.scene.clone()
   
   // Enhance materials
-  chestScene.traverse((child) => {
+  chestScene.traverse((child: any) => {
     if (child instanceof THREE.Mesh) {
       // Make materials more metallic and reflective
       if (child.material) {
@@ -98,7 +98,17 @@ function GLBChest({ isUnlocked, onUnlockComplete }: GLBChestSceneProps) {
     
     // Glow effect
     if (glowRef.current) {
-      glowRef.current.material.opacity = 0.3 + Math.sin(state.clock.elapsedTime * 2) * 0.1
+      const material = glowRef.current.material
+      const targetOpacity = 0.3 + Math.sin(state.clock.elapsedTime * 2) * 0.1
+      if (Array.isArray(material)) {
+        material.forEach(mat => {
+          if ('opacity' in mat) {
+            mat.opacity = targetOpacity
+          }
+        })
+      } else if (material && 'opacity' in material) {
+        material.opacity = targetOpacity
+      }
     }
   })
   
@@ -166,6 +176,7 @@ function ParticleBurst() {
           count={particles.length}
           array={new Float32Array(particles.flatMap(p => [p.x, p.y, p.z]))}
           itemSize={3}
+          args={[new Float32Array(particles.flatMap(p => [p.x, p.y, p.z])), 3]}
         />
       </bufferGeometry>
       <pointsMaterial 
@@ -181,7 +192,7 @@ function ParticleBurst() {
 
 // Fallback chest when GLB fails to load
 function FallbackChest({ isUnlocked, onUnlockComplete }: GLBChestSceneProps) {
-  const meshRef = useRef<THREE.Mesh>(null)
+  const meshRef = useRef<THREE.Group>(null)
   const [showParticles, setShowParticles] = useState(false)
   
   useEffect(() => {

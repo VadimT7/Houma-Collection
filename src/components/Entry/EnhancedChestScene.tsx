@@ -167,7 +167,19 @@ function MultiLayerParticleSystem({ isActive }: { isActive: boolean }) {
       }
       
       particlesRef.current.geometry.attributes.position.needsUpdate = true
-      particlesRef.current.material.opacity = Math.max(0, 1 - state.clock.elapsedTime * 0.1)
+      
+      // Update material opacity with type safety
+      const material = particlesRef.current.material
+      const targetOpacity = Math.max(0, 1 - state.clock.elapsedTime * 0.1)
+      if (Array.isArray(material)) {
+        material.forEach(mat => {
+          if ('opacity' in mat) {
+            mat.opacity = targetOpacity
+          }
+        })
+      } else if (material && 'opacity' in material) {
+        material.opacity = targetOpacity
+      }
     }
     
     // Update dust
@@ -189,7 +201,19 @@ function MultiLayerParticleSystem({ isActive }: { isActive: boolean }) {
     // Animate sparkles
     if (sparklesRef.current) {
       sparklesRef.current.rotation.y += delta * 0.5
-      sparklesRef.current.material.opacity = 0.5 + Math.sin(state.clock.elapsedTime * 3) * 0.5
+      
+      // Update sparkles material opacity with type safety
+      const material = sparklesRef.current.material
+      const targetOpacity = 0.5 + Math.sin(state.clock.elapsedTime * 3) * 0.5
+      if (Array.isArray(material)) {
+        material.forEach(mat => {
+          if ('opacity' in mat) {
+            mat.opacity = targetOpacity
+          }
+        })
+      } else if (material && 'opacity' in material) {
+        material.opacity = targetOpacity
+      }
     }
   })
   
@@ -339,7 +363,7 @@ function MysticalSymbols({ isActive }: { isActive: boolean }) {
 // Enhanced chest with more ornate details
 function OrnateChest({ isUnlocked, onUnlockComplete }: { isUnlocked: boolean, onUnlockComplete: () => void }) {
   const chestRef = useRef<THREE.Group>(null)
-  const lidRef = useRef<THREE.Mesh>(null)
+  const lidRef = useRef<THREE.Group>(null)
   const glowRef = useRef<THREE.ShaderMaterial>(null)
   const lockRef = useRef<THREE.Group>(null)
   const { camera, scene } = useThree()

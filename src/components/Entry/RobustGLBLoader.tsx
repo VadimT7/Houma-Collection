@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useLoader } from '@react-three/fiber'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 
 interface RobustGLBLoaderProps {
@@ -17,39 +16,53 @@ export function useRobustGLBLoader(url: string, timeout: number = 10000) {
   const timeoutRef = useRef<NodeJS.Timeout>()
 
   useEffect(() => {
-    setLoading(true)
-    setError(null)
-    setGltf(null)
+    const loadGLB = async () => {
+      setLoading(true)
+      setError(null)
+      setGltf(null)
 
-    // Set timeout
-    timeoutRef.current = setTimeout(() => {
-      setError(new Error('GLB loading timeout'))
-      setLoading(false)
-    }, timeout)
-
-    // Try to load the GLB
-    const loader = new GLTFLoader()
-    loader.load(
-      url,
-      (loadedGltf) => {
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current)
-        }
-        setGltf(loadedGltf)
+      // Set timeout
+      timeoutRef.current = setTimeout(() => {
+        setError(new Error('GLB loading timeout'))
         setLoading(false)
-      },
-      (progress) => {
-        console.log('GLB loading progress:', (progress.loaded / progress.total) * 100 + '%')
-      },
-      (err) => {
+      }, timeout)
+
+      try {
+        // Try to load the GLB
+        const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js')
+        const loader = new GLTFLoader()
+        loader.load(
+          url,
+          (loadedGltf) => {
+            if (timeoutRef.current) {
+              clearTimeout(timeoutRef.current)
+            }
+            setGltf(loadedGltf)
+            setLoading(false)
+          },
+          (progress) => {
+            console.log('GLB loading progress:', (progress.loaded / progress.total) * 100 + '%')
+          },
+          (err) => {
+            if (timeoutRef.current) {
+              clearTimeout(timeoutRef.current)
+            }
+            console.error('GLB loading error:', err)
+            setError(err as Error)
+            setLoading(false)
+          }
+        )
+      } catch (error) {
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current)
         }
-        console.error('GLB loading error:', err)
-        setError(err)
+        console.error('Failed to load GLTFLoader:', error)
+        setError(error as Error)
         setLoading(false)
       }
-    )
+    }
+
+    loadGLB()
 
     return () => {
       if (timeoutRef.current) {
@@ -66,7 +79,7 @@ export function GLBWithErrorBoundary({ url, children }: { url: string, children:
   const [hasError, setHasError] = useState(false)
   
   try {
-    const gltf = useLoader(GLTFLoader, url)
+    const gltf = useGLTF(url)
     return <>{children(gltf)}</>
   } catch (error) {
     console.error('GLB loading failed:', error)

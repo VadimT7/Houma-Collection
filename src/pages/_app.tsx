@@ -35,6 +35,8 @@ export default function App({ Component, pageProps }: AppProps) {
       setShowEntry(true)
     } else {
       setEntryComplete(true)
+      // If entry was already shown, immediately show the homepage content
+      setShowHomepage(true)
     }
   }, [])
 

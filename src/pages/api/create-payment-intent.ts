@@ -18,7 +18,7 @@ export default async function handler(
 
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // Convert to cents
+      amount: amount, // Amount is already in cents from the frontend
       currency,
       automatic_payment_methods: {
         enabled: true,

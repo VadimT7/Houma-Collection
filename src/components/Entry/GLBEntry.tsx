@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react'
-import { Canvas, useLoader, useFrame } from '@react-three/fiber'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { useGLTF } from '@react-three/drei'
 import { OrbitControls, Environment, PerspectiveCamera } from '@react-three/drei'
 import { motion, AnimatePresence } from 'framer-motion'
 import { gsap } from 'gsap'
@@ -17,9 +17,9 @@ function ChestModel({ isUnlocked }: { isUnlocked: boolean }) {
   const [loadError, setLoadError] = useState(false)
   
   // Load the GLB model with error handling
-  let gltf = null
+  let gltf: any = null
   try {
-    gltf = useLoader(GLTFLoader, '/Resources/GLB_Models/logo_basic_pbr.glb')
+    gltf = useGLTF('/Resources/GLB_Models/logo_basic_pbr.glb')
   } catch (error) {
     console.error('GLB loading failed:', error)
     setLoadError(true)
@@ -33,7 +33,7 @@ function ChestModel({ isUnlocked }: { isUnlocked: boolean }) {
   // Clone and enhance the model
   React.useMemo(() => {
     if (gltf && gltf.scene) {
-      gltf.scene.traverse((child) => {
+      gltf.scene.traverse((child: any) => {
         if (child instanceof THREE.Mesh) {
           // Enhance materials
           if (child.material) {
@@ -261,7 +261,19 @@ function GoldParticles() {
       }
       
       particlesRef.current.geometry.attributes.position.needsUpdate = true
-      particlesRef.current.material.opacity = Math.max(0, 1 - state.clock.elapsedTime * 0.2)
+      
+      // Update material opacity with type safety
+      const material = particlesRef.current.material
+      const targetOpacity = Math.max(0, 1 - state.clock.elapsedTime * 0.2)
+      if (Array.isArray(material)) {
+        material.forEach(mat => {
+          if ('opacity' in mat) {
+            mat.opacity = targetOpacity
+          }
+        })
+      } else if (material && 'opacity' in material) {
+        material.opacity = targetOpacity
+      }
     }
   })
   
@@ -273,6 +285,7 @@ function GoldParticles() {
           count={particleCount}
           array={positions}
           itemSize={3}
+          args={[positions, 3]}
         />
       </bufferGeometry>
       <pointsMaterial

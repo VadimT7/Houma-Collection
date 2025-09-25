@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { Environment, OrbitControls } from '@react-three/drei'
 import { motion, AnimatePresence } from 'framer-motion'
 import { gsap } from 'gsap'
 
@@ -19,7 +21,7 @@ function GLBLoader({ isUnlocked, onLoadComplete }: { isUnlocked: boolean, onLoad
     // Dynamically import Three.js only on client
     const loadThree = async () => {
       const three = await import('three')
-      const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader')
+      const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js')
       
       setTHREE(three)
       
@@ -130,7 +132,7 @@ function GLBLoader({ isUnlocked, onLoadComplete }: { isUnlocked: boolean, onLoad
       gltf.scene.traverse((child: any) => {
         if (child instanceof THREE.Mesh) {
           if (child.material) {
-            const mat = child.material as THREE.MeshStandardMaterial
+            const mat = child.material as any
             mat.metalness = 0.7
             mat.roughness = 0.3
             mat.envMapIntensity = 1.5
@@ -160,7 +162,7 @@ function GLBLoader({ isUnlocked, onLoadComplete }: { isUnlocked: boolean, onLoad
           color="#D4AF37" 
           transparent 
           opacity={isUnlocked ? 0.3 : 0.1}
-          side={THREE.BackSide}
+          side={2} // THREE.BackSide
         />
       </mesh>
       
@@ -172,7 +174,7 @@ function GLBLoader({ isUnlocked, onLoadComplete }: { isUnlocked: boolean, onLoad
 
 // Particle System
 function GoldParticles() {
-  const particlesRef = useRef<THREE.Points>(null)
+  const particlesRef = useRef<any>(null)
   const particleCount = 150
   
   const positions = React.useMemo(() => {
@@ -211,6 +213,7 @@ function GoldParticles() {
           count={particleCount}
           array={positions}
           itemSize={3}
+          args={[positions, 3]}
         />
       </bufferGeometry>
       <pointsMaterial
@@ -219,7 +222,7 @@ function GoldParticles() {
         transparent
         opacity={1}
         sizeAttenuation={true}
-        blending={THREE.AdditiveBlending}
+        blending={1} // THREE.AdditiveBlending
       />
     </points>
   )
@@ -292,7 +295,7 @@ export default function RealGLBEntry({ onComplete }: RealGLBEntryProps) {
         camera={{ position: [0, 0, 5], fov: 45 }}
         gl={{
           antialias: true,
-          toneMapping: THREE.ACESFilmicToneMapping,
+          toneMapping: 1, // THREE.ACESFilmicToneMapping
           toneMappingExposure: 1.2
         }}
       >

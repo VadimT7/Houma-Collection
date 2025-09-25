@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
 import { loadStripe } from '@stripe/stripe-js'
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
+import { Elements } from '@stripe/react-stripe-js'
 import toast from 'react-hot-toast'
 import { 
   ShieldCheckIcon, 
@@ -20,11 +20,21 @@ import PaymentForm from '@/components/PaymentForm'
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
+// Debug: Log Stripe key
+if (typeof window !== 'undefined') {
+  console.log('Stripe publishable key:', process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+  console.log('Stripe promise:', stripePromise)
+}
+
 const CheckoutForm = () => {
   const router = useRouter()
-  const { items, getTotalPrice, clearCart } = useCart()
+  const [isClient, setIsClient] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [isPaymentSuccess, setIsPaymentSuccess] = useState(false)
   const [step, setStep] = useState<'shipping' | 'payment' | 'review'>('shipping')
+  
+  // Always call the hook, but handle hydration safely
+  const { items, getTotalPrice, clearCart } = useCart()
   
   const [shippingInfo, setShippingInfo] = useState({
     email: '',
@@ -46,16 +56,24 @@ const CheckoutForm = () => {
     sameAsShipping: true,
   })
 
-  const subtotal = getTotalPrice()
+  const subtotal = isClient ? getTotalPrice() : 0
   const shipping = subtotal > 200 ? 0 : 15
   const tax = subtotal * 0.1 // 10% tax
   const total = subtotal + shipping + tax
 
   useEffect(() => {
-    if (items.length === 0) {
+    // Ensure we're on the client side
+    setIsClient(true)
+  }, [])
+
+  useEffect(() => {
+    // Only redirect if cart is empty and we're not processing payment or payment succeeded
+    // Also don't redirect if we're in the middle of a payment flow
+    if (isClient && items.length === 0 && !isProcessing && !isPaymentSuccess && step === 'shipping') {
+      console.log('Cart is empty, redirecting to shop')
       router.push('/shop')
     }
-  }, [items, router])
+  }, [isClient, items.length, router, isProcessing, isPaymentSuccess, step])
 
   const handleShippingChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setShippingInfo({
@@ -80,26 +98,52 @@ const CheckoutForm = () => {
       return
     }
     
+    // For payment step, we don't handle the form submission here
+    // The PaymentForm component handles its own submission
     if (step === 'payment') {
-      setStep('review')
       return
     }
   }
 
   const handlePaymentSuccess = async (paymentIntent: any) => {
     try {
+      console.log('Payment success handler called with:', paymentIntent)
+      setIsPaymentSuccess(true) // Prevent cart redirect
+      setIsProcessing(false) // Stop processing state
+      
       // Here you could save the order to your database
       // For now, we'll just show success and redirect
       toast.success('Payment successful! Order placed.')
+      
+      // Clear cart first to prevent any state conflicts
       clearCart()
-      router.push(`/order-confirmation?payment_intent=${paymentIntent.id}`)
+      
+      // Small delay to ensure cart is cleared before redirect
+      setTimeout(() => {
+        const redirectUrl = `/order-confirmation?payment_intent=${paymentIntent.id}`
+        console.log('Redirecting to:', redirectUrl)
+        // Use window.location for a clean redirect
+        window.location.href = redirectUrl
+      }, 100)
     } catch (error) {
+      console.error('Error in payment success handler:', error)
       toast.error('Order processing failed. Please contact support.')
+      setIsProcessing(false)
     }
   }
 
   const handlePaymentError = (error: string) => {
     toast.error(`Payment failed: ${error}`)
+  }
+
+  // Test function to bypass payment and test redirect
+  const handleTestPayment = () => {
+    console.log('Testing payment redirect...')
+    const mockPaymentIntent = {
+      id: 'pi_test_1234567890',
+      status: 'succeeded'
+    }
+    handlePaymentSuccess(mockPaymentIntent)
   }
 
   const renderStepIndicator = () => (
@@ -143,8 +187,31 @@ const CheckoutForm = () => {
     </div>
   )
 
-  if (items.length === 0) {
-    return null
+  // Show loading state while hydrating
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-houma-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-houma-gold mx-auto mb-4"></div>
+          <h2 className="text-2xl text-houma-white">Loading...</h2>
+        </div>
+      </div>
+    )
+  }
+
+  if (items.length === 0 && !isProcessing) {
+    return (
+      <div className="min-h-screen bg-houma-black flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl text-houma-white mb-4">Your cart is empty</h2>
+          <Link href="/shop">
+            <button className="bg-houma-gold text-houma-black px-8 py-4 rounded uppercase tracking-wider">
+              Continue Shopping
+            </button>
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -180,9 +247,9 @@ const CheckoutForm = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
               {/* Form Section */}
               <div className="lg:col-span-2">
-                <form onSubmit={handleSubmit}>
-                  {/* Shipping Information */}
-                  {step === 'shipping' && (
+                {/* Shipping Information */}
+                {step === 'shipping' && (
+                  <form onSubmit={handleSubmit}>
                     <motion.div
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -337,10 +404,24 @@ const CheckoutForm = () => {
                         </div>
                       </div>
                     </motion.div>
-                  )}
 
-                  {/* Payment Information */}
-                  {step === 'payment' && (
+                    {/* Navigation Buttons */}
+                    <div className="flex justify-between mt-8">
+                      <div></div>
+                      <button
+                        type="submit"
+                        disabled={isProcessing}
+                        className="ml-auto bg-houma-gold text-houma-black px-8 py-4 uppercase tracking-widest 
+                                 hover:bg-houma-gold-light transition-all duration-300 disabled:opacity-50"
+                      >
+                        {isProcessing ? 'Processing...' : 'Continue'}
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                {/* Payment Information */}
+                {step === 'payment' && (
                     <motion.div
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -358,10 +439,10 @@ const CheckoutForm = () => {
                         setIsProcessing={setIsProcessing}
                       />
                     </motion.div>
-                  )}
+                )}
 
-                  {/* Order Review */}
-                  {step === 'review' && (
+                {/* Order Review */}
+                {step === 'review' && (
                     <motion.div
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -398,34 +479,31 @@ const CheckoutForm = () => {
                         </div>
                       </div>
                     </motion.div>
-                  )}
+                )}
 
-                  {/* Navigation Buttons */}
-                  {step !== 'review' && (
-                    <div className="flex justify-between mt-8">
-                      {step !== 'shipping' && (
-                        <button
-                          type="button"
-                          onClick={() => setStep(step === 'payment' ? 'shipping' : 'payment')}
-                          className="flex items-center gap-2 text-houma-white/70 hover:text-houma-gold 
-                                   transition-colors"
-                        >
-                          <ChevronLeftIcon className="w-4 h-4" />
-                          Back
-                        </button>
-                      )}
-                      
-                      <button
-                        type="submit"
-                        disabled={isProcessing}
-                        className="ml-auto bg-houma-gold text-houma-black px-8 py-4 uppercase tracking-widest 
-                                 hover:bg-houma-gold-light transition-all duration-300 disabled:opacity-50"
-                      >
-                        {isProcessing ? 'Processing...' : 'Continue'}
-                      </button>
-                    </div>
-                  )}
-                </form>
+                {/* Navigation Buttons */}
+                {step === 'payment' && (
+                  <div className="flex justify-between mt-8">
+                    <button
+                      type="button"
+                      onClick={() => setStep('shipping')}
+                      className="flex items-center gap-2 text-houma-white/70 hover:text-houma-gold 
+                               transition-colors"
+                    >
+                      <ChevronLeftIcon className="w-4 h-4" />
+                      Back
+                    </button>
+                    
+                    {/* Test button for debugging */}
+                    <button
+                      type="button"
+                      onClick={handleTestPayment}
+                      className="bg-blue-600 text-white px-4 py-2 rounded text-sm"
+                    >
+                      Test Redirect
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Order Summary */}

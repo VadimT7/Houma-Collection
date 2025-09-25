@@ -156,7 +156,19 @@ function GoldParticles() {
       }
       
       particlesRef.current.geometry.attributes.position.needsUpdate = true
-      particlesRef.current.material.opacity = Math.max(0, 1 - state.clock.elapsedTime * 0.2)
+      
+      // Update material opacity with type safety
+      const material = particlesRef.current.material
+      const targetOpacity = Math.max(0, 1 - state.clock.elapsedTime * 0.2)
+      if (Array.isArray(material)) {
+        material.forEach(mat => {
+          if ('opacity' in mat) {
+            mat.opacity = targetOpacity
+          }
+        })
+      } else if (material && 'opacity' in material) {
+        material.opacity = targetOpacity
+      }
     }
   })
   
@@ -168,6 +180,7 @@ function GoldParticles() {
           count={particleCount}
           array={positions}
           itemSize={3}
+          args={[positions, 3]}
         />
       </bufferGeometry>
       <pointsMaterial

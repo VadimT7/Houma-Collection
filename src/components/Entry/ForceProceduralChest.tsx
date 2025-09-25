@@ -202,8 +202,15 @@ function ParticleBurst({ isActive }: { isActive: boolean }) {
     particlesRef.current.geometry.attributes.position.needsUpdate = true
     
     // Fade out
-    if (particlesRef.current.material.opacity > 0) {
-      particlesRef.current.material.opacity -= delta * 0.2
+    const material = particlesRef.current.material
+    if (Array.isArray(material)) {
+      material.forEach(mat => {
+        if ('opacity' in mat && mat.opacity > 0) {
+          mat.opacity -= delta * 0.2
+        }
+      })
+    } else if (material && 'opacity' in material && material.opacity > 0) {
+      material.opacity -= delta * 0.2
     }
   })
   

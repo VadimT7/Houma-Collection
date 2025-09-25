@@ -10,10 +10,16 @@ const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false)
+  const [isClient, setIsClient] = useState(false)
+  
+  // Always call the hook, but handle hydration safely
   const { toggleCart, getTotalItems } = useCart()
-  const totalItems = getTotalItems()
+  const totalItems = isClient ? getTotalItems() : 0
 
   useEffect(() => {
+    // Ensure we're on the client side
+    setIsClient(true)
+    
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20)
     }

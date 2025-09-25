@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -7,8 +7,16 @@ import { formatPrice, getImagePath } from '@/lib/utils'
 import { XMarkIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 
 const Cart = () => {
+  const [isClient, setIsClient] = useState(false)
+  
+  // Always call the hook, but handle hydration safely
   const { items, isOpen, toggleCart, removeItem, updateQuantity, getTotalPrice, clearCart } = useCart()
-  const totalPrice = getTotalPrice()
+  const totalPrice = isClient ? getTotalPrice() : 0
+
+  useEffect(() => {
+    // Ensure we're on the client side
+    setIsClient(true)
+  }, [])
 
   return (
     <AnimatePresence>
