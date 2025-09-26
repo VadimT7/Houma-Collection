@@ -436,31 +436,174 @@ const CollectionsPage = () => {
         </div>
       </section>
 
-      {/* Archive Section */}
-      <section className="py-20 bg-houma-smoke">
-        <div className="houma-container">
+      {/* Heritage Section */}
+      <section className="relative py-32 overflow-hidden">
+        {/* Luxury Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-houma-black via-houma-smoke/20 to-houma-black">
+          {/* Flowing Gold Particles */}
+          <div className="absolute inset-0">
+            {[...Array(20)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute w-1 h-1 bg-houma-gold/30 rounded-full"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                }}
+                animate={{
+                  y: [0, -20, 0],
+                  opacity: [0.3, 0.8, 0.3],
+                  scale: [1, 1.5, 1],
+                }}
+                transition={{
+                  duration: 3 + Math.random() * 2,
+                  repeat: Infinity,
+                  delay: Math.random() * 2,
+                }}
+              />
+            ))}
+          </div>
+          
+          {/* Flowing Lines */}
+          <div className="absolute inset-0">
+            <motion.div
+              className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-houma-gold/20 to-transparent"
+              animate={{
+                x: ['-100%', '100%'],
+              }}
+              transition={{
+                duration: 8,
+                repeat: Infinity,
+                ease: 'linear',
+              }}
+            />
+            <motion.div
+              className="absolute top-3/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-houma-gold/15 to-transparent"
+              animate={{
+                x: ['100%', '-100%'],
+              }}
+              transition={{
+                duration: 10,
+                repeat: Infinity,
+                ease: 'linear',
+              }}
+            />
+          </div>
+          
+          {/* Central Glow */}
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-houma-gold/5 rounded-full blur-3xl" />
+        </div>
+
+        <div className="houma-container relative z-10">
           <motion.div
             className="text-center"
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             viewport={{ once: true }}
           >
-            <p className="text-houma-gold text-xs tracking-[0.3em] mb-4">HERITAGE</p>
-            <h2 className="text-3xl font-display tracking-wider text-houma-white mb-8">
-              DEEP HISTORY
-            </h2>
-            <p className="text-houma-white/60 max-w-2xl mx-auto mb-8">
-              Discover the rich cultural tapestry that shapes HOUMA. From ancient traditions 
-              to modern innovation, learn how our heritage continues to define luxury streetwear.
-            </p>
-            <Link href="/about">
-              <button className="text-houma-gold hover:text-houma-gold-light transition-colors duration-300 
-                             text-sm tracking-[0.2em] flex items-center gap-2 mx-auto">
-                LEARN OUR STORY
-                <ArrowRightIcon className="w-4 h-4" />
-              </button>
-            </Link>
+            {/* Heritage Badge */}
+            <motion.div
+              className="inline-block mb-8"
+              initial={{ scale: 0, rotate: -10 }}
+              whileInView={{ scale: 1, rotate: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, type: "spring", stiffness: 200 }}
+              viewport={{ once: true }}
+            >
+              <div className="relative">
+                <div className="absolute inset-0 bg-houma-gold/20 blur-xl rounded-full" />
+                <div className="relative bg-gradient-to-r from-houma-gold/10 to-houma-gold/5 backdrop-blur-sm border border-houma-gold/30 rounded-full px-8 py-3">
+                  <p className="text-houma-gold text-xs tracking-[0.4em] font-light">
+                    HERITAGE
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Main Title */}
+            <motion.h2
+              className="text-5xl md:text-6xl font-display tracking-wider text-houma-white mb-8 relative"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.4 }}
+              viewport={{ once: true }}
+            >
+              <span className="relative">
+                HOUMA. THE HISTORY OF ONE.
+                {/* Title Glow */}
+                <div className="absolute inset-0 text-houma-gold/20 blur-sm">
+                  HOUMA. THE HISTORY OF ONE.
+                </div>
+              </span>
+            </motion.h2>
+
+            {/* Description */}
+            <motion.div
+              className="max-w-3xl mx-auto mb-12"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <p className="text-lg text-houma-white/80 leading-relaxed mb-6">
+                Discover the rich cultural tapestry that shapes HOUMA. From ancient traditions 
+                to modern innovation, learn how our heritage continues to shape all luxury streetwear.
+              </p>
+              
+              {/* Arabic Accent */}
+              <motion.div
+                className="inline-block"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+                viewport={{ once: true }}
+              >
+                <p className="houma-arabic text-2xl text-houma-gold/60 font-light">
+                  تراث عميق
+                </p>
+              </motion.div>
+            </motion.div>
+
+            {/* CTA Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 1 }}
+              viewport={{ once: true }}
+            >
+              <Link href="/about">
+                <motion.button
+                  className="group relative overflow-hidden bg-gradient-to-r from-houma-gold/10 to-houma-gold/5 
+                           backdrop-blur-sm border border-houma-gold/40 text-houma-gold px-12 py-4 
+                           uppercase tracking-[0.3em] font-light transition-all duration-500 hover:border-houma-gold/80
+                           hover:from-houma-gold/20 hover:to-houma-gold/10"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {/* Button Glow */}
+                  <div className="absolute inset-0 bg-houma-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  
+                  {/* Button Content */}
+                  <span className="relative flex items-center gap-3">
+                    LEARN OUR STORY
+                    <motion.div
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      <ArrowRightIcon className="w-4 h-4" />
+                    </motion.div>
+                  </span>
+                  
+                  {/* Flowing Effect */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-houma-gold/20 to-transparent"
+                    initial={{ x: '-100%' }}
+                    whileHover={{ x: '100%' }}
+                    transition={{ duration: 0.6 }}
+                  />
+                </motion.button>
+              </Link>
+            </motion.div>
           </motion.div>
         </div>
       </section>
