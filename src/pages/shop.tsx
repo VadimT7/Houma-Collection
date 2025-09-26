@@ -26,6 +26,40 @@ const ShopPage = () => {
     'summer': 'Summer Drop',
   }
 
+  // Collection-specific hero data
+  const collectionHeroData: { [key: string]: { title: string, subtitle: string, description: string, image: string } } = {
+    'Heritage Collection': {
+      title: 'HERITAGE',
+      subtitle: 'COLLECTION',
+      description: 'Where ancient traditions meet contemporary design. Each piece honors the rich cultural tapestry of North Africa.',
+      image: '/Resources/Logos-and-Images/Logo_page-0003.jpg'
+    },
+    'Signature Line': {
+      title: 'SIGNATURE',
+      subtitle: 'LINE',
+      description: 'Our most exclusive pieces, crafted with unparalleled attention to detail and luxury materials.',
+      image: '/Resources/Logos-and-Images/Logo_page-0002.jpg'
+    },
+    'Street Essentials': {
+      title: 'STREET',
+      subtitle: 'ESSENTIALS',
+      description: 'Everyday luxury redefined. Essential pieces that blend comfort, style, and cultural authenticity.',
+      image: '/Resources/Logos-and-Images/Logo_page-0001.jpg'
+    },
+    'Core Collection': {
+      title: 'CORE',
+      subtitle: 'COLLECTION',
+      description: 'The foundation of HOUMA. Timeless pieces that define our brand identity and quality standards.',
+      image: '/Resources/Logos-and-Images/Logo_page-0005.jpg'
+    },
+    'Summer Drop': {
+      title: 'SUMMER',
+      subtitle: 'DROP',
+      description: 'Lightweight luxury for warmer days. Fresh designs that capture the essence of summer sophistication.',
+      image: '/Resources/Logos-and-Images/Logo_page-0006.jpg'
+    }
+  }
+
   // Map URL category parameters to actual category names
   const categoryMap: { [key: string]: string } = {
     'hoodies': 'Hoodies',
@@ -78,6 +112,24 @@ const ShopPage = () => {
       }
     }
   }, [router.isReady, router.query])
+
+  // Get current hero data based on selected collection
+  const currentHeroData = useMemo(() => {
+    if (selectedCollection === 'all') {
+      return {
+        title: 'EXPLORE',
+        subtitle: 'THE COLLECTION',
+        description: 'Each piece tells a story of heritage reimagined. Discover luxury streetwear that honors tradition while defining the future.',
+        image: '/Resources/Logos-and-Images/Logo_page-0004.jpg'
+      }
+    }
+    return collectionHeroData[selectedCollection] || {
+      title: 'EXPLORE',
+      subtitle: 'THE COLLECTION',
+      description: 'Each piece tells a story of heritage reimagined. Discover luxury streetwear that honors tradition while defining the future.',
+      image: '/Resources/Logos-and-Images/Logo_page-0004.jpg'
+    }
+  }, [selectedCollection])
 
   // Filter and sort products
   const filteredProducts = useMemo(() => {
@@ -138,13 +190,13 @@ const ShopPage = () => {
           transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
         >
           <Image
-            src="/Resources/Logos-and-Images/Logo_page-0004.jpg"
-            alt="HOUMA Shop"
+            src={currentHeroData.image}
+            alt={`HOUMA ${currentHeroData.title} ${currentHeroData.subtitle}`}
             fill
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-houma-black/60 via-houma-black/40 to-houma-black" />
+          <div className="absolute inset-0 bg-gradient-to-b from-houma-black/80 via-houma-black/70 to-houma-black/90" />
         </motion.div>
 
         <div className="relative h-full flex items-center justify-center text-center">
@@ -153,13 +205,16 @@ const ShopPage = () => {
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            key={selectedCollection} // Re-animate when collection changes
           >
-            <p className="text-houma-gold text-xs tracking-[0.3em] mb-6">EXPLORE</p>
-            <h1 className="text-6xl md:text-8xl font-display tracking-wider text-houma-white mb-6">
-              THE COLLECTION
+            <h1 className="text-6xl md:text-8xl font-display tracking-wider text-houma-gold mb-6">
+              {currentHeroData.title}
             </h1>
+            <h2 className="text-6xl md:text-8xl font-display tracking-wider text-houma-white mb-6">
+              {currentHeroData.subtitle}
+            </h2>
             <p className="text-xl text-houma-white/80 max-w-2xl mx-auto">
-              Each piece tells a story of heritage reimagined. Discover luxury streetwear that honors tradition while defining the future.
+              {currentHeroData.description}
             </p>
           </motion.div>
         </div>

@@ -13,11 +13,14 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
   const [glbLoaded, setGlbLoaded] = useState(false)
   const [glbError, setGlbError] = useState(false)
   const [chestVisible, setChestVisible] = useState(true)
+  const [showSkipButton, setShowSkipButton] = useState(false)
+  const [isSkipping, setIsSkipping] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const sceneRef = useRef<any>(null)
   const rendererRef = useRef<any>(null)
   const cameraRef = useRef<any>(null)
   const chestRef = useRef<any>(null)
+  const messageIntervalRef = useRef<NodeJS.Timeout | null>(null)
   
   const messages = [
     "Welcome to HOUMA",
@@ -26,6 +29,15 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
     "This is heritage. This is power",
     "Welcome to the inner circle"
   ]
+  
+  // Cleanup effect
+  useEffect(() => {
+    return () => {
+      if (messageIntervalRef.current) {
+        clearInterval(messageIntervalRef.current)
+      }
+    }
+  }, [])
   
   useEffect(() => {
     // Ensure we're on client side
@@ -54,24 +66,37 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
         renderer.setSize(window.innerWidth, window.innerHeight)
         renderer.shadowMap.enabled = true
         renderer.shadowMap.type = THREE.PCFSoftShadowMap
+        renderer.toneMapping = THREE.ACESFilmicToneMapping
+        renderer.toneMappingExposure = 1.5
+        renderer.outputColorSpace = THREE.SRGBColorSpace
         
-         // Brighter lighting
-         const ambientLight = new THREE.AmbientLight(0xffffff, 0.8)
+         // Very bright lighting for maximum visibility
+         const ambientLight = new THREE.AmbientLight(0xffffff, 2.5)
          scene.add(ambientLight)
          
-         const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5)
+         const directionalLight = new THREE.DirectionalLight(0xffffff, 4.0)
          directionalLight.position.set(5, 5, 5)
          directionalLight.castShadow = true
          scene.add(directionalLight)
          
-         const pointLight = new THREE.PointLight(0xffffff, 1.2)
+         const pointLight = new THREE.PointLight(0xffffff, 3.5)
          pointLight.position.set(0, 2, 2)
          scene.add(pointLight)
          
          // Additional fill light for brightness
-         const fillLight = new THREE.DirectionalLight(0xffffff, 0.8)
+         const fillLight = new THREE.DirectionalLight(0xffffff, 2.5)
          fillLight.position.set(-3, 2, 3)
          scene.add(fillLight)
+         
+         // Extra rim light for definition
+         const rimLight = new THREE.DirectionalLight(0xffffff, 2.0)
+         rimLight.position.set(0, 0, -5)
+         scene.add(rimLight)
+         
+         // Additional golden accent light
+         const goldenLight = new THREE.PointLight(0xD4AF37, 2.0)
+         goldenLight.position.set(2, 1, 3)
+         scene.add(goldenLight)
         
          // Camera position - normal view since model is moved lower
          camera.position.set(0, 1, 4)
@@ -110,12 +135,40 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
              chest.position.sub(center.multiplyScalar(scale))
              chest.position.set(0, -1.5, 0) // Move the model lower in the scene
              
-             // Keep original materials - no color corrections
+             // Enhance materials for better visibility
              chest.traverse((child: any) => {
                if (child instanceof THREE.Mesh) {
-                 // Only enable shadows, keep original colors
+                 // Enable shadows
                  child.castShadow = true
                  child.receiveShadow = true
+                 
+                 // Dramatically enhance material properties for maximum brightness
+                 if (child.material) {
+                   // Add strong emissive glow
+                   if (child.material.emissive) {
+                     child.material.emissive.multiplyScalar(0.8)
+                   } else {
+                     child.material.emissive = new THREE.Color(0x333333)
+                   }
+                   
+                   // Significantly increase metalness for better light reflection
+                   if (child.material.metalness !== undefined) {
+                     child.material.metalness = Math.min(child.material.metalness * 1.8, 1.0)
+                   }
+                   
+                   // Reduce roughness for maximum light reflection
+                   if (child.material.roughness !== undefined) {
+                     child.material.roughness = Math.max(child.material.roughness * 0.3, 0.05)
+                   }
+                   
+                   // Increase overall brightness
+                   if (child.material.color) {
+                     child.material.color.multiplyScalar(1.5)
+                   }
+                   
+                   // Ensure material is updated
+                   child.material.needsUpdate = true
+                 }
                }
              })
             
@@ -253,8 +306,16 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
         setCurrentMessage(messageIndex)
         messageIndex++
         
+        // Show skip button a few seconds after first message appears
+        if (messageIndex === 1) {
+          setTimeout(() => {
+            setShowSkipButton(true)
+          }, 2000) // 2 second delay after first message appears
+        }
+        
         if (messageIndex >= messages.length) {
           clearInterval(messageInterval)
+          messageIntervalRef.current = null
           // Special longer duration for the final "Welcome to the Inner Circle" message
           setTimeout(() => {
             setCurrentMessage(-1)
@@ -263,7 +324,30 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
           }, 4000) // 4 seconds for the final message to have more impact
         }
       }, 3500) // Increased from 2500ms to 3500ms for better pacing
+      
+      messageIntervalRef.current = messageInterval
     }, 500) // Reduced from 1000ms to 500ms for faster transition
+  }
+  
+  const handleSkip = () => {
+    if (isSkipping) return
+    
+    setIsSkipping(true)
+    setShowSkipButton(false)
+    
+    // Clear the message interval if it exists
+    if (messageIntervalRef.current) {
+      clearInterval(messageIntervalRef.current)
+      messageIntervalRef.current = null
+    }
+    
+    // Clear current message and trigger the same transition as the final message
+    setCurrentMessage(-1)
+    
+    // Use the same timing as the final message transition
+    setTimeout(() => {
+      setTimeout(onComplete, 500) // Quick transition to start zoom effect
+    }, 1000) // Short delay to allow message to fade out
   }
   
   // Don't render until client-side
@@ -357,6 +441,35 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
               exit={{ width: 0 }}
               transition={{ duration: 1, ease: "easeOut" }}
             />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      {/* Skip Button */}
+      <AnimatePresence>
+        {showSkipButton && !isSkipping && (
+          <motion.div
+            className="absolute inset-x-0 bottom-8 flex flex-col items-center z-40"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 2, ease: "easeOut" }}
+          >
+            <motion.div
+              className="flex flex-col items-center cursor-pointer"
+              onClick={handleSkip}
+              animate={{ y: [0, -5, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <p className="text-[#D4AF37]/60 text-sm tracking-[0.4em] mb-3 uppercase font-light">
+                Press to skip
+              </p>
+              <motion.div 
+                className="w-px h-16 bg-gradient-to-b from-[#D4AF37]/40 to-transparent"
+                animate={{ opacity: [0.3, 0.6, 0.3] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              />
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
