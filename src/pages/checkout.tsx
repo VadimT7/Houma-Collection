@@ -494,14 +494,6 @@ const CheckoutForm = () => {
                       Back
                     </button>
                     
-                    {/* Test button for debugging */}
-                    <button
-                      type="button"
-                      onClick={handleTestPayment}
-                      className="bg-blue-600 text-white px-4 py-2 rounded text-sm"
-                    >
-                      Test Redirect
-                    </button>
                   </div>
                 )}
               </div>

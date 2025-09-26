@@ -12,6 +12,7 @@ const ShopPage = () => {
   const router = useRouter()
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [selectedCollection, setSelectedCollection] = useState<string>('all')
+  const [selectedFilter, setSelectedFilter] = useState<string>('all')
   const [sortBy, setSortBy] = useState<string>('featured')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [showFilters, setShowFilters] = useState(false)
@@ -75,7 +76,7 @@ const ShopPage = () => {
   // Handle URL query parameters
   useEffect(() => {
     if (router.isReady) {
-      const { collection, category } = router.query
+      const { collection, category, filter } = router.query
       
       if (collection && typeof collection === 'string') {
         // Map URL parameter to actual collection name
@@ -110,11 +111,35 @@ const ShopPage = () => {
           }
         }, 300)
       }
+      
+      if (filter && typeof filter === 'string') {
+        setSelectedFilter(filter)
+        
+        // Auto-scroll to products section when filter is applied
+        setTimeout(() => {
+          const productsSection = document.getElementById('products-section')
+          if (productsSection) {
+            productsSection.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            })
+          }
+        }, 300)
+      }
     }
   }, [router.isReady, router.query])
 
-  // Get current hero data based on selected collection
+  // Get current hero data based on selected collection or filter
   const currentHeroData = useMemo(() => {
+    if (selectedFilter === 'new') {
+      return {
+        title: 'NEW',
+        subtitle: 'ARRIVALS',
+        description: 'Discover our latest pieces that blend contemporary design with timeless cultural heritage.',
+        image: '/Resources/Logos-and-Images/Logo_page-0001.jpg'
+      }
+    }
+    
     if (selectedCollection === 'all') {
       return {
         title: 'EXPLORE',
@@ -129,11 +154,16 @@ const ShopPage = () => {
       description: 'Each piece tells a story of heritage reimagined. Discover luxury streetwear that honors tradition while defining the future.',
       image: '/Resources/Logos-and-Images/Logo_page-0004.jpg'
     }
-  }, [selectedCollection])
+  }, [selectedCollection, selectedFilter])
 
   // Filter and sort products
   const filteredProducts = useMemo(() => {
     let filtered = [...products]
+
+    // Filter by new arrivals (featured products)
+    if (selectedFilter === 'new') {
+      filtered = filtered.filter(p => p.featured)
+    }
 
     // Category filter
     if (selectedCategory !== 'all') {
@@ -165,7 +195,7 @@ const ShopPage = () => {
     }
 
     return filtered
-  }, [selectedCategory, selectedCollection, sortBy, priceRange])
+  }, [selectedCategory, selectedCollection, selectedFilter, sortBy, priceRange])
 
   const sortOptions = [
     { value: 'featured', label: 'Featured' },
@@ -205,7 +235,7 @@ const ShopPage = () => {
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            key={selectedCollection} // Re-animate when collection changes
+            key={`${selectedCollection}-${selectedFilter}`} // Re-animate when collection or filter changes
           >
             <h1 className="text-6xl md:text-8xl font-display tracking-wider text-houma-gold mb-6">
               {currentHeroData.title}
@@ -306,6 +336,37 @@ const ShopPage = () => {
                   transition={{ duration: 0.3 }}
                 >
                   <div className="space-y-8">
+                    {/* Filters */}
+                    <div>
+                      <h3 className="text-xs font-light tracking-[0.3em] text-houma-gold mb-4">
+                        FILTERS
+                      </h3>
+                      <div className="space-y-2">
+                        <button
+                          onClick={() => setSelectedFilter('all')}
+                          className={cn(
+                            'block w-full text-left text-sm transition-colors',
+                            selectedFilter === 'all' 
+                              ? 'text-houma-gold' 
+                              : 'text-houma-white/70 hover:text-houma-white'
+                          )}
+                        >
+                          All Products
+                        </button>
+                        <button
+                          onClick={() => setSelectedFilter('new')}
+                          className={cn(
+                            'block w-full text-left text-sm transition-colors',
+                            selectedFilter === 'new' 
+                              ? 'text-houma-gold' 
+                              : 'text-houma-white/70 hover:text-houma-white'
+                          )}
+                        >
+                          New Arrivals
+                        </button>
+                      </div>
+                    </div>
+
                     {/* Categories */}
                     <div>
                       <h3 className="text-xs font-light tracking-[0.3em] text-houma-gold mb-4">
@@ -414,6 +475,7 @@ const ShopPage = () => {
                       onClick={() => {
                         setSelectedCategory('all')
                         setSelectedCollection('all')
+                        setSelectedFilter('all')
                         setPriceRange([0, 1000])
                       }}
                       className="text-sm text-houma-white/50 hover:text-houma-gold transition-colors"
@@ -440,6 +502,7 @@ const ShopPage = () => {
                       onClick={() => {
                         setSelectedCategory('all')
                         setSelectedCollection('all')
+                        setSelectedFilter('all')
                         setPriceRange([0, 1000])
                       }}
                       className="houma-button"
