@@ -1,11 +1,11 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import useEmblaCarousel from 'embla-carousel-react'
-import { ArrowRightIcon } from '@heroicons/react/24/outline'
+import { ArrowRightIcon, CheckIcon } from '@heroicons/react/24/outline'
 import ProductCard from '@/components/ProductCard'
 import { getFeaturedProducts } from '@/lib/products'
 import { cn } from '@/lib/utils'
@@ -20,6 +20,10 @@ const HomePage = () => {
   const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '50%'])
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
   
+  // Newsletter subscription state
+  const [isSubscribed, setIsSubscribed] = useState(false)
+  const [email, setEmail] = useState('')
+  
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: true,
     align: 'start',
@@ -32,6 +36,16 @@ const HomePage = () => {
     threshold: 0.3,
     triggerOnce: true,
   })
+
+  // Handle newsletter subscription
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (email.trim()) {
+      setIsSubscribed(true)
+      // Here you would normally send the email to your backend
+      console.log('Subscribed email:', email)
+    }
+  }
 
   const collections = [
     {
@@ -319,8 +333,8 @@ const HomePage = () => {
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-32 bg-gradient-desert relative">
-        <div className="absolute inset-0 bg-houma-black/80" />
+      <section className="py-32 luxury-newsletter-bg relative">
+        <div className="absolute inset-0 bg-houma-black/40" />
         
         <div className="houma-container relative">
           <motion.div
@@ -330,29 +344,101 @@ const HomePage = () => {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl md:text-5xl font-display tracking-wider text-houma-white mb-4">
-              JOIN THE MOVEMENT
-            </h2>
-            <p className="text-lg text-houma-white/70 mb-8">
-              Be the first to know about exclusive drops and cultural events
-            </p>
-            
-            <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 bg-transparent border border-houma-gold/30 text-houma-white 
-                         placeholder-houma-white/50 px-6 py-4 focus:outline-none focus:border-houma-gold 
-                         transition-colors duration-300"
-              />
-              <button
-                type="submit"
-                className="bg-houma-gold text-houma-black px-8 py-4 uppercase tracking-widest 
-                         font-light hover:bg-houma-gold-light transition-all duration-300"
-              >
-                Subscribe
-              </button>
-            </form>
+            <AnimatePresence mode="wait">
+              {!isSubscribed ? (
+                <motion.div
+                  key="subscribe-form"
+                  initial={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <h2 className="text-4xl md:text-5xl font-display tracking-wider text-houma-white mb-4">
+                    JOIN THE MOVEMENT
+                  </h2>
+                  <p className="text-lg text-houma-white/70 mb-8">
+                    Be the first to know about exclusive drops and cultural events
+                  </p>
+                  
+                  <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email"
+                      required
+                      className="flex-1 bg-transparent border border-houma-gold/30 text-houma-white 
+                               placeholder-houma-white/50 px-6 py-4 focus:outline-none focus:border-houma-gold 
+                               transition-colors duration-300"
+                    />
+                    <button
+                      type="submit"
+                      className="bg-houma-gold text-houma-black px-8 py-4 uppercase tracking-widest 
+                               font-light hover:bg-houma-gold-light transition-all duration-300"
+                    >
+                      Subscribe
+                    </button>
+                  </form>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="success-message"
+                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  className="space-y-6"
+                >
+                  {/* Success Icon */}
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                    className="mx-auto w-20 h-20 bg-houma-gold rounded-full flex items-center justify-center"
+                  >
+                    <CheckIcon className="w-10 h-10 text-houma-black" />
+                  </motion.div>
+                  
+                  {/* Success Message */}
+                  <div className="space-y-4">
+                    <motion.h2
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4, duration: 0.6 }}
+                      className="text-4xl md:text-5xl font-display tracking-wider text-houma-white"
+                    >
+                      WELCOME TO THE
+                    </motion.h2>
+                    <motion.h3
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6, duration: 0.6 }}
+                      className="text-4xl md:text-5xl font-display tracking-wider text-houma-gold"
+                    >
+                      HOUMA FAMILY
+                    </motion.h3>
+                    <motion.p
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.8, duration: 0.6 }}
+                      className="text-lg text-houma-white/70 max-w-md mx-auto"
+                    >
+                      You are now part of our exclusive circle. The movement awaits your presence.
+                    </motion.p>
+                  </div>
+                  
+                  {/* Cult-like Message */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.0, duration: 0.6 }}
+                    className="pt-4"
+                  >
+                    <p className="text-sm text-houma-gold/80 tracking-[0.3em] font-light">
+                      STRENGTH IN UNITY • HERITAGE IN MOTION
+                    </p>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         </div>
       </section>

@@ -333,13 +333,126 @@
   }
 }
 
-.golden-shimmer {
-  background: linear-gradient(
-    90deg,
-    rgba(212, 175, 55, 0) 0%,
-    rgba(212, 175, 55, 0.5) 50%,
-    rgba(212, 175, 55, 0) 100%
-  );
-  background-size: 200% auto;
-  animation: golden-shimmer 3s linear infinite;
-}
+  .golden-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(212, 175, 55, 0) 0%,
+      rgba(212, 175, 55, 0.5) 50%,
+      rgba(212, 175, 55, 0) 100%
+    );
+    background-size: 200% auto;
+    animation: golden-shimmer 3s linear infinite;
+  }
+
+  /* Luxury Newsletter Background */
+  .luxury-newsletter-bg {
+    position: relative;
+    background: 
+      radial-gradient(circle at 25% 25%, rgba(212, 175, 55, 0.2) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.1) 0%, transparent 70%),
+      linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 25%, #0A0A0A 50%, #1A1A1A 75%, #0A0A0A 100%);
+  }
+
+  .luxury-newsletter-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: 
+      /* Gucci-like interlocking G pattern - much more visible */
+      radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.4) 2px, transparent 2px),
+      radial-gradient(circle at 40% 40%, rgba(212, 175, 55, 0.35) 2px, transparent 2px),
+      radial-gradient(circle at 60% 60%, rgba(212, 175, 55, 0.4) 2px, transparent 2px),
+      radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.35) 2px, transparent 2px),
+      /* Sleek star pattern - more prominent */
+      radial-gradient(circle at 10% 10%, rgba(212, 175, 55, 0.5) 1px, transparent 1px),
+      radial-gradient(circle at 30% 30%, rgba(212, 175, 55, 0.45) 1px, transparent 1px),
+      radial-gradient(circle at 50% 10%, rgba(212, 175, 55, 0.5) 1px, transparent 1px),
+      radial-gradient(circle at 70% 30%, rgba(212, 175, 55, 0.45) 1px, transparent 1px),
+      radial-gradient(circle at 90% 10%, rgba(212, 175, 55, 0.5) 1px, transparent 1px),
+      radial-gradient(circle at 20% 70%, rgba(212, 175, 55, 0.4) 1px, transparent 1px),
+      radial-gradient(circle at 40% 90%, rgba(212, 175, 55, 0.45) 1px, transparent 1px),
+      radial-gradient(circle at 60% 70%, rgba(212, 175, 55, 0.4) 1px, transparent 1px),
+      radial-gradient(circle at 80% 90%, rgba(212, 175, 55, 0.45) 1px, transparent 1px),
+      /* Diamond pattern overlay - more visible */
+      linear-gradient(45deg, transparent 35%, rgba(212, 175, 55, 0.1) 50%, transparent 65%),
+      linear-gradient(-45deg, transparent 35%, rgba(212, 175, 55, 0.1) 50%, transparent 65%);
+    background-size: 
+      80px 80px,
+      80px 80px,
+      80px 80px,
+      80px 80px,
+      50px 50px,
+      50px 50px,
+      50px 50px,
+      50px 50px,
+      50px 50px,
+      50px 50px,
+      50px 50px,
+      50px 50px,
+      50px 50px,
+      100px 100px,
+      100px 100px;
+    background-position: 
+      0 0,
+      40px 40px,
+      80px 80px,
+      120px 120px,
+      0 0,
+      25px 25px,
+      50px 0,
+      75px 25px,
+      100px 0,
+      25px 75px,
+      50px 100px,
+      75px 75px,
+      100px 100px,
+      0 0,
+      50px 50px;
+    opacity: 0.8;
+    animation: luxuryPatternFloat 20s ease-in-out infinite;
+  }
+
+  .luxury-newsletter-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: 
+      /* More visible luxury texture */
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(212, 175, 55, 0.08) 3px,
+        rgba(212, 175, 55, 0.08) 6px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 3px,
+        rgba(212, 175, 55, 0.08) 3px,
+        rgba(212, 175, 55, 0.08) 6px
+      );
+    opacity: 0.6;
+  }
+
+  @keyframes luxuryPatternFloat {
+    0%, 100% {
+      transform: translate(0, 0) rotate(0deg);
+      opacity: 0.6;
+    }
+    25% {
+      transform: translate(2px, -2px) rotate(0.5deg);
+      opacity: 0.7;
+    }
+    50% {
+      transform: translate(-1px, 1px) rotate(-0.5deg);
+      opacity: 0.5;
+    }
+    75% {
+      transform: translate(1px, -1px) rotate(0.3deg);
+      opacity: 0.8;
+    }
+  }

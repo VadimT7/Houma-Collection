@@ -336,18 +336,18 @@ const CollectionsPage = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <p className="text-houma-gold text-xs tracking-[0.3em] mb-4">LEGACY</p>
+            <p className="text-houma-gold text-xs tracking-[0.3em] mb-4">HERITAGE</p>
             <h2 className="text-3xl font-display tracking-wider text-houma-white mb-8">
-              COLLECTION ARCHIVE
+              DEEP HISTORY
             </h2>
             <p className="text-houma-white/60 max-w-2xl mx-auto mb-8">
-              Every collection is part of our journey. Explore past drops that defined moments 
-              in HOUMA's evolution and continue to inspire our future.
+              Discover the rich cultural tapestry that shapes HOUMA. From ancient traditions 
+              to modern innovation, learn how our heritage continues to define luxury streetwear.
             </p>
-            <Link href="/archive">
+            <Link href="/about">
               <button className="text-houma-gold hover:text-houma-gold-light transition-colors duration-300 
                              text-sm tracking-[0.2em] flex items-center gap-2 mx-auto">
-                VIEW ARCHIVE
+                LEARN OUR STORY
                 <ArrowRightIcon className="w-4 h-4" />
               </button>
             </Link>
