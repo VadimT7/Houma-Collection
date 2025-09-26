@@ -1,17 +1,27 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { motion } from 'framer-motion'
-import { ArrowRightIcon } from '@heroicons/react/24/outline'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ArrowRightIcon, CheckIcon } from '@heroicons/react/24/outline'
 
 const CollectionsPage = () => {
   const router = useRouter()
+  const [waitlistStep, setWaitlistStep] = useState<'button' | 'email' | 'success'>('button')
+  const [email, setEmail] = useState('')
   
   const handleJoinWaitlist = () => {
-    // Navigate to home page and scroll to the join the movement section
-    router.push('/#join-the-movement')
+    setWaitlistStep('email')
+  }
+  
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (email.trim()) {
+      setWaitlistStep('success')
+      // Here you would normally send the email to your backend
+      console.log('Waitlist email:', email)
+    }
   }
   
   const collections = [
@@ -318,18 +328,110 @@ const CollectionsPage = () => {
           </div>
 
           <motion.div
-            className="text-center mt-16"
+            className="text-center mt-16 min-h-[120px] flex items-center justify-center"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <p className="text-sm text-houma-white/50 mb-6">
-              Be the first to know about new drops
-            </p>
-            <button onClick={handleJoinWaitlist} className="houma-button">
-              <span>JOIN THE WAITLIST</span>
-            </button>
+            <AnimatePresence mode="wait">
+              {waitlistStep === 'button' && (
+                <motion.div
+                  key="button"
+                  initial={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.5 }}
+                  className="w-full"
+                >
+                  <p className="text-sm text-houma-white/50 mb-6">
+                    Be the first to know about new drops
+                  </p>
+                  <button onClick={handleJoinWaitlist} className="houma-button">
+                    <span>JOIN THE WAITLIST</span>
+                  </button>
+                </motion.div>
+              )}
+              
+              {waitlistStep === 'email' && (
+                <motion.div
+                  key="email"
+                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -20 }}
+                  transition={{ duration: 0.5 }}
+                  className="w-full max-w-md mx-auto"
+                >
+                  <p className="text-sm text-houma-white/50 mb-6">
+                    Enter your email to join the waitlist
+                  </p>
+                  <form onSubmit={handleEmailSubmit} className="flex gap-4">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email"
+                      required
+                      className="flex-1 bg-transparent border border-houma-gold/30 text-houma-white 
+                               placeholder-houma-white/50 px-6 py-4 focus:outline-none focus:border-houma-gold 
+                               transition-colors duration-300"
+                    />
+                    <button
+                      type="submit"
+                      className="bg-houma-gold text-houma-black px-8 py-4 uppercase tracking-widest 
+                               font-light hover:bg-houma-gold-light transition-all duration-300 whitespace-nowrap"
+                    >
+                      JOIN
+                    </button>
+                  </form>
+                </motion.div>
+              )}
+              
+              {waitlistStep === 'success' && (
+                <motion.div
+                  key="success"
+                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  className="w-full"
+                >
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                    className="mx-auto w-16 h-16 bg-houma-gold rounded-full flex items-center justify-center mb-6"
+                  >
+                    <CheckIcon className="w-8 h-8 text-houma-black" />
+                  </motion.div>
+                  
+                  <motion.h3
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4, duration: 0.6 }}
+                    className="text-2xl font-display tracking-wider text-houma-white mb-2"
+                  >
+                    WELCOME TO THE WAITLIST
+                  </motion.h3>
+                  
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6, duration: 0.6 }}
+                    className="text-sm text-houma-white/70 mb-4"
+                  >
+                    You'll be the first to know about exclusive drops
+                  </motion.p>
+                  
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8, duration: 0.6 }}
+                    className="text-xs text-houma-gold/80 tracking-[0.3em] font-light"
+                  >
+                    EXCLUSIVE ACCESS • EARLY RELEASE
+                  </motion.p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         </div>
       </section>
