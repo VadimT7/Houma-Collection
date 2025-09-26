@@ -15,6 +15,7 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
   const [chestVisible, setChestVisible] = useState(true)
   const [showSkipButton, setShowSkipButton] = useState(false)
   const [isSkipping, setIsSkipping] = useState(false)
+  const [isFadingIn, setIsFadingIn] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const sceneRef = useRef<any>(null)
   const rendererRef = useRef<any>(null)
@@ -38,6 +39,32 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
       }
     }
   }, [])
+  
+  // Cinematic fade-in function
+  const fadeInModel = () => {
+    if (!chestRef.current) return
+    
+    setIsFadingIn(true)
+    const fadeStart = Date.now()
+    const fadeIn = () => {
+      const fadeElapsed = Date.now() - fadeStart
+      if (fadeElapsed < 2000) { // 2 second fade-in
+        const opacity = Math.min(1, fadeElapsed / 2000)
+        chestRef.current.traverse((child: any) => {
+          if (child.material) {
+            child.material.transparent = true
+            child.material.opacity = opacity
+          }
+        })
+        requestAnimationFrame(fadeIn)
+      } else {
+        // Fade-in complete
+        setIsFadingIn(false)
+        setCanInteract(true)
+      }
+    }
+    fadeIn()
+  }
   
   useEffect(() => {
     // Ensure we're on client side
@@ -144,6 +171,10 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
                  
                  // Dramatically enhance material properties for maximum brightness
                  if (child.material) {
+                   // Set initial opacity to 0 for fade-in effect
+                   child.material.transparent = true
+                   child.material.opacity = 0
+                   
                    // Add strong emissive glow
                    if (child.material.emissive) {
                      child.material.emissive.multiplyScalar(0.8)
@@ -178,10 +209,14 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
             rendererRef.current = renderer
             
             setGlbLoaded(true)
-            setCanInteract(true)
             
             // Start render loop immediately
             animate()
+            
+            // Start cinematic fade-in after a brief delay
+            setTimeout(() => {
+              fadeInModel()
+            }, 500)
           },
           (progress: any) => {
             // Progress tracking removed for smooth transition
@@ -217,9 +252,13 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
                  
                  chest.traverse((child: any) => {
                    if (child instanceof THREE.Mesh) {
-                     // Only enable shadows, keep original colors
+                     // Set initial opacity to 0 for fade-in effect
                      child.castShadow = true
                      child.receiveShadow = true
+                     if (child.material) {
+                       child.material.transparent = true
+                       child.material.opacity = 0
+                     }
                    }
                  })
                 
@@ -230,8 +269,12 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
                 cameraRef.current = camera
                 
                 setGlbLoaded(true)
-                setCanInteract(true)
                 animate()
+                
+                // Start cinematic fade-in after a brief delay
+                setTimeout(() => {
+                  fadeInModel()
+                }, 500)
               },
               (progress: any) => {
                 // Progress tracking removed for smooth transition

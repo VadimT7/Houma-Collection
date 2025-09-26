@@ -8,15 +8,7 @@ import dynamic from 'next/dynamic'
 
 // Dynamically import Entry to avoid SSR issues
 const Entry = dynamic(() => import('@/components/Entry'), {
-  ssr: false,
-  loading: () => (
-    <div className="fixed inset-0 bg-houma-black z-[9999] flex items-center justify-center">
-      <div className="text-center">
-        <div className="text-houma-gold text-sm tracking-widest mb-4">Preparing Experience...</div>
-        <div className="w-8 h-8 border-2 border-houma-gold border-t-transparent rounded-full animate-spin mx-auto"></div>
-      </div>
-    </div>
-  )
+  ssr: false
 })
 
 export default function App({ Component, pageProps }: AppProps) {
