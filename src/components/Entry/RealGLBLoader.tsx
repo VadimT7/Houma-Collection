@@ -48,8 +48,8 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
     const fadeStart = Date.now()
     const fadeIn = () => {
       const fadeElapsed = Date.now() - fadeStart
-      if (fadeElapsed < 2000) { // 2 second fade-in
-        const opacity = Math.min(1, fadeElapsed / 2000)
+      if (fadeElapsed < 1200) { // 1.2 second fade-in
+        const opacity = Math.min(1, fadeElapsed / 1200)
         chestRef.current.traverse((child: any) => {
           if (child.material) {
             child.material.transparent = true
@@ -216,7 +216,7 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
             // Start cinematic fade-in after a brief delay
             setTimeout(() => {
               fadeInModel()
-            }, 500)
+            }, 200)
           },
           (progress: any) => {
             // Progress tracking removed for smooth transition
@@ -274,7 +274,7 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
                 // Start cinematic fade-in after a brief delay
                 setTimeout(() => {
                   fadeInModel()
-                }, 500)
+                }, 200)
               },
               (progress: any) => {
                 // Progress tracking removed for smooth transition
