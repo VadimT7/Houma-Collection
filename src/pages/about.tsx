@@ -415,7 +415,7 @@ const AboutPage = () => {
                   viewport={{ once: true }}
                 >
                   <div className="text-center">
-                    <div className="text-3xl font-display text-houma-gold mb-1">100%</div>
+                    <div className="text-3xl font-display text-houma-gold mb-1">FULLY</div>
                     <div className="text-xs text-houma-white/70 tracking-wider">SUSTAINABLE</div>
                   </div>
                 </motion.div>
