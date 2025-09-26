@@ -31,6 +31,7 @@ const CheckoutForm = () => {
   const [isClient, setIsClient] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
   const [isPaymentSuccess, setIsPaymentSuccess] = useState(false)
+  const [isRedirecting, setIsRedirecting] = useState(false)
   const [step, setStep] = useState<'shipping' | 'payment' | 'review'>('shipping')
   
   // Always call the hook, but handle hydration safely
@@ -68,12 +69,12 @@ const CheckoutForm = () => {
 
   useEffect(() => {
     // Only redirect if cart is empty and we're not processing payment or payment succeeded
-    // Also don't redirect if we're in the middle of a payment flow
-    if (isClient && items.length === 0 && !isProcessing && !isPaymentSuccess && step === 'shipping') {
+    // Also don't redirect if we're in the middle of a payment flow or redirecting
+    if (isClient && items.length === 0 && !isProcessing && !isPaymentSuccess && !isRedirecting && step === 'shipping') {
       console.log('Cart is empty, redirecting to shop')
       router.push('/shop')
     }
-  }, [isClient, items.length, router, isProcessing, isPaymentSuccess, step])
+  }, [isClient, items.length, router, isProcessing, isPaymentSuccess, isRedirecting, step])
 
   const handleShippingChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setShippingInfo({
@@ -110,6 +111,7 @@ const CheckoutForm = () => {
       console.log('Payment success handler called with:', paymentIntent)
       setIsPaymentSuccess(true) // Prevent cart redirect
       setIsProcessing(false) // Stop processing state
+      setIsRedirecting(true) // Prevent cart empty check from triggering
       
       // Here you could save the order to your database
       // For now, we'll just show success and redirect
@@ -118,17 +120,17 @@ const CheckoutForm = () => {
       // Clear cart first to prevent any state conflicts
       clearCart()
       
-      // Small delay to ensure cart is cleared before redirect
-      setTimeout(() => {
-        const redirectUrl = `/order-confirmation?payment_intent=${paymentIntent.id}`
-        console.log('Redirecting to:', redirectUrl)
-        // Use window.location for a clean redirect
-        window.location.href = redirectUrl
-      }, 100)
+      // Redirect immediately to order confirmation
+      const redirectUrl = `/order-confirmation?payment_intent=${paymentIntent.id}`
+      console.log('Redirecting to:', redirectUrl)
+      
+      // Use window.location for a clean redirect
+      window.location.href = redirectUrl
     } catch (error) {
       console.error('Error in payment success handler:', error)
       toast.error('Order processing failed. Please contact support.')
       setIsProcessing(false)
+      setIsRedirecting(false)
     }
   }
 
@@ -199,7 +201,7 @@ const CheckoutForm = () => {
     )
   }
 
-  if (items.length === 0 && !isProcessing) {
+  if (items.length === 0 && !isProcessing && !isRedirecting) {
     return (
       <div className="min-h-screen bg-houma-black flex items-center justify-center">
         <div className="text-center">
