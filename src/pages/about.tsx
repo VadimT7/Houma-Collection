@@ -199,7 +199,7 @@ const AboutPage = () => {
       </section>
 
       {/* Values Section */}
-      <section className="py-40 relative overflow-hidden" id="culture">
+      <section className="py-20 relative overflow-hidden" id="culture">
         {/* Section Transition Background */}
         <div className="absolute inset-0 bg-gradient-to-b from-houma-black via-houma-smoke/20 to-houma-black" />
         
@@ -266,7 +266,7 @@ const AboutPage = () => {
       </section>
 
       {/* Timeline Section */}
-      <section className="py-40 relative bg-gradient-to-b from-houma-black to-houma-smoke">
+      <section className="py-20 relative bg-gradient-to-b from-houma-black to-houma-smoke">
         <div className="houma-container">
           <motion.div
             className="text-center mb-24"

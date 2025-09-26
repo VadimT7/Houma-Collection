@@ -2,10 +2,18 @@ import React from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 
 const CollectionsPage = () => {
+  const router = useRouter()
+  
+  const handleJoinWaitlist = () => {
+    // Navigate to home page and scroll to the join the movement section
+    router.push('/#join-the-movement')
+  }
+  
   const collections = [
     {
       id: 'heritage',
@@ -319,7 +327,7 @@ const CollectionsPage = () => {
             <p className="text-sm text-houma-white/50 mb-6">
               Be the first to know about new drops
             </p>
-            <button className="houma-button">
+            <button onClick={handleJoinWaitlist} className="houma-button">
               <span>JOIN THE WAITLIST</span>
             </button>
           </motion.div>

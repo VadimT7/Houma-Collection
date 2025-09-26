@@ -333,7 +333,7 @@ const HomePage = () => {
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-32 luxury-newsletter-bg relative">
+      <section id="join-the-movement" className="py-32 luxury-newsletter-bg relative">
         <div className="absolute inset-0 bg-houma-black/40" />
         
         <div className="houma-container relative">
