@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import useEmblaCarousel from 'embla-carousel-react'
-import { ArrowRightIcon, PlayIcon } from '@heroicons/react/24/outline'
+import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import ProductCard from '@/components/ProductCard'
 import { getFeaturedProducts } from '@/lib/products'
 import { cn } from '@/lib/utils'
@@ -107,8 +107,8 @@ const HomePage = () => {
                 STRENGTH IN HERITAGE
               </p>
 
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              {/* CTA Button */}
+              <div className="flex justify-center">
                 <Link href="/shop">
                   <motion.button
                     className="houma-button min-w-[200px]"
@@ -118,16 +118,6 @@ const HomePage = () => {
                     <span>EXPLORE COLLECTION</span>
                   </motion.button>
                 </Link>
-                
-                <motion.button
-                  className="group flex items-center justify-center gap-3 px-8 py-4 border border-houma-white/20 
-                           text-houma-white hover:bg-houma-white/10 transition-all duration-500"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <PlayIcon className="w-5 h-5" />
-                  <span className="uppercase tracking-widest text-sm">Watch Film</span>
-                </motion.button>
               </div>
             </motion.div>
 
