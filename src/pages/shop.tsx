@@ -26,6 +26,18 @@ const ShopPage = () => {
     'summer': 'Summer Drop',
   }
 
+  // Map URL category parameters to actual category names
+  const categoryMap: { [key: string]: string } = {
+    'hoodies': 'Hoodies',
+    'jackets': 'Jackets',
+    'pants': 'Pants',
+    't-shirts': 'T-Shirts',
+    'tracksuits': 'Tracksuits',
+    'shirts': 'Shirts',
+    'shorts': 'Shorts',
+    'accessories': 'Accessories',
+  }
+
   // Handle URL query parameters
   useEffect(() => {
     if (router.isReady) {
@@ -49,7 +61,9 @@ const ShopPage = () => {
       }
       
       if (category && typeof category === 'string') {
-        setSelectedCategory(category)
+        // Map URL parameter to actual category name
+        const mappedCategory = categoryMap[category] || category
+        setSelectedCategory(mappedCategory)
         
         // Auto-scroll to products section when category filter is applied
         setTimeout(() => {
@@ -311,18 +325,32 @@ const ShopPage = () => {
                         PRICE RANGE
                       </h3>
                       <div className="space-y-4">
-                        <div className="flex items-center justify-between text-sm text-houma-white/70">
-                          <span>${priceRange[0]}</span>
-                          <span>${priceRange[1]}</span>
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1">
+                            <label className="block text-xs text-houma-white/50 mb-2">Min Price</label>
+                            <input
+                              type="number"
+                              min="0"
+                              max="1000"
+                              value={priceRange[0]}
+                              onChange={(e) => setPriceRange([parseInt(e.target.value) || 0, priceRange[1]])}
+                              className="w-full bg-transparent border border-houma-white/20 text-houma-white 
+                                       px-3 py-2 focus:outline-none focus:border-houma-gold transition-colors"
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <label className="block text-xs text-houma-white/50 mb-2">Max Price</label>
+                            <input
+                              type="number"
+                              min="0"
+                              max="1000"
+                              value={priceRange[1]}
+                              onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value) || 1000])}
+                              className="w-full bg-transparent border border-houma-white/20 text-houma-white 
+                                       px-3 py-2 focus:outline-none focus:border-houma-gold transition-colors"
+                            />
+                          </div>
                         </div>
-                        <input
-                          type="range"
-                          min="0"
-                          max="1000"
-                          value={priceRange[1]}
-                          onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                          className="w-full accent-houma-gold"
-                        />
                       </div>
                     </div>
 
