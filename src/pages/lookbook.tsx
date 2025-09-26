@@ -209,6 +209,112 @@ const LookbookPage = () => {
         </div>
       </section>
 
+      {/* Behind The Scenes */}
+      <section className="py-20 md:py-32 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 pattern-overlay opacity-5" />
+        
+        {/* Decorative Elements */}
+        <div className="absolute top-0 left-0 w-32 h-px bg-gradient-to-r from-transparent via-houma-gold to-transparent" />
+        <div className="absolute bottom-0 right-0 w-32 h-px bg-gradient-to-l from-transparent via-houma-gold to-transparent" />
+        
+        <div className="houma-container relative">
+          {/* Section Header */}
+          <motion.div
+            className="text-center mb-12 md:mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <div className="inline-flex items-center gap-4 mb-6">
+              <div className="w-8 h-px bg-houma-gold" />
+              <p className="text-houma-gold text-xs tracking-[0.3em]">PROCESS</p>
+              <div className="w-8 h-px bg-houma-gold" />
+            </div>
+            <h2 className="text-3xl md:text-5xl font-display tracking-wider text-houma-white mb-4">
+              BEHIND THE LENS
+            </h2>
+            <p className="text-sm text-houma-white/60 tracking-[0.2em]">
+              THE ARTISTRY OF VISUAL STORYTELLING
+            </p>
+          </motion.div>
+
+          {/* Main Video Section */}
+          <motion.div
+            className="relative aspect-video bg-houma-smoke overflow-hidden group rounded-lg"
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true }}
+          >
+            <video
+              className="w-full h-full object-cover filter brightness-40 blur-[1px]"
+              controls
+              preload="metadata"
+              poster="/Resources/Models/Models3.jpeg"
+              loop
+              autoPlay
+              muted
+              playsInline
+            >
+              <source src="/Resources/Models/BTSVideo.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            
+            {/* Gradient Overlays */}
+            <div className="absolute inset-0 bg-gradient-to-t from-houma-black/80 via-houma-black/40 to-houma-black/60" />
+            <div className="absolute inset-0 bg-gradient-to-r from-houma-black/30 via-transparent to-houma-black/30" />
+            
+            {/* Text overlay */}
+            <motion.div
+              className="absolute inset-0 flex items-center justify-center text-center px-8"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.3 }}
+              viewport={{ once: true }}
+            >
+              <div className="max-w-4xl">
+                <motion.p 
+                  className="text-houma-gold text-sm tracking-[0.4em] mb-6 font-light"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.5 }}
+                  viewport={{ once: true }}
+                >
+                  EVERY SHOOT IS A CEREMONY
+                </motion.p>
+                <motion.h3 
+                  className="text-2xl md:text-4xl font-display tracking-wider text-houma-white mb-6 leading-tight"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.6 }}
+                  viewport={{ once: true }}
+                >
+                  A CELEBRATION OF CULTURE, CRAFT, AND CREATIVITY
+                </motion.h3>
+                <motion.p 
+                  className="text-base md:text-lg text-houma-white/80 max-w-2xl mx-auto leading-relaxed font-light"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.7 }}
+                  viewport={{ once: true }}
+                >
+                  Witness the artistry behind our visual narratives. Where tradition meets innovation, 
+                  and every frame tells a story of heritage reimagined.
+                </motion.p>
+              </div>
+            </motion.div>
+
+            {/* Decorative Corner Elements */}
+            <div className="absolute top-4 left-4 w-12 h-12 border-l-2 border-t-2 border-houma-gold/30" />
+            <div className="absolute top-4 right-4 w-12 h-12 border-r-2 border-t-2 border-houma-gold/30" />
+            <div className="absolute bottom-4 left-4 w-12 h-12 border-l-2 border-b-2 border-houma-gold/30" />
+            <div className="absolute bottom-4 right-4 w-12 h-12 border-r-2 border-b-2 border-houma-gold/30" />
+          </motion.div>
+        </div>
+      </section>
+
       {/* Magazine Layout Section */}
       <section className="py-32 bg-gradient-luxury relative overflow-hidden">
         <div className="absolute inset-0 pattern-overlay opacity-10" />
@@ -316,128 +422,26 @@ const LookbookPage = () => {
         </div>
       </section>
 
-      {/* Behind The Scenes */}
-      <section className="py-20 md:py-32 relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 pattern-overlay opacity-5" />
-        
-        {/* Decorative Elements */}
-        <div className="absolute top-0 left-0 w-32 h-px bg-gradient-to-r from-transparent via-houma-gold to-transparent" />
-        <div className="absolute bottom-0 right-0 w-32 h-px bg-gradient-to-l from-transparent via-houma-gold to-transparent" />
-        
-        <div className="houma-container relative">
-          {/* Section Header */}
+      {/* Final Quote Section */}
+      <section className="py-20 relative overflow-hidden">
+        <div className="houma-container">
           <motion.div
-            className="text-center mb-12 md:mb-16"
+            className="text-center"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <div className="inline-flex items-center gap-4 mb-6">
-              <div className="w-8 h-px bg-houma-gold" />
-              <p className="text-houma-gold text-xs tracking-[0.3em]">PROCESS</p>
-              <div className="w-8 h-px bg-houma-gold" />
-            </div>
-            <h2 className="text-3xl md:text-5xl font-display tracking-wider text-houma-white mb-4">
-              BEHIND THE LENS
-            </h2>
-            <p className="text-sm text-houma-white/60 tracking-[0.2em]">
-              THE ARTISTRY OF VISUAL STORYTELLING
-            </p>
-          </motion.div>
-
-          {/* Main Video Section */}
-          <motion.div
-            className="relative aspect-video bg-houma-smoke overflow-hidden group rounded-lg"
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            viewport={{ once: true }}
-          >
-            <video
-              className="w-full h-full object-cover filter brightness-40 blur-[1px]"
-              controls
-              preload="metadata"
-              poster="/Resources/Models/Models3.jpeg"
-              loop
-              autoPlay
-              muted
-              playsInline
-            >
-              <source src="/Resources/Models/BTSVideo.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-            
-            {/* Gradient Overlays */}
-            <div className="absolute inset-0 bg-gradient-to-t from-houma-black/80 via-houma-black/40 to-houma-black/60" />
-            <div className="absolute inset-0 bg-gradient-to-r from-houma-black/30 via-transparent to-houma-black/30" />
-            
-            {/* Text overlay */}
-            <motion.div
-              className="absolute inset-0 flex items-center justify-center text-center px-8"
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.3 }}
-              viewport={{ once: true }}
-            >
-              <div className="max-w-4xl">
-                <motion.p 
-                  className="text-houma-gold text-sm tracking-[0.4em] mb-6 font-light"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.5 }}
-                  viewport={{ once: true }}
-                >
-                  EVERY SHOOT IS A CEREMONY
-                </motion.p>
-                <motion.h3 
-                  className="text-2xl md:text-4xl font-display tracking-wider text-houma-white mb-6 leading-tight"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.6 }}
-                  viewport={{ once: true }}
-                >
-                  A CELEBRATION OF CULTURE, CRAFT, AND CREATIVITY
-                </motion.h3>
-                <motion.p 
-                  className="text-base md:text-lg text-houma-white/80 max-w-2xl mx-auto leading-relaxed font-light"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.7 }}
-                  viewport={{ once: true }}
-                >
-                  Witness the artistry behind our visual narratives. Where tradition meets innovation, 
-                  and every frame tells a story of heritage reimagined.
-                </motion.p>
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-center justify-center gap-4 mb-8">
+                <div className="w-20 h-px bg-houma-gold/50" />
+                <div className="w-3 h-3 bg-houma-gold rounded-full" />
+                <div className="w-20 h-px bg-houma-gold/50" />
               </div>
-            </motion.div>
-
-            {/* Decorative Corner Elements */}
-            <div className="absolute top-4 left-4 w-12 h-12 border-l-2 border-t-2 border-houma-gold/30" />
-            <div className="absolute top-4 right-4 w-12 h-12 border-r-2 border-t-2 border-houma-gold/30" />
-            <div className="absolute bottom-4 left-4 w-12 h-12 border-l-2 border-b-2 border-houma-gold/30" />
-            <div className="absolute bottom-4 right-4 w-12 h-12 border-r-2 border-b-2 border-houma-gold/30" />
-          </motion.div>
-
-          {/* Bottom Quote Section */}
-          <motion.div
-            className="mt-12 md:mt-16 text-center"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            viewport={{ once: true }}
-          >
-            <div className="max-w-3xl mx-auto">
-              <div className="flex items-center justify-center gap-4 mb-6">
-                <div className="w-16 h-px bg-houma-gold/50" />
-                <div className="w-2 h-2 bg-houma-gold rounded-full" />
-                <div className="w-16 h-px bg-houma-gold/50" />
-              </div>
-              <blockquote className="text-lg md:text-xl text-houma-white/70 italic font-light leading-relaxed">
+              <blockquote className="text-xl md:text-2xl text-houma-white/80 italic font-light leading-relaxed mb-6">
                 "In every frame, we capture not just fashion, but the soul of a culture that refuses to be forgotten."
               </blockquote>
-              <p className="text-sm text-houma-gold/70 mt-4 tracking-[0.2em]">
+              <p className="text-sm text-houma-gold/70 tracking-[0.3em]">
                 — HOUMA CREATIVE DIRECTOR
               </p>
             </div>
