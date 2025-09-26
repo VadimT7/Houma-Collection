@@ -46,7 +46,7 @@ const AboutPage = () => {
     { year: '2020', event: 'Founded in the heart of Algiers' },
     { year: '2021', event: 'First collection launch - Heritage Line' },
     { year: '2022', event: 'Expanded to Morocco and Tunisia' },
-    { year: '2023', event: 'International recognition at Paris Fashion Week' },
+    { year: '2023', event: 'International expansion to Europe and North America' },
     { year: '2024', event: 'Global movement, local soul' },
   ]
 
@@ -415,8 +415,8 @@ const AboutPage = () => {
                   viewport={{ once: true }}
                 >
                   <div className="text-center">
-                    <div className="text-3xl font-display text-houma-gold mb-1">2025</div>
-                    <div className="text-xs text-houma-white/70 tracking-wider">CARBON NEUTRAL</div>
+                    <div className="text-3xl font-display text-houma-gold mb-1">100%</div>
+                    <div className="text-xs text-houma-white/70 tracking-wider">SUSTAINABLE</div>
                   </div>
                 </motion.div>
               </motion.div>
