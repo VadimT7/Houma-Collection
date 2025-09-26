@@ -1,19 +1,69 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useRouter } from 'next/router'
 import ProductCard from '@/components/ProductCard'
 import { products, categories, collections } from '@/lib/products'
 import { ChevronDownIcon, AdjustmentsHorizontalIcon, Squares2X2Icon, ListBulletIcon } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils'
 
 const ShopPage = () => {
+  const router = useRouter()
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [selectedCollection, setSelectedCollection] = useState<string>('all')
   const [sortBy, setSortBy] = useState<string>('featured')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [showFilters, setShowFilters] = useState(false)
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000])
+
+  // Map URL collection parameters to actual collection names
+  const collectionMap: { [key: string]: string } = {
+    'heritage': 'Heritage Collection',
+    'signature': 'Signature Line',
+    'essentials': 'Street Essentials',
+    'core': 'Core Collection',
+    'summer': 'Summer Drop',
+  }
+
+  // Handle URL query parameters
+  useEffect(() => {
+    if (router.isReady) {
+      const { collection, category } = router.query
+      
+      if (collection && typeof collection === 'string') {
+        // Map URL parameter to actual collection name
+        const mappedCollection = collectionMap[collection] || collection
+        setSelectedCollection(mappedCollection)
+        
+        // Auto-scroll to products section when collection filter is applied
+        setTimeout(() => {
+          const productsSection = document.getElementById('products-section')
+          if (productsSection) {
+            productsSection.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            })
+          }
+        }, 300)
+      }
+      
+      if (category && typeof category === 'string') {
+        setSelectedCategory(category)
+        
+        // Auto-scroll to products section when category filter is applied
+        setTimeout(() => {
+          const productsSection = document.getElementById('products-section')
+          if (productsSection) {
+            productsSection.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            })
+          }
+        }, 300)
+      }
+    }
+  }, [router.isReady, router.query])
 
   // Filter and sort products
   const filteredProducts = useMemo(() => {
@@ -110,7 +160,7 @@ const ShopPage = () => {
       </section>
 
       {/* Filters Bar */}
-      <section className="sticky top-20 lg:top-24 bg-houma-black/95 backdrop-blur-xl border-b border-houma-gold/20 z-40">
+      <section id="products-section" className="sticky top-20 lg:top-24 bg-houma-black/95 backdrop-blur-xl border-b border-houma-gold/20 z-40">
         <div className="houma-container">
           <div className="flex items-center justify-between py-4">
             {/* Left: Filter Toggle */}

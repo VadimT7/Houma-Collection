@@ -179,7 +179,7 @@ const Navigation = () => {
                   <div className="col-span-2">
                     <p className="text-houma-gold text-xs tracking-[0.3em] mb-2">FEATURED DROP</p>
                     <h2 className="text-3xl font-display text-houma-white mb-4">HERITAGE COLLECTION</h2>
-                    <Link href="/collections/heritage">
+                    <Link href="/shop?collection=heritage">
                       <button className="houma-button">
                         <span>EXPLORE NOW</span>
                       </button>
