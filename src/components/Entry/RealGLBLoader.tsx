@@ -152,7 +152,10 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
             const box = new THREE.Box3().setFromObject(chest)
             const size = box.getSize(new THREE.Vector3())
             const maxDimension = Math.max(size.x, size.y, size.z)
-            const targetSize = 3 // Target size for the chest
+            
+            // Make model smaller on mobile devices
+            const isMobile = window.innerWidth < 768
+            const targetSize = isMobile ? 1.4 : 3 // Smaller size for mobile
             const scale = targetSize / maxDimension
             
              chest.scale.set(scale, scale, scale)
@@ -240,7 +243,10 @@ export default function RealGLBLoader({ onComplete }: RealGLBLoaderProps) {
                 const box = new THREE.Box3().setFromObject(chest)
                 const size = box.getSize(new THREE.Vector3())
                 const maxDimension = Math.max(size.x, size.y, size.z)
-                const targetSize = 3 // Target size for the chest
+                
+                // Make model smaller on mobile devices
+                const isMobile = window.innerWidth < 768
+                const targetSize = isMobile ? 2 : 3 // Smaller size for mobile
                 const scale = targetSize / maxDimension
                 
                  chest.scale.set(scale, scale, scale)

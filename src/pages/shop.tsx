@@ -266,7 +266,65 @@ const ShopPage = () => {
       {/* Filters Bar */}
       <section id="products-section" className="sticky top-20 lg:top-24 bg-houma-black/95 backdrop-blur-xl border-b border-houma-gold/20 z-40">
         <div className="houma-container">
-          <div className="flex items-center justify-between py-4">
+          {/* Mobile Layout - Stacked */}
+          <div className="md:hidden py-4 space-y-3">
+            {/* Top Row: Filters and Product Count */}
+            <div className="flex items-center justify-between">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-2 text-houma-white hover:text-houma-gold transition-colors"
+              >
+                <AdjustmentsHorizontalIcon className="w-5 h-5" />
+                <span className="text-sm tracking-wider">FILTERS</span>
+              </button>
+              <p className="text-sm text-houma-white/50">
+                {filteredProducts.length} PRODUCTS
+              </p>
+            </div>
+            
+            {/* Bottom Row: Sort and View Options */}
+            <div className="flex items-center justify-between">
+              <div className="relative">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="appearance-none bg-transparent text-houma-white text-sm tracking-wider 
+                           pr-8 focus:outline-none cursor-pointer hover:text-houma-gold transition-colors"
+                >
+                  {sortOptions.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDownIcon className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-houma-white/50 pointer-events-none" />
+              </div>
+
+              <div className="flex gap-1">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={cn(
+                    'p-2 transition-colors',
+                    viewMode === 'grid' ? 'text-houma-gold' : 'text-houma-white/50 hover:text-houma-white'
+                  )}
+                >
+                  <Squares2X2Icon className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={cn(
+                    'p-2 transition-colors',
+                    viewMode === 'list' ? 'text-houma-gold' : 'text-houma-white/50 hover:text-houma-white'
+                  )}
+                >
+                  <ListBulletIcon className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop Layout - Horizontal */}
+          <div className="hidden md:flex items-center justify-between py-4">
             {/* Left: Filter Toggle */}
             <button
               onClick={() => setShowFilters(!showFilters)}
