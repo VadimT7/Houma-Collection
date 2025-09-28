@@ -568,7 +568,7 @@ const ShopPage = () => {
                 </div>
               ) : (
               <AnimatePresence mode="wait">
-                {filteredProducts.length === 0 ? (
+                {filteredProducts.length === 0 && products.length > 0 ? (
                   <motion.div
                     className="text-center py-20"
                     initial={{ opacity: 0 }}
@@ -588,7 +588,7 @@ const ShopPage = () => {
                       <span>CLEAR FILTERS</span>
                     </button>
                   </motion.div>
-                ) : (
+                ) : filteredProducts.length > 0 ? (
                   <motion.div
                     className={cn(
                       'grid gap-6',
@@ -605,6 +605,11 @@ const ShopPage = () => {
                       <ProductCard key={product.id} product={product} index={index} />
                     ))}
                   </motion.div>
+                ) : (
+                  <div className="text-center py-20">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-houma-gold"></div>
+                    <p className="text-houma-white/50 mt-4">Loading products...</p>
+                  </div>
                 )}
               </AnimatePresence>
               )}
