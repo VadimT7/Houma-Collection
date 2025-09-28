@@ -4,12 +4,13 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
 import ProductCard from '@/components/ProductCard'
-import { products, categories, collections } from '@/lib/products'
+import { useProducts } from '@/lib/stripe-products'
 import { ChevronDownIcon, AdjustmentsHorizontalIcon, Squares2X2Icon, ListBulletIcon } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils'
 
 const ShopPage = () => {
   const router = useRouter()
+  const { products, isLoading, error, getCategories, getCollections } = useProducts()
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [selectedCollection, setSelectedCollection] = useState<string>('all')
   const [selectedFilter, setSelectedFilter] = useState<string>('all')
@@ -17,6 +18,10 @@ const ShopPage = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [showFilters, setShowFilters] = useState(false)
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000])
+  
+  // Get dynamic categories and collections from Stripe products
+  const categories = getCategories()
+  const collections = getCollections()
 
   // Map URL collection parameters to actual collection names
   const collectionMap: { [key: string]: string } = {
@@ -384,7 +389,7 @@ const ShopPage = () => {
                         >
                           All Categories
                         </button>
-                        {categories.map(category => (
+                        {categories.length > 0 ? categories.map(category => (
                           <button
                             key={category}
                             onClick={() => setSelectedCategory(category)}
@@ -397,7 +402,9 @@ const ShopPage = () => {
                           >
                             {category}
                           </button>
-                        ))}
+                        )) : (
+                          <span className="text-houma-white/30 text-sm">Loading categories...</span>
+                        )}
                       </div>
                     </div>
 
@@ -418,7 +425,7 @@ const ShopPage = () => {
                         >
                           All Collections
                         </button>
-                        {collections.map(collection => (
+                        {collections.length > 0 ? collections.map(collection => (
                           <button
                             key={collection}
                             onClick={() => setSelectedCollection(collection)}
@@ -431,7 +438,9 @@ const ShopPage = () => {
                           >
                             {collection}
                           </button>
-                        ))}
+                        )) : (
+                          <span className="text-houma-white/30 text-sm">Loading collections...</span>
+                        )}
                       </div>
                     </div>
 
@@ -489,6 +498,17 @@ const ShopPage = () => {
 
             {/* Products Grid/List */}
             <div className="flex-1">
+              {isLoading ? (
+                <div className="text-center py-20">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-houma-gold"></div>
+                  <p className="text-houma-white/50 mt-4">Loading products from Stripe...</p>
+                </div>
+              ) : error ? (
+                <div className="text-center py-20">
+                  <p className="text-red-500 mb-4">{error}</p>
+                  <p className="text-houma-white/50">Please check your Stripe configuration.</p>
+                </div>
+              ) : (
               <AnimatePresence mode="wait">
                 {filteredProducts.length === 0 ? (
                   <motion.div
@@ -529,6 +549,7 @@ const ShopPage = () => {
                   </motion.div>
                 )}
               </AnimatePresence>
+              )}
             </div>
           </div>
         </div>

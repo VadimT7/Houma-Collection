@@ -1,9 +1,8 @@
-import React, { useState } from 'react'
-import { GetStaticPaths, GetStaticProps } from 'next'
+import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import toast from 'react-hot-toast'
@@ -19,26 +18,49 @@ import {
 } from '@heroicons/react/24/outline'
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid'
 import { Product, useCart } from '@/lib/store'
-import { getProductById, products, getProductsByCategory } from '@/lib/products'
+import { useProducts } from '@/lib/stripe-products'
 import { formatPrice, getImagePath, cn } from '@/lib/utils'
 import ProductCard from '@/components/ProductCard'
 
-interface ProductPageProps {
-  product: Product
-  relatedProducts: Product[]
-}
-
-const ProductDetailPage: React.FC<ProductPageProps> = ({ product, relatedProducts }) => {
+const ProductDetailPage: React.FC = () => {
   const router = useRouter()
+  const { id } = router.query
+  const { products, getProductById, getProductsByCategory, isLoading } = useProducts()
   const { addItem } = useCart()
+  
+  const [product, setProduct] = useState<Product | null>(null)
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([])
   const [selectedImage, setSelectedImage] = useState(0)
-  const [selectedSize, setSelectedSize] = useState(product.sizes[0])
-  const [selectedColor, setSelectedColor] = useState(product.colors[0])
+  const [selectedSize, setSelectedSize] = useState<string>('')
+  const [selectedColor, setSelectedColor] = useState<string>('')
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [showZoom, setShowZoom] = useState(false)
   const [activeTab, setActiveTab] = useState<'details' | 'story' | 'care'>('details')
 
+  // Load product when ID changes or products are fetched
+  useEffect(() => {
+    if (id && typeof id === 'string' && products.length > 0) {
+      const foundProduct = getProductById(id)
+      if (foundProduct) {
+        setProduct(foundProduct)
+        setSelectedSize(foundProduct.sizes[0] || '')
+        setSelectedColor(foundProduct.colors[0] || '')
+        
+        // Get related products from the same category
+        const related = getProductsByCategory(foundProduct.category)
+          .filter(p => p.id !== foundProduct.id)
+          .slice(0, 4)
+        setRelatedProducts(related)
+      } else if (!isLoading) {
+        // Product not found and not loading
+        router.push('/shop')
+      }
+    }
+  }, [id, products, getProductById, getProductsByCategory, isLoading, router])
+
   const handleAddToCart = () => {
+    if (!product) return
+    
     if (!product.inStock) {
       toast.error('This product is currently out of stock')
       return
@@ -48,17 +70,18 @@ const ProductDetailPage: React.FC<ProductPageProps> = ({ product, relatedProduct
     toast.success('Added to your bag')
   }
 
-  const handleShare = async () => {
+  const handleWishlist = () => {
+    setIsWishlisted(!isWishlisted)
+    toast.success(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist')
+  }
+
+  const handleShare = () => {
     if (navigator.share) {
-      try {
-        await navigator.share({
-          title: product.name,
-          text: product.description,
-          url: window.location.href,
-        })
-      } catch (err) {
-        console.log('Error sharing:', err)
-      }
+      navigator.share({
+        title: product?.name,
+        text: product?.description,
+        url: window.location.href,
+      }).catch(() => {})
     } else {
       navigator.clipboard.writeText(window.location.href)
       toast.success('Link copied to clipboard')
@@ -66,73 +89,91 @@ const ProductDetailPage: React.FC<ProductPageProps> = ({ product, relatedProduct
   }
 
   const nextImage = () => {
-    setSelectedImage((prev) => (prev + 1) % product.images.length)
+    if (product) {
+      setSelectedImage((prev) => (prev + 1) % product.images.length)
+    }
   }
 
   const prevImage = () => {
-    setSelectedImage((prev) => (prev - 1 + product.images.length) % product.images.length)
+    if (product) {
+      setSelectedImage((prev) => (prev - 1 + product.images.length) % product.images.length)
+    }
+  }
+
+  // Loading state
+  if (isLoading || !product) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-houma-gold"></div>
+          <p className="text-houma-white/50 mt-4">Loading product...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
     <>
       <Head>
-        <title>{product.name} - HOUMA</title>
+        <title>{product.name} - HOUMA | Luxury Streetwear</title>
         <meta name="description" content={product.description} />
+        <meta property="og:title" content={`${product.name} - HOUMA`} />
+        <meta property="og:description" content={product.description} />
+        <meta property="og:image" content={product.images && product.images.length > 0 ? getImagePath(product.images[0]) : '/images/placeholder.svg'} />
       </Head>
 
-      {/* Breadcrumbs */}
-      <div className="pt-28 pb-4 houma-container">
-        <nav className="flex items-center gap-2 text-xs text-houma-white/50">
-          <Link href="/" className="hover:text-houma-gold transition-colors">
-            Home
-          </Link>
-          <span>/</span>
-          <Link href="/shop" className="hover:text-houma-gold transition-colors">
-            Shop
-          </Link>
-          <span>/</span>
-          <Link href={`/shop?category=${product.category}`} className="hover:text-houma-gold transition-colors">
-            {product.category}
-          </Link>
-          <span>/</span>
-          <span className="text-houma-white">{product.name}</span>
-        </nav>
-      </div>
-
-      {/* Product Section */}
-      <section className="py-12">
+      <section className="pt-24 pb-8">
         <div className="houma-container">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-            {/* Images Section */}
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-            >
+          {/* Breadcrumb */}
+          <nav className="mb-8">
+            <ol className="flex items-center space-x-2 text-sm">
+              <li>
+                <Link href="/" className="text-houma-white/50 hover:text-houma-gold transition-colors">
+                  Home
+                </Link>
+              </li>
+              <li className="text-houma-white/30">/</li>
+              <li>
+                <Link href="/shop" className="text-houma-white/50 hover:text-houma-gold transition-colors">
+                  Shop
+                </Link>
+              </li>
+              <li className="text-houma-white/30">/</li>
+              <li>
+                <Link 
+                  href={`/shop?category=${product.category.toLowerCase()}`} 
+                  className="text-houma-white/50 hover:text-houma-gold transition-colors"
+                >
+                  {product.category}
+                </Link>
+              </li>
+              <li className="text-houma-white/30">/</li>
+              <li className="text-houma-gold">{product.name}</li>
+            </ol>
+          </nav>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Image Gallery */}
+            <div className="space-y-4">
               {/* Main Image */}
-              <div className="relative aspect-[3/4] overflow-hidden bg-houma-smoke mb-4">
+              <div className="relative aspect-square bg-houma-black/50 rounded-lg overflow-hidden group">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={selectedImage}
-                    className="relative w-full h-full cursor-zoom-in"
+                    className="relative w-full h-full"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
-                    onClick={() => setShowZoom(true)}
                   >
                     <Image
-                      src={getImagePath(product.images[selectedImage])}
-                      alt={`${product.name} - Image ${selectedImage + 1}`}
+                      src={getImagePath(product.images?.[selectedImage])}
+                      alt={`${product.name} - View ${selectedImage + 1}`}
                       fill
-                      className="object-cover"
+                      className="object-cover cursor-zoom-in"
+                      onClick={() => setShowZoom(true)}
                       priority
                     />
-                    
-                    {/* Zoom Icon */}
-                    <div className="absolute top-4 right-4 p-2 bg-houma-black/50 backdrop-blur-sm rounded-full">
-                      <MagnifyingGlassPlusIcon className="w-5 h-5 text-houma-white" />
-                    </div>
                   </motion.div>
                 </AnimatePresence>
 
@@ -141,34 +182,49 @@ const ProductDetailPage: React.FC<ProductPageProps> = ({ product, relatedProduct
                   <>
                     <button
                       onClick={prevImage}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-houma-black/50 
-                               backdrop-blur-sm rounded-full hover:bg-houma-black/70 transition-colors"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-houma-black/50 
+                               backdrop-blur-sm rounded-full flex items-center justify-center
+                               text-houma-white hover:bg-houma-black/70 transition-all
+                               opacity-0 group-hover:opacity-100"
                     >
-                      <ChevronLeftIcon className="w-5 h-5 text-houma-white" />
+                      <ChevronLeftIcon className="w-5 h-5" />
                     </button>
                     <button
                       onClick={nextImage}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-houma-black/50 
-                               backdrop-blur-sm rounded-full hover:bg-houma-black/70 transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-houma-black/50 
+                               backdrop-blur-sm rounded-full flex items-center justify-center
+                               text-houma-white hover:bg-houma-black/70 transition-all
+                               opacity-0 group-hover:opacity-100"
                     >
-                      <ChevronRightIcon className="w-5 h-5 text-houma-white" />
+                      <ChevronRightIcon className="w-5 h-5" />
                     </button>
                   </>
                 )}
+
+                {/* Zoom Icon */}
+                <button
+                  onClick={() => setShowZoom(true)}
+                  className="absolute top-4 right-4 w-10 h-10 bg-houma-black/50 
+                           backdrop-blur-sm rounded-full flex items-center justify-center
+                           text-houma-white hover:bg-houma-black/70 transition-all
+                           opacity-0 group-hover:opacity-100"
+                >
+                  <MagnifyingGlassPlusIcon className="w-5 h-5" />
+                </button>
               </div>
 
-              {/* Thumbnail Images */}
-              {product.images.length > 1 && (
-                <div className="grid grid-cols-4 gap-2">
+              {/* Thumbnail Gallery */}
+              {product.images && product.images.length > 1 && (
+                <div className="grid grid-cols-4 gap-4">
                   {product.images.map((image, index) => (
                     <button
                       key={index}
                       onClick={() => setSelectedImage(index)}
                       className={cn(
-                        'relative aspect-[3/4] overflow-hidden bg-houma-smoke transition-all duration-300',
+                        'relative aspect-square rounded-lg overflow-hidden transition-all',
                         selectedImage === index 
                           ? 'ring-2 ring-houma-gold' 
-                          : 'opacity-60 hover:opacity-100'
+                          : 'ring-1 ring-houma-white/10 hover:ring-houma-white/30'
                       )}
                     >
                       <Image
@@ -181,82 +237,42 @@ const ProductDetailPage: React.FC<ProductPageProps> = ({ product, relatedProduct
                   ))}
                 </div>
               )}
-            </motion.div>
+            </div>
 
             {/* Product Info */}
-            <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-            >
+            <div className="space-y-6">
               {/* Header */}
-              <div className="mb-8">
-                <p className="text-xs text-houma-gold tracking-[0.3em] mb-2">
-                  {product.collection.toUpperCase()}
+              <div>
+                <p className="text-houma-gold text-sm tracking-wider mb-2">
+                  {product.collection}
                 </p>
                 <h1 className="text-4xl font-display tracking-wider text-houma-white mb-4">
                   {product.name}
                 </h1>
-                <p className="text-2xl font-light text-houma-gold">
+                <p className="text-3xl text-houma-gold">
                   {formatPrice(product.price)}
                 </p>
               </div>
 
               {/* Description */}
-              <p className="text-houma-white/70 leading-relaxed mb-8">
+              <p className="text-houma-white/80 leading-relaxed">
                 {product.description}
               </p>
 
-              {/* Color Selection */}
-              <div className="mb-6">
-                <h3 className="text-xs tracking-[0.2em] text-houma-white/50 mb-3">
-                  COLOR: <span className="text-houma-white">{selectedColor}</span>
-                </h3>
-                <div className="flex gap-2">
-                  {product.colors.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => setSelectedColor(color)}
-                      className={cn(
-                        'w-10 h-10 rounded-full border-2 transition-all duration-300',
-                        selectedColor === color 
-                          ? 'border-houma-gold scale-110' 
-                          : 'border-houma-white/20 hover:border-houma-white/40'
-                      )}
-                      style={{
-                        backgroundColor: 
-                          color === 'Midnight Black' ? '#000000' :
-                          color === 'Desert Sand' ? '#D2B48C' :
-                          color === 'Atlas White' ? '#FFFFFF' :
-                          color === 'Obsidian' ? '#1C1C1C' :
-                          color === 'Sahara Gold' ? '#D4AF37' :
-                          '#2C2C2C'
-                      }}
-                      title={color}
-                    />
-                  ))}
-                </div>
-              </div>
-
               {/* Size Selection */}
-              <div className="mb-8">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xs tracking-[0.2em] text-houma-white/50">
-                    SIZE: <span className="text-houma-white">{selectedSize}</span>
-                  </h3>
-                  <button className="text-xs text-houma-gold hover:underline">
-                    Size Guide
-                  </button>
-                </div>
+              <div>
+                <label className="block text-sm tracking-wider text-houma-white mb-3">
+                  SIZE
+                </label>
                 <div className="grid grid-cols-4 gap-2">
                   {product.sizes.map((size) => (
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
                       className={cn(
-                        'py-3 border transition-all duration-300',
+                        'py-3 border text-sm tracking-wider transition-all',
                         selectedSize === size
-                          ? 'bg-houma-gold text-houma-black border-houma-gold'
+                          ? 'border-houma-gold bg-houma-gold text-houma-black'
                           : 'border-houma-white/20 text-houma-white hover:border-houma-gold'
                       )}
                     >
@@ -266,150 +282,180 @@ const ProductDetailPage: React.FC<ProductPageProps> = ({ product, relatedProduct
                 </div>
               </div>
 
+              {/* Color Selection */}
+              <div>
+                <label className="block text-sm tracking-wider text-houma-white mb-3">
+                  COLOR
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {product.colors.map((color) => (
+                    <button
+                      key={color}
+                      onClick={() => setSelectedColor(color)}
+                      className={cn(
+                        'px-4 py-2 border text-sm tracking-wider transition-all',
+                        selectedColor === color
+                          ? 'border-houma-gold bg-houma-gold/10 text-houma-gold'
+                          : 'border-houma-white/20 text-houma-white hover:border-houma-gold'
+                      )}
+                    >
+                      {color}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Action Buttons */}
-              <div className="flex gap-4 mb-8">
+              <div className="flex gap-4">
                 <button
                   onClick={handleAddToCart}
                   disabled={!product.inStock}
                   className={cn(
-                    'flex-1 py-4 uppercase tracking-widest transition-all duration-300',
+                    'flex-1 py-4 text-center tracking-wider transition-all',
                     product.inStock
-                      ? 'bg-houma-gold text-houma-black hover:bg-houma-gold-light'
-                      : 'bg-houma-smoke text-houma-white/50 cursor-not-allowed'
+                      ? 'bg-houma-gold text-houma-black hover:bg-houma-gold/90'
+                      : 'bg-houma-white/10 text-houma-white/50 cursor-not-allowed'
                   )}
                 >
-                  {product.inStock ? 'Add to Bag' : 'Out of Stock'}
+                  {product.inStock ? 'ADD TO BAG' : 'OUT OF STOCK'}
                 </button>
-                
                 <button
-                  onClick={() => setIsWishlisted(!isWishlisted)}
-                  className="p-4 border border-houma-white/20 hover:border-houma-gold transition-colors"
+                  onClick={handleWishlist}
+                  className="w-14 h-14 border border-houma-white/20 flex items-center justify-center
+                           hover:border-houma-gold transition-colors"
                 >
                   {isWishlisted ? (
-                    <HeartIconSolid className="w-5 h-5 text-houma-gold" />
+                    <HeartIconSolid className="w-6 h-6 text-houma-gold" />
                   ) : (
-                    <HeartIcon className="w-5 h-5 text-houma-white" />
+                    <HeartIcon className="w-6 h-6 text-houma-white" />
                   )}
                 </button>
-                
                 <button
                   onClick={handleShare}
-                  className="p-4 border border-houma-white/20 hover:border-houma-gold transition-colors"
+                  className="w-14 h-14 border border-houma-white/20 flex items-center justify-center
+                           hover:border-houma-gold transition-colors"
                 >
-                  <ShareIcon className="w-5 h-5 text-houma-white" />
+                  <ShareIcon className="w-6 h-6 text-houma-white" />
                 </button>
               </div>
 
-              {/* Product Benefits */}
-              <div className="grid grid-cols-3 gap-4 py-6 border-t border-b border-houma-white/10">
-                <div className="text-center">
-                  <TruckIcon className="w-6 h-6 text-houma-gold mx-auto mb-2" />
-                  <p className="text-xs text-houma-white/70">Free Shipping</p>
-                </div>
-                <div className="text-center">
-                  <ShieldCheckIcon className="w-6 h-6 text-houma-gold mx-auto mb-2" />
-                  <p className="text-xs text-houma-white/70">Authenticity</p>
-                </div>
-                <div className="text-center">
-                  <ArrowPathIcon className="w-6 h-6 text-houma-gold mx-auto mb-2" />
-                  <p className="text-xs text-houma-white/70">Easy Returns</p>
-                </div>
-              </div>
-
-              {/* Tabs */}
-              <div className="mt-8">
-                <div className="flex gap-8 border-b border-houma-white/10">
-                  {(['details', 'story', 'care'] as const).map((tab) => (
-                    <button
-                      key={tab}
-                      onClick={() => setActiveTab(tab)}
-                      className={cn(
-                        'pb-3 text-sm uppercase tracking-wider transition-all duration-300',
-                        activeTab === tab
-                          ? 'text-houma-gold border-b-2 border-houma-gold'
-                          : 'text-houma-white/50 hover:text-houma-white'
-                      )}
-                    >
-                      {tab === 'story' ? 'Cultural Story' : tab}
-                    </button>
-                  ))}
+              {/* Product Details Tabs */}
+              <div className="border-t border-houma-white/10 pt-6">
+                <div className="flex gap-8 mb-6">
+                  <button
+                    onClick={() => setActiveTab('details')}
+                    className={cn(
+                      'text-sm tracking-wider pb-2 border-b-2 transition-all',
+                      activeTab === 'details'
+                        ? 'text-houma-gold border-houma-gold'
+                        : 'text-houma-white/50 border-transparent hover:text-houma-white'
+                    )}
+                  >
+                    DETAILS
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('story')}
+                    className={cn(
+                      'text-sm tracking-wider pb-2 border-b-2 transition-all',
+                      activeTab === 'story'
+                        ? 'text-houma-gold border-houma-gold'
+                        : 'text-houma-white/50 border-transparent hover:text-houma-white'
+                    )}
+                  >
+                    CULTURAL STORY
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('care')}
+                    className={cn(
+                      'text-sm tracking-wider pb-2 border-b-2 transition-all',
+                      activeTab === 'care'
+                        ? 'text-houma-gold border-houma-gold'
+                        : 'text-houma-white/50 border-transparent hover:text-houma-white'
+                    )}
+                  >
+                    CARE GUIDE
+                  </button>
                 </div>
 
                 <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeTab}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.3 }}
-                    className="py-6"
-                  >
-                    {activeTab === 'details' && (
-                      <ul className="space-y-2 text-sm text-houma-white/70">
-                        <li>• Premium quality materials</li>
-                        <li>• Handcrafted with attention to detail</li>
-                        <li>• Limited edition piece</li>
-                        <li>• Ethically sourced fabrics</li>
-                        <li>• Made with cultural authenticity</li>
-                      </ul>
-                    )}
-                    
-                    {activeTab === 'story' && (
-                      <div className="space-y-4">
-                        {product.culturalStory && (
-                          <p className="text-houma-white/70 leading-relaxed">
-                            {product.culturalStory}
-                          </p>
-                        )}
-                        <div className="pt-4 border-t border-houma-white/10">
-                          <p className="houma-arabic text-2xl text-houma-gold mb-2">
-                            القوة في التراث
-                          </p>
-                          <p className="text-xs text-houma-white/50">
-                            "Strength in Heritage" - Every piece carries the soul of our culture
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {activeTab === 'care' && (
-                      <ul className="space-y-2 text-sm text-houma-white/70">
-                        <li>• Machine wash cold with like colors</li>
-                        <li>• Do not bleach</li>
-                        <li>• Tumble dry low</li>
-                        <li>• Iron on low heat if needed</li>
-                        <li>• Do not dry clean</li>
-                      </ul>
-                    )}
-                  </motion.div>
+                  {activeTab === 'details' && (
+                    <motion.div
+                      key="details"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="space-y-3 text-houma-white/70 text-sm"
+                    >
+                      <p>• Premium quality materials sourced ethically</p>
+                      <p>• Handcrafted details with traditional techniques</p>
+                      <p>• Modern fit designed for comfort and style</p>
+                      <p>• Limited edition piece from {product.collection}</p>
+                      <p>• Category: {product.category}</p>
+                    </motion.div>
+                  )}
+
+                  {activeTab === 'story' && (
+                    <motion.div
+                      key="story"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="text-houma-white/70 text-sm leading-relaxed"
+                    >
+                      {product.culturalStory || 
+                        'Each HOUMA piece carries the spirit of North African heritage, reimagined for the modern world. This design celebrates the rich cultural tapestry of the Maghreb, where ancient traditions meet contemporary expression.'}
+                    </motion.div>
+                  )}
+
+                  {activeTab === 'care' && (
+                    <motion.div
+                      key="care"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="space-y-3 text-houma-white/70 text-sm"
+                    >
+                      <p>• Machine wash cold with like colors</p>
+                      <p>• Do not bleach or use fabric softener</p>
+                      <p>• Tumble dry low or hang to dry</p>
+                      <p>• Iron on low heat if needed</p>
+                      <p>• Store in a cool, dry place</p>
+                    </motion.div>
+                  )}
                 </AnimatePresence>
               </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
 
-      {/* Related Products */}
-      <section className="py-20 bg-gradient-luxury">
-        <div className="houma-container">
-          <motion.div
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <p className="text-xs text-houma-gold tracking-[0.3em] mb-4">COMPLETE THE LOOK</p>
-            <h2 className="text-3xl font-display tracking-wider text-houma-white">
-              YOU MIGHT ALSO LIKE
-            </h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {relatedProducts.slice(0, 4).map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} />
-            ))}
+              {/* Trust Badges */}
+              <div className="grid grid-cols-3 gap-4 pt-6 border-t border-houma-white/10">
+                <div className="flex flex-col items-center text-center">
+                  <ShieldCheckIcon className="w-8 h-8 text-houma-gold mb-2" />
+                  <p className="text-xs text-houma-white/70">Authentic Design</p>
+                </div>
+                <div className="flex flex-col items-center text-center">
+                  <TruckIcon className="w-8 h-8 text-houma-gold mb-2" />
+                  <p className="text-xs text-houma-white/70">Worldwide Shipping</p>
+                </div>
+                <div className="flex flex-col items-center text-center">
+                  <ArrowPathIcon className="w-8 h-8 text-houma-gold mb-2" />
+                  <p className="text-xs text-houma-white/70">Easy Returns</p>
+                </div>
+              </div>
+            </div>
           </div>
+
+          {/* Related Products */}
+          {relatedProducts.length > 0 && (
+            <section className="mt-20">
+              <h2 className="text-3xl font-display tracking-wider text-houma-white mb-8">
+                YOU MAY ALSO LIKE
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {relatedProducts.map((relatedProduct, index) => (
+                  <ProductCard key={relatedProduct.id} product={relatedProduct} index={index} />
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </section>
 
@@ -417,28 +463,28 @@ const ProductDetailPage: React.FC<ProductPageProps> = ({ product, relatedProduct
       <AnimatePresence>
         {showZoom && (
           <motion.div
-            className="fixed inset-0 bg-houma-black/95 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-houma-black/95 z-50 flex items-center justify-center p-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setShowZoom(false)}
           >
             <button
-              className="absolute top-4 right-4 p-2 text-houma-white hover:text-houma-gold transition-colors"
+              className="absolute top-4 right-4 text-houma-white hover:text-houma-gold transition-colors"
               onClick={() => setShowZoom(false)}
             >
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-
+            
             <TransformWrapper>
               <TransformComponent>
                 <Image
-                  src={getImagePath(product.images[selectedImage])}
+                  src={getImagePath(product.images?.[selectedImage])}
                   alt={product.name}
                   width={1200}
-                  height={1600}
+                  height={1200}
                   className="max-w-full max-h-full object-contain"
                 />
               </TransformComponent>
@@ -448,38 +494,6 @@ const ProductDetailPage: React.FC<ProductPageProps> = ({ product, relatedProduct
       </AnimatePresence>
     </>
   )
-}
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = products.map((product) => ({
-    params: { id: product.id },
-  }))
-
-  return {
-    paths,
-    fallback: false,
-  }
-}
-
-export const getStaticProps: GetStaticProps<ProductPageProps> = async ({ params }) => {
-  const product = getProductById(params?.id as string)
-
-  if (!product) {
-    return {
-      notFound: true,
-    }
-  }
-
-  // Get related products from same category
-  const relatedProducts = getProductsByCategory(product.category)
-    .filter(p => p.id !== product.id)
-
-  return {
-    props: {
-      product,
-      relatedProducts,
-    },
-  }
 }
 
 export default ProductDetailPage

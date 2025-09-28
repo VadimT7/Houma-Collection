@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ['localhost'],
+    domains: ['localhost', 'files.stripe.com'],
     formats: ['image/avif', 'image/webp'],
   },
   // Removed experimental optimizeCss to prevent critters dependency issues

@@ -7,7 +7,7 @@ import { useInView } from 'react-intersection-observer'
 import useEmblaCarousel from 'embla-carousel-react'
 import { ArrowRightIcon, CheckIcon } from '@heroicons/react/24/outline'
 import ProductCard from '@/components/ProductCard'
-import { getFeaturedProducts } from '@/lib/products'
+import { useProducts } from '@/lib/stripe-products'
 import { cn } from '@/lib/utils'
 
 const HomePage = () => {
@@ -30,6 +30,7 @@ const HomePage = () => {
     skipSnaps: false,
   })
 
+  const { getFeaturedProducts } = useProducts()
   const featuredProducts = getFeaturedProducts()
 
   const [heroInViewRef, heroInView] = useInView({

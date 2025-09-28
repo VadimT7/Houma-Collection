@@ -14,8 +14,18 @@ export function formatPrice(price: number): string {
   }).format(price)
 }
 
-export function getImagePath(imageName: string): string {
-  // Helper to construct proper image paths from Resources folder
+export function getImagePath(imageName: string | undefined | null): string {
+  // Handle undefined, null, or empty string
+  if (!imageName || typeof imageName !== 'string') {
+    return '/images/placeholder.svg' // Fallback placeholder
+  }
+  
+  // If it's already a full URL (Stripe image), return as is
+  if (imageName.startsWith('http://') || imageName.startsWith('https://')) {
+    return imageName
+  }
+  
+  // Helper to construct proper image paths from Resources folder for local images
   if (imageName.includes('Logo')) {
     return `/Resources/Logos-and-Images/${imageName}`
   }

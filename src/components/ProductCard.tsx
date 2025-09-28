@@ -46,7 +46,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
             <Image
-              src={getImagePath(product.images[imageIndex])}
+              src={getImagePath(product.images?.[imageIndex])}
               alt={product.name}
               fill
               className="object-cover"

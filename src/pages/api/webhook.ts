@@ -67,9 +67,43 @@ export default async function handler(
       console.log('PaymentMethod attached:', paymentMethod.id)
       break
 
+    // Product event handlers
+    case 'product.created':
+      const createdProduct = event.data.object as Stripe.Product
+      console.log('Product created:', createdProduct.id, createdProduct.name)
+      // The frontend will fetch updated products on next request
+      break
+
+    case 'product.updated':
+      const updatedProduct = event.data.object as Stripe.Product
+      console.log('Product updated:', updatedProduct.id, updatedProduct.name)
+      // The frontend will fetch updated products on next request
+      break
+
+    case 'product.deleted':
+      const deletedProduct = event.data.object as Stripe.Product
+      console.log('Product deleted:', deletedProduct.id)
+      // The frontend will fetch updated products on next request
+      break
+
+    // Price event handlers
+    case 'price.created':
+      const createdPrice = event.data.object as Stripe.Price
+      console.log('Price created:', createdPrice.id)
+      break
+
+    case 'price.updated':
+      const updatedPrice = event.data.object as Stripe.Price
+      console.log('Price updated:', updatedPrice.id)
+      break
+
+    case 'price.deleted':
+      const deletedPrice = event.data.object as Stripe.Price
+      console.log('Price deleted:', deletedPrice.id)
+      break
+
     default:
       console.log(`Unhandled event type: ${event.type}`)
-  }
 
   res.status(200).json({ received: true })
 }
