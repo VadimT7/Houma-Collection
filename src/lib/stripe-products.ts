@@ -77,13 +77,13 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
   getCategories: () => {
     const products = get().products
-    const categories = [...new Set(products.map(p => p.category))]
+    const categories = Array.from(new Set(products.map(p => p.category)))
     return categories.sort()
   },
 
   getCollections: () => {
     const products = get().products
-    const collections = [...new Set(products.map(p => p.collection))]
+    const collections = Array.from(new Set(products.map(p => p.collection)))
     return collections.sort()
   },
 }))

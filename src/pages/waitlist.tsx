@@ -142,7 +142,7 @@ const WaitlistPage = () => {
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-8"
+            className="mb-12"
           >
             <Image
               src="/Resources/Logos-and-Images/Logo-White-No-Background.png"
@@ -175,7 +175,7 @@ const WaitlistPage = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
-                    className="inline-block mb-6"
+                    className="inline-block mb-10"
                   >
                     <span className="px-4 py-2 border border-houma-gold/30 text-houma-gold text-xs tracking-[0.3em] uppercase">
                       Pre-Launch Access
@@ -187,10 +187,10 @@ const WaitlistPage = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 }}
-                    className="text-5xl md:text-7xl font-display tracking-wider text-houma-white mb-6"
+                    className="text-5xl md:text-7xl font-display tracking-wider text-houma-white mb-10"
                   >
                     THE MOVEMENT
-                    <span className="block text-gradient-gold">BEGINS HERE</span>
+                    <span className="block text-gradient-gold mt-2">BEGINS HERE</span>
                   </motion.h1>
 
                   {/* Description */}
@@ -198,7 +198,7 @@ const WaitlistPage = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.7 }}
-                    className="text-lg text-houma-white/70 mb-4 max-w-lg mx-auto"
+                    className="text-lg text-houma-white/70 mb-10 max-w-lg mx-auto"
                   >
                     Be among the chosen few. Join our exclusive waitlist and receive{' '}
                     <span className="relative inline-block">
@@ -226,7 +226,7 @@ const WaitlistPage = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.8 }}
-                    className="mb-8"
+                    className="mb-12"
                   >
                     {spotsRemaining !== null && (
                       <div className="inline-flex items-center gap-3">
@@ -246,7 +246,7 @@ const WaitlistPage = () => {
                             Limited to
                           </p>
                           <p className="text-2xl font-display text-houma-white">
-                            100 Members
+                            300 Members
                           </p>
                         </div>
                       </div>
@@ -280,7 +280,7 @@ const WaitlistPage = () => {
                     <motion.button
                       type="submit"
                       disabled={isSubmitting || spotsRemaining === 0}
-                      className="mt-8 houma-button min-w-[200px] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="mt-10 houma-button min-w-[200px] disabled:opacity-50 disabled:cursor-not-allowed"
                       whileHover={spotsRemaining !== 0 ? { scale: 1.05 } : {}}
                       whileTap={spotsRemaining !== 0 ? { scale: 0.95 } : {}}
                     >
@@ -293,7 +293,7 @@ const WaitlistPage = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 0.3 }}
                     transition={{ delay: 1.2, duration: 2 }}
-                    className="houma-arabic text-7xl text-houma-gold/20 mt-12"
+                    className="houma-arabic text-7xl text-houma-gold/20 mt-16"
                   >
                     حُومة
                   </motion.p>
@@ -303,43 +303,62 @@ const WaitlistPage = () => {
                   key="success-message"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 1.618, ease: [0.16, 1, 0.3, 1] }}
                   className="text-center"
                 >
                   {/* Success icon */}
                   <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                    className="mx-auto w-24 h-24 bg-houma-gold rounded-full flex items-center justify-center mb-8"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ 
+                      delay: 0.618, 
+                      duration: 1.618,
+                      type: "spring", 
+                      stiffness: 80,
+                      damping: 20
+                    }}
+                    className="mx-auto w-24 h-24 bg-houma-gold rounded-full flex items-center justify-center mb-12"
                   >
                     <CheckIcon className="w-12 h-12 text-houma-black" />
                   </motion.div>
 
                   {/* Success message */}
                   <motion.h2
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                    className="text-4xl md:text-6xl font-display tracking-wider text-houma-white mb-6"
+                    transition={{ 
+                      delay: 1.236,
+                      duration: 1.618,
+                      ease: [0.16, 1, 0.3, 1]
+                    }}
+                    className="text-4xl md:text-6xl font-display tracking-wider text-houma-white mb-8"
                   >
                     WELCOME TO THE
-                    <span className="block text-gradient-gold mt-2">INNER CIRCLE</span>
+                    <span className="block text-gradient-gold mt-3">INNER CIRCLE</span>
                   </motion.h2>
 
                   <motion.p
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 }}
-                    className="text-lg text-houma-white/70 mb-8 max-w-lg mx-auto"
+                    transition={{ 
+                      delay: 1.854,
+                      duration: 1.618,
+                      ease: [0.16, 1, 0.3, 1]
+                    }}
+                    className="text-lg text-houma-white/70 mb-10 max-w-lg mx-auto"
                   >
-                    You are now one of the chosen {100 - (spotsRemaining || 0)}. 
+                    You are now one of the chosen few. 
                     Your exclusive access has been secured.
                   </motion.p>
 
                   <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8 }}
+                    transition={{ 
+                      delay: 2.472,
+                      duration: 1.618,
+                      ease: [0.16, 1, 0.3, 1]
+                    }}
                     className="space-y-4"
                   >
                     <div className="inline-block px-6 py-3 border border-houma-gold/30 bg-houma-gold/10">
@@ -356,7 +375,11 @@ const WaitlistPage = () => {
                   <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: 1.2, duration: 2 }}
+                    transition={{ 
+                      delay: 3.09,
+                      duration: 2.618,
+                      ease: [0.16, 1, 0.3, 1]
+                    }}
                     className="text-sm text-houma-gold tracking-[0.4em] uppercase mt-16 font-medium"
                     style={{
                       textShadow: '0 0 20px rgba(212, 175, 55, 0.8), 0 0 40px rgba(212, 175, 55, 0.5), 0 0 60px rgba(212, 175, 55, 0.3)'

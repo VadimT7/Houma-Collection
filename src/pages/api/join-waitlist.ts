@@ -1,37 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import fs from 'fs'
-import path from 'path'
+import { sql } from '@/lib/db'
 
-const WAITLIST_FILE = path.join(process.cwd(), 'waitlist.json')
-const MAX_SPOTS = 100
-
-type WaitlistData = {
-  emails: string[]
-  createdAt: string[]
-}
-
-const getWaitlistData = (): WaitlistData => {
-  try {
-    if (fs.existsSync(WAITLIST_FILE)) {
-      const data = fs.readFileSync(WAITLIST_FILE, 'utf-8')
-      return JSON.parse(data)
-    }
-  } catch (error) {
-    console.error('Error reading waitlist file:', error)
-  }
-  return { emails: [], createdAt: [] }
-}
-
-const saveWaitlistData = (data: WaitlistData): void => {
-  fs.writeFileSync(WAITLIST_FILE, JSON.stringify(data, null, 2))
-}
+const MAX_SPOTS = 300
+const FAKE_OFFSET = 127 // Faking enrollment to show 173 spots remaining
 
 const isValidEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return emailRegex.test(email)
 }
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' })
   }
@@ -45,36 +23,44 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const normalizedEmail = email.toLowerCase().trim()
-    const waitlistData = getWaitlistData()
+
+    // Check current count
+    const countResult = await sql`SELECT COUNT(*) as count FROM waitlist`
+    const actualCount = parseInt(countResult[0].count)
+    const currentCount = actualCount + FAKE_OFFSET
 
     // Check if waitlist is full
-    if (waitlistData.emails.length >= MAX_SPOTS) {
+    if (currentCount >= MAX_SPOTS) {
       return res.status(400).json({ 
         message: 'Waitlist full',
         spotsRemaining: 0 
       })
     }
 
-    // Check if email already exists
-    if (waitlistData.emails.includes(normalizedEmail)) {
-      return res.status(400).json({ 
-        message: 'Already on waitlist',
-        spotsRemaining: MAX_SPOTS - waitlistData.emails.length 
+    // Try to insert email
+    try {
+      await sql`
+        INSERT INTO waitlist (email) 
+        VALUES (${normalizedEmail})
+      `
+      
+      const spotsRemaining = MAX_SPOTS - (currentCount + 1)
+
+      res.status(200).json({ 
+        message: 'Successfully joined waitlist',
+        spotsRemaining,
+        position: currentCount + 1
       })
+    } catch (insertError: any) {
+      // Check if it's a duplicate email error
+      if (insertError.code === '23505' || insertError.message?.includes('duplicate') || insertError.message?.includes('unique')) {
+        return res.status(400).json({ 
+          message: 'Already on waitlist',
+          spotsRemaining: MAX_SPOTS - currentCount
+        })
+      }
+      throw insertError
     }
-
-    // Add to waitlist
-    waitlistData.emails.push(normalizedEmail)
-    waitlistData.createdAt.push(new Date().toISOString())
-    saveWaitlistData(waitlistData)
-
-    const spotsRemaining = MAX_SPOTS - waitlistData.emails.length
-
-    res.status(200).json({ 
-      message: 'Successfully joined waitlist',
-      spotsRemaining,
-      position: waitlistData.emails.length
-    })
   } catch (error) {
     console.error('Error joining waitlist:', error)
     res.status(500).json({ message: 'Internal server error' })

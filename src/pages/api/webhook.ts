@@ -104,6 +104,7 @@ export default async function handler(
 
     default:
       console.log(`Unhandled event type: ${event.type}`)
+  }
 
   res.status(200).json({ received: true })
 }

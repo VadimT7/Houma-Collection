@@ -3,6 +3,24 @@
 ## Overview
 During the pre-launch phase, all visitors to the HOUMA website are redirected to an exclusive waitlist page. This waitlist is limited to 100 spots and offers free shipping on the first order to members.
 
+## Database Setup
+The waitlist now uses **Neon PostgreSQL** database for reliable, production-ready storage.
+
+### Database Schema
+```sql
+CREATE TABLE waitlist (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+```
+
+### Environment Variables
+Required in `.env.local` (local) and Vercel (production):
+```
+DATABASE_URL=postgresql://[connection-string]
+```
+
 ## How It Works
 
 ### Automatic Redirect
@@ -15,14 +33,15 @@ During the pre-launch phase, all visitors to the HOUMA website are redirected to
 ### Waitlist Features
 - **Limited to 100 spots**: Once 100 people sign up, the waitlist closes
 - **Real-time counter**: Shows remaining spots
-- **Duplicate prevention**: Same email can't sign up twice
+- **Duplicate prevention**: Same email can't sign up twice (enforced by database)
 - **Exclusive benefits**: Free shipping on first order for waitlist members
 - **Modern, luxury design**: Aligned with HOUMA brand identity
+- **Production-ready**: Uses Neon PostgreSQL for reliable data persistence
 
 ## API Endpoints
 
 ### `POST /api/join-waitlist`
-Adds an email to the waitlist.
+Adds an email to the waitlist (stores in database).
 
 **Request body:**
 ```json
@@ -37,7 +56,7 @@ Adds an email to the waitlist.
 - Waitlist full (400): `{ message: "Waitlist full", spotsRemaining: 0 }`
 
 ### `GET /api/waitlist-status`
-Returns current waitlist status.
+Returns current waitlist status from database.
 
 **Response:**
 ```json
@@ -48,10 +67,50 @@ Returns current waitlist status.
 }
 ```
 
-## Data Storage
-- Waitlist data is stored in `waitlist.json` at the project root
-- This file contains emails and signup timestamps
-- **Important**: This file is in `.gitignore` to protect user data
+## Database Management
+
+### Setup Database Table
+To create the waitlist table (already done):
+```bash
+node scripts/setup-waitlist-db.js
+```
+
+### Export Waitlist Emails
+To view and export all waitlist emails:
+```bash
+node scripts/export-waitlist.js
+```
+
+This will display:
+- All emails with signup timestamps
+- CSV format for easy import to email marketing tools
+
+### Viewing Waitlist Data
+You can query the database directly using the Neon console or any PostgreSQL client:
+```sql
+-- View all waitlist entries
+SELECT * FROM waitlist ORDER BY created_at DESC;
+
+-- Count current entries
+SELECT COUNT(*) FROM waitlist;
+
+-- Get specific email
+SELECT * FROM waitlist WHERE email = 'user@example.com';
+```
+
+### Clearing the Waitlist
+To reset the waitlist (use with caution):
+```sql
+TRUNCATE TABLE waitlist;
+```
+
+Or using Node.js:
+```javascript
+require('dotenv').config({ path: '.env.local' })
+const { neon } = require('@neondatabase/serverless')
+const sql = neon(process.env.DATABASE_URL)
+await sql`TRUNCATE TABLE waitlist`
+```
 
 ## Launching the Site
 
@@ -74,45 +133,47 @@ if (!isWaitlistPage && !isApiRoute) {
 }
 ```
 
-## Managing Waitlist Data
+## Production Deployment
 
-### Viewing Waitlist Emails
-The waitlist emails are stored in `waitlist.json`:
-```json
-{
-  "emails": ["email1@example.com", "email2@example.com"],
-  "createdAt": ["2023-01-01T00:00:00Z", "2023-01-02T00:00:00Z"]
-}
+### Environment Variables in Vercel
+The `DATABASE_URL` is already configured in Vercel's environment variables for production.
+
+To update or verify:
+1. Go to your Vercel project dashboard
+2. Settings → Environment Variables
+3. Ensure `DATABASE_URL` is set for Production
+
+### Deploying
+```bash
+vercel --prod
 ```
 
-### Exporting Waitlist
-To export the waitlist for marketing purposes:
-1. Copy the `waitlist.json` file
-2. Use the email list for your email marketing platform
-3. Remember to honor the free shipping promise for these users
-
-### Clearing the Waitlist
-To reset the waitlist:
-1. Edit `waitlist.json`
-2. Set both arrays to empty: `{ "emails": [], "createdAt": [] }`
+### Post-Deployment Checklist
+- ✅ Database table created
+- ✅ Environment variables set in Vercel
+- ✅ API endpoints working
+- ✅ Email validation active
+- ✅ Duplicate prevention working
+- ✅ Spot counter displaying correctly
 
 ## Security Considerations
-- Email validation is performed server-side
-- Waitlist data file is excluded from version control
-- Rate limiting should be added for production use
-- Consider adding CAPTCHA for bot prevention
+- ✅ Email validation performed server-side
+- ✅ Database enforces unique emails
+- ✅ Connection pooling for performance
+- ✅ SSL required for database connections
+- 🔄 Consider adding rate limiting for production
+- 🔄 Consider adding CAPTCHA for bot prevention
 
 ## Customization
 
 ### Changing the Limit
-To change the 100-spot limit:
-1. Edit `MAX_SPOTS` constant in both API files:
-   - `src/pages/api/join-waitlist.ts`
-   - `src/pages/api/waitlist-status.ts`
+To change the 100-spot limit, update `MAX_SPOTS` constant in:
+- `src/pages/api/join-waitlist.ts`
+- `src/pages/api/waitlist-status.ts`
 
 ### Modifying Benefits
 To change the waitlist benefits, edit the text in:
-- `src/pages/waitlist.tsx` (lines ~115-118)
+- `src/pages/waitlist.tsx` (lines ~203-221)
 
 ### Styling Changes
 The waitlist page uses the existing HOUMA design system:
@@ -121,11 +182,27 @@ The waitlist page uses the existing HOUMA design system:
 - Animations: Framer Motion for smooth transitions
 - Patterns: Luxury overlays and geometric shapes
 
-## Production Deployment
-Before deploying to production:
-1. Ensure `waitlist.json` is properly initialized
-2. Consider using a database instead of JSON file for better scalability
-3. Add proper error logging
-4. Implement rate limiting
-5. Add email verification if needed
-6. Set up backup system for waitlist data
+## Monitoring
+Check waitlist status at any time:
+```bash
+node scripts/export-waitlist.js
+```
+
+Or query the database directly through Neon console:
+- Visit: https://console.neon.tech
+- Select your project
+- Use SQL Editor
+
+## Backup & Recovery
+Neon automatically backs up your database. To export for safekeeping:
+```bash
+# Using the export script
+node scripts/export-waitlist.js > waitlist-backup-$(date +%Y%m%d).txt
+```
+
+## Technical Details
+- **Database**: Neon PostgreSQL (serverless)
+- **Client**: @neondatabase/serverless (edge-compatible)
+- **Connection**: Pooled connections for optimal performance
+- **Concurrency**: Safe for multiple simultaneous signups
+- **Persistence**: Data survives deployments and server restarts
