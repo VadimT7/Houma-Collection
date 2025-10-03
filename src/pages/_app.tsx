@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
 import Layout from '@/components/Layout'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/router'
 
 // Dynamically import Entry to avoid SSR issues
 const Entry = dynamic(() => import('@/components/Entry'), {
@@ -16,11 +17,23 @@ export default function App({ Component, pageProps }: AppProps) {
   const [entryComplete, setEntryComplete] = useState(false)
   const [isClient, setIsClient] = useState(false)
   const [showHomepage, setShowHomepage] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     // Ensure we're on the client side
     setIsClient(true)
     
+    // PRE-LAUNCH MODE: Redirect all traffic to waitlist page
+    const isWaitlistPage = window.location.pathname === '/waitlist'
+    const isApiRoute = window.location.pathname.startsWith('/api/')
+    
+    if (!isWaitlistPage && !isApiRoute) {
+      router.push('/waitlist')
+      return
+    }
+    
+    // Original entry logic (disabled during pre-launch)
+    /*
     // Only show entry on homepage
     const isHomepage = window.location.pathname === '/'
     if (isHomepage && !sessionStorage.getItem('houma-entry-shown')) {
@@ -30,7 +43,12 @@ export default function App({ Component, pageProps }: AppProps) {
       // If entry was already shown, immediately show the homepage content
       setShowHomepage(true)
     }
-  }, [])
+    */
+    
+    // Skip entry during pre-launch
+    setEntryComplete(true)
+    setShowHomepage(true)
+  }, [router])
 
   const handleEntryComplete = () => {
     sessionStorage.setItem('houma-entry-shown', 'true')
@@ -42,6 +60,9 @@ export default function App({ Component, pageProps }: AppProps) {
       setShowHomepage(true)
     }, 100)
   }
+
+  // Check if current page is waitlist - no Layout/Navigation for waitlist
+  const isWaitlistPage = router.pathname === '/waitlist'
 
   return (
     <>
@@ -60,9 +81,13 @@ export default function App({ Component, pageProps }: AppProps) {
               ease: [0.22, 1, 0.36, 1]
             }}
           >
-            <Layout>
+            {isWaitlistPage ? (
               <Component {...pageProps} />
-            </Layout>
+            ) : (
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
