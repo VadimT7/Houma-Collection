@@ -25,45 +25,52 @@ const ShopPage = () => {
 
   // Map URL collection parameters to actual collection names
   const collectionMap: { [key: string]: string } = {
-    'heritage': 'Heritage Collection',
-    'signature': 'Signature Line',
-    'essentials': 'Street Essentials',
-    'core': 'Core Collection',
-    'summer': 'Summer Drop',
+    'el-bidaya': 'EL BIDAYA',
+    // 'heritage': 'Heritage Collection',
+    // 'signature': 'Signature Line',
+    // 'essentials': 'Street Essentials',
+    // 'core': 'Core Collection',
+    // 'summer': 'Summer Drop',
   }
 
   // Collection-specific hero data
   const collectionHeroData: { [key: string]: { title: string, subtitle: string, description: string, image: string } } = {
-    'Heritage Collection': {
-      title: 'HERITAGE',
-      subtitle: 'COLLECTION',
-      description: 'Where ancient traditions meet contemporary design. Each piece honors the rich cultural tapestry of North Africa.',
-      image: '/Resources/Logos-and-Images/Logo_page-0003.jpg'
-    },
-    'Signature Line': {
-      title: 'SIGNATURE',
-      subtitle: 'LINE',
+    'EL BIDAYA': {
+      title: 'EL BIDAYA',
+      subtitle: '',
       description: 'Our most exclusive pieces, crafted with unparalleled attention to detail and luxury materials.',
       image: '/Resources/Logos-and-Images/Logo_page-0002.jpg'
     },
-    'Street Essentials': {
-      title: 'STREET',
-      subtitle: 'ESSENTIALS',
-      description: 'Everyday luxury redefined. Essential pieces that blend comfort, style, and cultural authenticity.',
-      image: '/Resources/Logos-and-Images/Logo_page-0001.jpg'
-    },
-    'Core Collection': {
-      title: 'CORE',
-      subtitle: 'COLLECTION',
-      description: 'The foundation of HOUMA. Timeless pieces that define our brand identity and quality standards.',
-      image: '/Resources/Logos-and-Images/Logo_page-0005.jpg'
-    },
-    'Summer Drop': {
-      title: 'SUMMER',
-      subtitle: 'DROP',
-      description: 'Lightweight luxury for warmer days. Fresh designs that capture the essence of summer sophistication.',
-      image: '/Resources/Logos-and-Images/Logo_page-0006.jpg'
-    }
+    // 'Heritage Collection': {
+    //   title: 'HERITAGE',
+    //   subtitle: 'COLLECTION',
+    //   description: 'Where ancient traditions meet contemporary design. Each piece honors the rich cultural tapestry of North Africa.',
+    //   image: '/Resources/Logos-and-Images/Logo_page-0003.jpg'
+    // },
+    // 'Signature Line': {
+    //   title: 'SIGNATURE',
+    //   subtitle: 'LINE',
+    //   description: 'Our most exclusive pieces, crafted with unparalleled attention to detail and luxury materials.',
+    //   image: '/Resources/Logos-and-Images/Logo_page-0002.jpg'
+    // },
+    // 'Street Essentials': {
+    //   title: 'STREET',
+    //   subtitle: 'ESSENTIALS',
+    //   description: 'Everyday luxury redefined. Essential pieces that blend comfort, style, and cultural authenticity.',
+    //   image: '/Resources/Logos-and-Images/Logo_page-0001.jpg'
+    // },
+    // 'Core Collection': {
+    //   title: 'CORE',
+    //   subtitle: 'COLLECTION',
+    //   description: 'The foundation of HOUMA. Timeless pieces that define our brand identity and quality standards.',
+    //   image: '/Resources/Logos-and-Images/Logo_page-0005.jpg'
+    // },
+    // 'Summer Drop': {
+    //   title: 'SUMMER',
+    //   subtitle: 'DROP',
+    //   description: 'Lightweight luxury for warmer days. Fresh designs that capture the essence of summer sophistication.',
+    //   image: '/Resources/Logos-and-Images/Logo_page-0006.jpg'
+    // }
   }
 
   // Map URL category parameters to actual category names
@@ -165,19 +172,19 @@ const ShopPage = () => {
   const filteredProducts = useMemo(() => {
     let filtered = [...products]
 
-    // Filter by new arrivals (featured products)
+    // When "NEW ARRIVALS" is selected, show all products (ignore category/collection filters)
     if (selectedFilter === 'new') {
-      filtered = filtered.filter(p => p.featured)
-    }
+      // Show all products - no filtering needed
+    } else {
+      // Category filter (only apply when not in "new arrivals" mode)
+      if (selectedCategory !== 'all') {
+        filtered = filtered.filter(p => p.category === selectedCategory)
+      }
 
-    // Category filter
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(p => p.category === selectedCategory)
-    }
-
-    // Collection filter
-    if (selectedCollection !== 'all') {
-      filtered = filtered.filter(p => p.collection === selectedCollection)
+      // Collection filter (only apply when not in "new arrivals" mode)
+      if (selectedCollection !== 'all') {
+        filtered = filtered.filter(p => p.collection === selectedCollection)
+      }
     }
 
     // Price range filter

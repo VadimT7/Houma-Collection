@@ -151,11 +151,12 @@ export function getProductsByCollection(collection: string): Product[] {
 }
 
 export const collections = [
-  'Heritage Collection',
-  'Signature Line',
-  'Street Essentials',
-  'Core Collection',
-  'Summer Drop',
+  'EL BIDAYA',
+  // 'Heritage Collection',
+  // 'Signature Line',
+  // 'Street Essentials',
+  // 'Core Collection',
+  // 'Summer Drop',
 ]
 
 export const categories = [

@@ -23,17 +23,6 @@ export default function App({ Component, pageProps }: AppProps) {
     // Ensure we're on the client side
     setIsClient(true)
     
-    // PRE-LAUNCH MODE: Redirect all traffic to waitlist page
-    const isWaitlistPage = window.location.pathname === '/waitlist'
-    const isApiRoute = window.location.pathname.startsWith('/api/')
-    
-    if (!isWaitlistPage && !isApiRoute) {
-      router.push('/waitlist')
-      return
-    }
-    
-    // Original entry logic (disabled during pre-launch)
-    /*
     // Only show entry on homepage
     const isHomepage = window.location.pathname === '/'
     if (isHomepage && !sessionStorage.getItem('houma-entry-shown')) {
@@ -43,11 +32,6 @@ export default function App({ Component, pageProps }: AppProps) {
       // If entry was already shown, immediately show the homepage content
       setShowHomepage(true)
     }
-    */
-    
-    // Skip entry during pre-launch
-    setEntryComplete(true)
-    setShowHomepage(true)
   }, [router])
 
   const handleEntryComplete = () => {
@@ -60,9 +44,6 @@ export default function App({ Component, pageProps }: AppProps) {
       setShowHomepage(true)
     }, 100)
   }
-
-  // Check if current page is waitlist - no Layout/Navigation for waitlist
-  const isWaitlistPage = router.pathname === '/waitlist'
 
   return (
     <>
@@ -81,13 +62,9 @@ export default function App({ Component, pageProps }: AppProps) {
               ease: [0.22, 1, 0.36, 1]
             }}
           >
-            {isWaitlistPage ? (
+            <Layout>
               <Component {...pageProps} />
-            ) : (
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
-            )}
+            </Layout>
           </motion.div>
         )}
       </AnimatePresence>

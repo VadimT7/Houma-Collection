@@ -37,10 +37,10 @@ const Navigation = () => {
 
   const shopCategories = [
     { label: 'NEW ARRIVALS', href: '/shop?filter=new' },
+    { label: 'T-SHIRTS', href: '/shop?category=t-shirts' },
     { label: 'HOODIES', href: '/shop?category=hoodies' },
     { label: 'JACKETS', href: '/shop?category=jackets' },
     { label: 'PANTS', href: '/shop?category=pants' },
-    { label: 'T-SHIRTS', href: '/shop?category=t-shirts' },
     { label: 'ACCESSORIES', href: '/shop?category=accessories' },
   ]
 
@@ -178,8 +178,8 @@ const Navigation = () => {
                 <div className="mt-8 grid grid-cols-3 gap-8">
                   <div className="col-span-2">
                     <p className="text-houma-gold text-xs tracking-[0.3em] mb-2">FEATURED DROP</p>
-                    <h2 className="text-3xl font-display text-houma-white mb-4">HERITAGE COLLECTION</h2>
-                    <Link href="/shop?collection=heritage">
+                    <h2 className="text-3xl font-display text-houma-white mb-4">EL BIDAYA</h2>
+                    <Link href="/shop?collection=el-bidaya">
                       <button className="houma-button">
                         <span>EXPLORE NOW</span>
                       </button>
@@ -187,7 +187,7 @@ const Navigation = () => {
                   </div>
                   <div className="relative h-48 overflow-hidden">
                     <Image
-                      src="/Resources/Models/Models1.jpeg"
+                      src="/Resources/Models/Illustration_sans_titre 2_pages-to-jpg-0003.jpg"
                       alt="Featured Collection"
                       fill
                       className="object-cover hover:scale-110 transition-transform duration-700"

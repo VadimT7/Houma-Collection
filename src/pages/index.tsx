@@ -26,7 +26,7 @@ const HomePage = () => {
   
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: true,
-    align: 'start',
+    align: 'center',
     skipSnaps: false,
   })
 
@@ -50,23 +50,29 @@ const HomePage = () => {
 
   const collections = [
     {
-      name: 'HERITAGE COLLECTION',
-      description: 'Where tradition meets rebellion',
-      image: 'Illustration_sans_titre 2_pages-to-jpg-0001.jpg',
-      link: '/collections/heritage',
-    },
-    {
-      name: 'SIGNATURE LINE',
+      name: 'EL BIDAYA',
       description: 'Defining luxury streetwear',
       image: 'Illustration_sans_titre 2_pages-to-jpg-0003.jpg',
-      link: '/collections/signature',
+      link: '/collections/el-bidaya',
     },
-    {
-      name: 'STREET ESSENTIALS',
-      description: 'Daily culture, elevated',
-      image: 'Models1.jpeg',
-      link: '/collections/essentials',
-    },
+    // {
+    //   name: 'HERITAGE COLLECTION',
+    //   description: 'Where tradition meets rebellion',
+    //   image: 'Illustration_sans_titre 2_pages-to-jpg-0001.jpg',
+    //   link: '/collections/heritage',
+    // },
+    // {
+    //   name: 'SIGNATURE LINE',
+    //   description: 'Defining luxury streetwear',
+    //   image: 'Illustration_sans_titre 2_pages-to-jpg-0003.jpg',
+    //   link: '/collections/signature',
+    // },
+    // {
+    //   name: 'STREET ESSENTIALS',
+    //   description: 'Daily culture, elevated',
+    //   image: 'Models1.jpeg',
+    //   link: '/collections/essentials',
+    // },
   ]
 
   return (
@@ -175,59 +181,71 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Collections Carousel */}
-      <section className="py-32 bg-gradient-luxury relative">
+      {/* Featured Collection */}
+      <section className="py-20">
         <div className="houma-container">
           <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
+            key="el-bidaya"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-32 last:mb-0"
+            initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <p className="text-houma-gold text-xs tracking-[0.3em] mb-4">EXPLORE</p>
-            <h2 className="text-4xl md:text-5xl font-display tracking-wider text-houma-white">
-              COLLECTIONS
-            </h2>
-          </motion.div>
+            {/* Image */}
+            <div className="relative aspect-[3/4] overflow-hidden">
+              <Image
+                src="/Resources/Models/Illustration_sans_titre 2_pages-to-jpg-0003.jpg"
+                alt="EL BIDAYA"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-houma-black/30 to-transparent" />
+              
+              {/* Season Badge */}
+              <div className="absolute top-8 left-8">
+                <span className="px-4 py-2 bg-houma-black/50 backdrop-blur-sm text-houma-gold text-xs tracking-[0.3em]">
+                  PERMANENT
+                </span>
+              </div>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {collections.map((collection, index) => (
+            {/* Content */}
+            <div className="flex flex-col justify-center">
               <motion.div
-                key={collection.name}
-                className="group relative overflow-hidden"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
+                initial={{ opacity: 0, x: 40 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
                 viewport={{ once: true }}
               >
-                <Link href={collection.link}>
-                  <div className="relative aspect-[3/4] overflow-hidden">
-                    <Image
-                      src={`/Resources/Models/${collection.image}`}
-                      alt={collection.name}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-houma-black via-houma-black/20 to-transparent" />
-                    
-                    {/* Collection Info */}
-                    <div className="absolute bottom-0 left-0 right-0 p-8">
-                      <h3 className="text-2xl font-display tracking-wider text-houma-white mb-2">
-                        {collection.name}
-                      </h3>
-                      <p className="text-sm text-houma-white/70 mb-4">{collection.description}</p>
-                      
-                      <div className="flex items-center text-houma-gold group-hover:gap-3 transition-all duration-300">
-                        <span className="text-xs tracking-[0.2em]">DISCOVER</span>
-                        <ArrowRightIcon className="w-4 h-4 ml-2" />
-                      </div>
-                    </div>
-                  </div>
+                <p className="text-houma-gold text-xs tracking-[0.3em] mb-4">
+                  ICONS OF IDENTITY
+                </p>
+                <h2 className="text-4xl font-display tracking-wider text-houma-white mb-6">
+                  EL BIDAYA
+                </h2>
+                <p className="text-lg text-houma-white/70 leading-relaxed mb-8">
+                  The essence of HOUMA. Timeless pieces that define luxury streetwear with unmistakable North African DNA.
+                </p>
+                
+                <Link href="/shop?collection=el-bidaya">
+                  <button className="houma-button group">
+                    <span className="flex items-center gap-3">
+                      EXPLORE COLLECTION
+                      <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-2 transition-transform duration-300" />
+                    </span>
+                  </button>
                 </Link>
+
+                {/* Arabic accent */}
+                <div className="mt-12 pt-8 border-t border-houma-white/10">
+                  <p className="houma-arabic text-2xl text-houma-gold/50">
+                    مجموعة التراث
+                  </p>
+                </div>
               </motion.div>
-            ))}
-          </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
