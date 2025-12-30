@@ -103,23 +103,50 @@ export default async function handler(
   } catch (error: any) {
     console.error('Error fetching products from Stripe:', error)
     
-    // Provide more detailed error information
+    // Extract detailed Stripe error information
     const errorMessage = error?.message || 'Unknown error'
-    const stripeError = error?.raw?.message || error?.raw?.code || null
+    const stripeErrorCode = error?.code || error?.raw?.code || null
+    const stripeErrorType = error?.type || null
+    const stripeStatusCode = error?.statusCode || error?.raw?.statusCode || null
+    const stripeDeclineCode = error?.decline_code || null
+    
     const keyPrefix = process.env.STRIPE_SECRET_KEY?.substring(0, 7) || 'unknown'
+    const keyLength = process.env.STRIPE_SECRET_KEY?.length || 0
     const isLiveKey = keyPrefix.startsWith('sk_live')
     const isTestKey = keyPrefix.startsWith('sk_test')
+    
+    // Generate helpful hints based on error type
+    let hint = ''
+    if (stripeErrorCode === 'api_key_expired') {
+      hint = 'Your Stripe API key has expired. Please generate a new one in the Stripe Dashboard.'
+    } else if (stripeErrorType === 'authentication_error' || stripeErrorCode === 'invalid_api_key') {
+      hint = 'Invalid API key. Please check that your STRIPE_SECRET_KEY is correct and has no extra spaces or characters.'
+    } else if (stripeStatusCode === 401) {
+      hint = 'Authentication failed. Your API key may be invalid, expired, or have incorrect permissions.'
+    } else if (stripeStatusCode === 403) {
+      hint = 'Access denied. Your API key may not have permission to access products.'
+    } else if (!process.env.STRIPE_SECRET_KEY) {
+      hint = 'STRIPE_SECRET_KEY environment variable is not set.'
+    } else if (keyLength < 30) {
+      hint = 'STRIPE_SECRET_KEY appears to be truncated or incomplete.'
+    } else {
+      hint = isLiveKey 
+        ? 'Using LIVE mode. Ensure products are created in live mode dashboard.'
+        : isTestKey 
+          ? 'Using TEST mode. Ensure products exist in test dashboard.'
+          : 'Could not determine key type. Key should start with sk_live_ or sk_test_'
+    }
     
     res.status(500).json({ 
       error: 'Failed to fetch products',
       details: errorMessage,
-      stripeError: stripeError,
-      hint: isLiveKey 
-        ? 'You are using LIVE mode keys. Products created in test mode do not exist in live mode. You need to create products in your Stripe live dashboard.'
-        : isTestKey 
-          ? 'You are using TEST mode keys. Make sure products exist in your test dashboard.'
-          : 'Could not determine key type. Check that STRIPE_SECRET_KEY is set correctly.',
-      keyMode: isLiveKey ? 'live' : isTestKey ? 'test' : 'unknown'
+      stripeErrorCode,
+      stripeErrorType,
+      stripeStatusCode,
+      hint,
+      keyMode: isLiveKey ? 'live' : isTestKey ? 'test' : 'unknown',
+      keyConfigured: !!process.env.STRIPE_SECRET_KEY,
+      keyPrefixValid: isLiveKey || isTestKey
     })
   }
 }
