@@ -102,6 +102,24 @@ export default async function handler(
     res.status(200).json(formattedProducts)
   } catch (error: any) {
     console.error('Error fetching products from Stripe:', error)
-    res.status(500).json({ error: 'Failed to fetch products' })
+    
+    // Provide more detailed error information
+    const errorMessage = error?.message || 'Unknown error'
+    const stripeError = error?.raw?.message || error?.raw?.code || null
+    const keyPrefix = process.env.STRIPE_SECRET_KEY?.substring(0, 7) || 'unknown'
+    const isLiveKey = keyPrefix.startsWith('sk_live')
+    const isTestKey = keyPrefix.startsWith('sk_test')
+    
+    res.status(500).json({ 
+      error: 'Failed to fetch products',
+      details: errorMessage,
+      stripeError: stripeError,
+      hint: isLiveKey 
+        ? 'You are using LIVE mode keys. Products created in test mode do not exist in live mode. You need to create products in your Stripe live dashboard.'
+        : isTestKey 
+          ? 'You are using TEST mode keys. Make sure products exist in your test dashboard.'
+          : 'Could not determine key type. Check that STRIPE_SECRET_KEY is set correctly.',
+      keyMode: isLiveKey ? 'live' : isTestKey ? 'test' : 'unknown'
+    })
   }
 }

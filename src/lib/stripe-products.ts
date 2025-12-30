@@ -36,8 +36,24 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
     try {
       const response = await fetch('/api/products')
+      
       if (!response.ok) {
-        throw new Error('Failed to fetch products')
+        // Try to get detailed error info from the response
+        const errorData = await response.json().catch(() => ({}))
+        const hint = errorData.hint || ''
+        const keyMode = errorData.keyMode || 'unknown'
+        
+        console.error('Products API error:', errorData)
+        
+        // Create a user-friendly error message
+        let errorMessage = 'Failed to fetch products'
+        if (keyMode === 'live') {
+          errorMessage = 'No products found in Stripe live mode. Products from test mode need to be recreated in your live Stripe dashboard.'
+        } else if (keyMode === 'test') {
+          errorMessage = 'No products found. Please check your Stripe test dashboard.'
+        }
+        
+        throw new Error(errorMessage)
       }
       
       const products = await response.json()
