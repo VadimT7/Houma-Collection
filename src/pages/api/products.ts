@@ -35,6 +35,13 @@ function convertStripeProduct(
   const sizes = metadata.sizes ? JSON.parse(metadata.sizes) : ['One Size']
   const colors = metadata.colors ? JSON.parse(metadata.colors) : ['Default']
   
+  // Normalize collection name - remove " Collection" suffix if present
+  // This handles cases where Stripe metadata is "EL BIDAYA Collection" but code expects "EL BIDAYA"
+  let collection = metadata.collection || 'General'
+  if (collection.endsWith(' Collection')) {
+    collection = collection.replace(' Collection', '')
+  }
+  
   return {
     id: product.id,
     name: product.name,
@@ -45,7 +52,7 @@ function convertStripeProduct(
     sizes,
     colors,
     category: metadata.category || 'Uncategorized',
-    collection: metadata.collection || 'General',
+    collection: collection,
     inStock: metadata.inStock !== 'false', // Default to true unless explicitly false
     featured: metadata.featured === 'true',
   }
