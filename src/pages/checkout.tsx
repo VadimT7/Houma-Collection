@@ -59,7 +59,7 @@ const CheckoutForm = () => {
 
   const subtotal = isClient ? getTotalPrice() : 0
   const shipping = subtotal > 200 ? 0 : 15
-  const tax = subtotal * 0.1 // 10% tax
+  const tax = subtotal * 0.14975 // 14.975% tax (calculated on subtotal, excluding shipping)
   const total = subtotal + shipping + tax
 
   useEffect(() => {
@@ -149,7 +149,7 @@ const CheckoutForm = () => {
   }
 
   const renderStepIndicator = () => (
-    <div className="flex items-center justify-center mb-8">
+    <div className="flex items-center justify-center mb-6 sm:mb-8 overflow-x-auto pb-2">
       {['Shipping', 'Payment', 'Review'].map((label, index) => {
         const stepNumber = index + 1
         const isActive = 
@@ -162,9 +162,9 @@ const CheckoutForm = () => {
 
         return (
           <React.Fragment key={label}>
-            <div className="flex items-center">
+            <div className="flex items-center flex-shrink-0">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 text-xs sm:text-base ${
                   isActive ? 'bg-houma-gold text-houma-black' :
                   isCompleted ? 'bg-houma-gold/20 text-houma-gold' :
                   'bg-houma-white/10 text-houma-white/50'
@@ -172,14 +172,14 @@ const CheckoutForm = () => {
               >
                 {isCompleted ? '✓' : stepNumber}
               </div>
-              <span className={`ml-3 text-sm ${
+              <span className={`ml-2 sm:ml-3 text-xs sm:text-sm ${
                 isActive ? 'text-houma-white' : 'text-houma-white/50'
               }`}>
-                {label}
+                <span className="hidden sm:inline">{label}</span>
               </span>
             </div>
             {index < 2 && (
-              <div className={`w-20 h-px mx-4 transition-all duration-300 ${
+              <div className={`w-12 sm:w-16 md:w-20 h-px mx-2 sm:mx-3 md:mx-4 transition-all duration-300 flex-shrink-0 ${
                 isCompleted ? 'bg-houma-gold' : 'bg-houma-white/20'
               }`} />
             )}
@@ -223,30 +223,30 @@ const CheckoutForm = () => {
         <meta name="description" content="Complete your HOUMA purchase securely" />
       </Head>
 
-      <section className="pt-32 pb-20 min-h-screen">
-        <div className="houma-container">
+      <section className="pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 min-h-screen">
+        <div className="houma-container px-4 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
             {/* Header */}
-            <div className="text-center mb-12">
-              <h1 className="text-4xl font-display tracking-wider text-houma-white mb-4">
+            <div className="text-center mb-6 sm:mb-8 md:mb-12">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-display tracking-wider text-houma-white mb-3 sm:mb-4">
                 CHECKOUT
               </h1>
-              <div className="flex items-center justify-center gap-4 text-sm text-houma-white/50">
-                <LockClosedIcon className="w-4 h-4" />
+              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs sm:text-sm text-houma-white/50">
+                <LockClosedIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span>Secure Checkout</span>
                 <span>•</span>
-                <ShieldCheckIcon className="w-4 h-4" />
+                <ShieldCheckIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span>SSL Encrypted</span>
               </div>
             </div>
 
             {renderStepIndicator()}
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-12">
               {/* Form Section */}
               <div className="lg:col-span-2">
                 {/* Shipping Information */}
@@ -257,11 +257,11 @@ const CheckoutForm = () => {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.5 }}
                     >
-                      <h2 className="text-xl font-display tracking-wider text-houma-white mb-6">
+                      <h2 className="text-lg sm:text-xl font-display tracking-wider text-houma-white mb-4 sm:mb-6">
                         SHIPPING INFORMATION
                       </h2>
 
-                      <div className="space-y-6">
+                      <div className="space-y-4 sm:space-y-6">
                         <div>
                           <label className="block text-xs text-houma-white/50 tracking-[0.2em] mb-2">
                             EMAIL ADDRESS *
@@ -273,11 +273,11 @@ const CheckoutForm = () => {
                             onChange={handleShippingChange}
                             required
                             className="w-full bg-transparent border border-houma-white/20 text-houma-white 
-                                     px-4 py-3 focus:outline-none focus:border-houma-gold transition-colors"
+                                     px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base focus:outline-none focus:border-houma-gold transition-colors"
                           />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <label className="block text-xs text-houma-white/50 tracking-[0.2em] mb-2">
                               FIRST NAME *
@@ -289,7 +289,7 @@ const CheckoutForm = () => {
                               onChange={handleShippingChange}
                               required
                               className="w-full bg-transparent border border-houma-white/20 text-houma-white 
-                                       px-4 py-3 focus:outline-none focus:border-houma-gold transition-colors"
+                                       px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base focus:outline-none focus:border-houma-gold transition-colors"
                             />
                           </div>
                           <div>
@@ -303,7 +303,7 @@ const CheckoutForm = () => {
                               onChange={handleShippingChange}
                               required
                               className="w-full bg-transparent border border-houma-white/20 text-houma-white 
-                                       px-4 py-3 focus:outline-none focus:border-houma-gold transition-colors"
+                                       px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base focus:outline-none focus:border-houma-gold transition-colors"
                             />
                           </div>
                         </div>
@@ -319,7 +319,7 @@ const CheckoutForm = () => {
                             onChange={handleShippingChange}
                             required
                             className="w-full bg-transparent border border-houma-white/20 text-houma-white 
-                                     px-4 py-3 focus:outline-none focus:border-houma-gold transition-colors"
+                                     px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base focus:outline-none focus:border-houma-gold transition-colors"
                           />
                         </div>
 
@@ -333,12 +333,12 @@ const CheckoutForm = () => {
                             value={shippingInfo.apartment}
                             onChange={handleShippingChange}
                             className="w-full bg-transparent border border-houma-white/20 text-houma-white 
-                                     px-4 py-3 focus:outline-none focus:border-houma-gold transition-colors"
+                                     px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base focus:outline-none focus:border-houma-gold transition-colors"
                           />
                         </div>
 
-                        <div className="grid grid-cols-3 gap-4">
-                          <div className="col-span-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                          <div className="sm:col-span-2">
                             <label className="block text-xs text-houma-white/50 tracking-[0.2em] mb-2">
                               CITY *
                             </label>
@@ -349,7 +349,7 @@ const CheckoutForm = () => {
                               onChange={handleShippingChange}
                               required
                               className="w-full bg-transparent border border-houma-white/20 text-houma-white 
-                                       px-4 py-3 focus:outline-none focus:border-houma-gold transition-colors"
+                                       px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base focus:outline-none focus:border-houma-gold transition-colors"
                             />
                           </div>
                           <div>
@@ -363,12 +363,12 @@ const CheckoutForm = () => {
                               onChange={handleShippingChange}
                               required
                               className="w-full bg-transparent border border-houma-white/20 text-houma-white 
-                                       px-4 py-3 focus:outline-none focus:border-houma-gold transition-colors"
+                                       px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base focus:outline-none focus:border-houma-gold transition-colors"
                             />
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <label className="block text-xs text-houma-white/50 tracking-[0.2em] mb-2">
                               COUNTRY *
@@ -379,7 +379,7 @@ const CheckoutForm = () => {
                               onChange={handleShippingChange}
                               required
                               className="w-full bg-houma-black border border-houma-white/20 text-houma-white 
-                                       px-4 py-3 focus:outline-none focus:border-houma-gold transition-colors"
+                                       px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base focus:outline-none focus:border-houma-gold transition-colors"
                             >
                               <option value="">Select Country</option>
                               <option value="AF">Afghanistan</option>
@@ -635,7 +635,7 @@ const CheckoutForm = () => {
                               onChange={handleShippingChange}
                               required
                               className="w-full bg-transparent border border-houma-white/20 text-houma-white 
-                                       px-4 py-3 focus:outline-none focus:border-houma-gold transition-colors"
+                                       px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base focus:outline-none focus:border-houma-gold transition-colors"
                             />
                           </div>
                         </div>
@@ -643,12 +643,11 @@ const CheckoutForm = () => {
                     </motion.div>
 
                     {/* Navigation Buttons */}
-                    <div className="flex justify-between mt-8">
-                      <div></div>
+                    <div className="flex justify-end mt-6 sm:mt-8">
                       <button
                         type="submit"
                         disabled={isProcessing}
-                        className="ml-auto bg-houma-gold text-houma-black px-8 py-4 uppercase tracking-widest 
+                        className="w-full sm:w-auto bg-houma-gold text-houma-black px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base uppercase tracking-widest 
                                  hover:bg-houma-gold-light transition-all duration-300 disabled:opacity-50"
                       >
                         {isProcessing ? 'Processing...' : 'Continue'}
@@ -664,7 +663,7 @@ const CheckoutForm = () => {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.5 }}
                     >
-                      <h2 className="text-xl font-display tracking-wider text-houma-white mb-6">
+                      <h2 className="text-lg sm:text-xl font-display tracking-wider text-houma-white mb-4 sm:mb-6">
                         PAYMENT INFORMATION
                       </h2>
 
@@ -685,7 +684,7 @@ const CheckoutForm = () => {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.5 }}
                     >
-                      <h2 className="text-xl font-display tracking-wider text-houma-white mb-6">
+                      <h2 className="text-lg sm:text-xl font-display tracking-wider text-houma-white mb-4 sm:mb-6">
                         REVIEW YOUR ORDER
                       </h2>
 
@@ -720,11 +719,11 @@ const CheckoutForm = () => {
 
                 {/* Navigation Buttons */}
                 {step === 'payment' && (
-                  <div className="flex justify-between mt-8">
+                  <div className="flex justify-start mt-6 sm:mt-8">
                     <button
                       type="button"
                       onClick={() => setStep('shipping')}
-                      className="flex items-center gap-2 text-houma-white/70 hover:text-houma-gold 
+                      className="flex items-center gap-2 text-sm sm:text-base text-houma-white/70 hover:text-houma-gold 
                                transition-colors"
                     >
                       <ChevronLeftIcon className="w-4 h-4" />
@@ -737,18 +736,18 @@ const CheckoutForm = () => {
 
               {/* Order Summary */}
               <div className="lg:col-span-1">
-                <div className="sticky top-32">
-                  <h2 className="text-xl font-display tracking-wider text-houma-white mb-6">
+                <div className="sticky top-20 sm:top-24 md:top-32">
+                  <h2 className="text-lg sm:text-xl font-display tracking-wider text-houma-white mb-4 sm:mb-6">
                     ORDER SUMMARY
                   </h2>
 
-                  <div className="space-y-4 mb-6">
+                  <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
                     {items.map((item) => (
                       <div
                         key={`${item.product.id}-${item.selectedSize}-${item.selectedColor}`}
-                        className="flex gap-4"
+                        className="flex gap-3 sm:gap-4"
                       >
-                        <div className="relative w-20 h-20 flex-shrink-0 overflow-hidden bg-houma-smoke">
+                        <div className="relative w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 overflow-hidden bg-houma-smoke rounded">
                           <Image
                             src={getImagePath(item.product.images[0])}
                             alt={item.product.name}
@@ -756,12 +755,12 @@ const CheckoutForm = () => {
                             className="object-cover"
                           />
                         </div>
-                        <div className="flex-1">
-                          <h3 className="text-sm text-houma-white">{item.product.name}</h3>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-xs sm:text-sm text-houma-white truncate">{item.product.name}</h3>
                           <p className="text-xs text-houma-white/50">
                             {item.selectedColor} / {item.selectedSize} / Qty: {item.quantity}
                           </p>
-                          <p className="text-sm text-houma-gold mt-1">
+                          <p className="text-xs sm:text-sm text-houma-gold mt-1">
                             {formatPrice(item.product.price * item.quantity)}
                           </p>
                         </div>
@@ -786,19 +785,19 @@ const CheckoutForm = () => {
                     </div>
                   </div>
 
-                  <div className="flex justify-between py-4 border-t border-houma-white/10">
-                    <span className="text-lg text-houma-white">Total</span>
-                    <span className="text-lg text-houma-gold">{formatPrice(total)}</span>
+                  <div className="flex justify-between py-3 sm:py-4 border-t border-houma-white/10">
+                    <span className="text-base sm:text-lg text-houma-white">Total</span>
+                    <span className="text-base sm:text-lg text-houma-gold">{formatPrice(total)}</span>
                   </div>
 
                   {/* Security Badges */}
-                  <div className="mt-6 p-4 bg-houma-smoke/30 rounded">
+                  <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-houma-smoke/30 rounded">
                     <div className="flex items-center gap-2 text-xs text-houma-white/50">
-                      <ShieldCheckIcon className="w-4 h-4" />
+                      <ShieldCheckIcon className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                       <span>100% Secure Checkout</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-houma-white/50 mt-2">
-                      <LockClosedIcon className="w-4 h-4" />
+                      <LockClosedIcon className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                       <span>SSL Encrypted Payment</span>
                     </div>
                   </div>

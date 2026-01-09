@@ -161,8 +161,8 @@ const OrderConfirmation = () => {
         </div>
 
         {/* Main Content */}
-        <div className="relative z-10 min-h-screen flex items-center justify-center px-4 pt-40">
-          <div className="max-w-6xl mx-auto text-center">
+        <div className="relative z-10 min-h-screen flex items-center justify-center px-4 pt-20 sm:pt-32 md:pt-40 pb-8">
+          <div className="max-w-6xl mx-auto text-center w-full">
             
 
             {/* Main Message with Enhanced Typography */}
@@ -172,7 +172,7 @@ const OrderConfirmation = () => {
               transition={{ delay: 0.2, duration: 1.5 }}
             >
               <motion.h1 
-                className="text-8xl md:text-9xl font-display text-houma-white mb-8 tracking-wider leading-none"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl xl:text-9xl font-display text-houma-white mb-4 sm:mb-6 md:mb-8 tracking-wider leading-tight sm:leading-none px-2"
                 initial={{ opacity: 0, y: 80 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.2, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
@@ -191,7 +191,7 @@ const OrderConfirmation = () => {
                   WELCOME
                 </motion.span>
                 <motion.span 
-                  className="block text-houma-gold mt-4"
+                  className="block text-houma-gold mt-2 sm:mt-3 md:mt-4"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 1.8, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
@@ -212,7 +212,7 @@ const OrderConfirmation = () => {
               </motion.h1>
               
               <motion.p 
-                className="text-2xl md:text-3xl text-houma-white/80 mb-20 max-w-4xl mx-auto leading-relaxed font-light"
+                className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-houma-white/80 mb-8 sm:mb-12 md:mb-16 lg:mb-20 max-w-4xl mx-auto leading-relaxed font-light px-4"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 2.2, duration: 1.2 }}
@@ -233,7 +233,7 @@ const OrderConfirmation = () => {
 
             {/* Luxury Order Details Card */}
             <motion.div
-              className="bg-houma-white/5 backdrop-blur-3xl border border-houma-gold/20 rounded-3xl p-16 mb-20 max-w-4xl mx-auto relative overflow-hidden"
+              className="bg-houma-white/5 backdrop-blur-3xl border border-houma-gold/20 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 lg:p-12 xl:p-16 mb-8 sm:mb-12 md:mb-16 lg:mb-20 max-w-4xl mx-auto relative overflow-hidden"
               initial={{ opacity: 0, y: 40, scale: 0.95 }}
               animate={{ 
                 opacity: isVisible ? 1 : 0, 
@@ -277,66 +277,66 @@ const OrderConfirmation = () => {
                 />
               ))}
               
-              <h2 className="text-4xl font-display text-houma-white mb-12 tracking-wider">
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-display text-houma-white mb-6 sm:mb-8 md:mb-12 tracking-wider">
                 ORDER CONFIRMATION
               </h2>
               
-              <div className="space-y-8">
+              <div className="space-y-4 sm:space-y-6 md:space-y-8">
                 <motion.div 
-                  className="flex justify-between items-center py-6 border-b border-houma-white/10"
+                  className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 py-4 sm:py-6 border-b border-houma-white/10"
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 2.0 + 0 * 0.15, duration: 0.8 }}
                 >
-                  <span className="text-houma-white/70 text-xl">Order Number</span>
-                  <span className="text-houma-gold font-mono tracking-wider text-xl">{orderNumber}</span>
+                  <span className="text-houma-white/70 text-sm sm:text-base md:text-lg lg:text-xl">Order Number</span>
+                  <span className="text-houma-gold font-mono tracking-wider text-xs sm:text-sm md:text-base lg:text-xl break-all">{orderNumber}</span>
                 </motion.div>
                 
                 <motion.div 
-                  className="flex justify-between items-center py-6 border-b border-houma-white/10"
+                  className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 py-4 sm:py-6 border-b border-houma-white/10"
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 2.0 + 1 * 0.15, duration: 0.8 }}
                 >
-                  <span className="text-houma-white/70 text-xl">Status</span>
-                  <div className="flex items-center gap-3">
-                    <CheckCircleIcon className="w-6 h-6 text-houma-gold" />
-                    <span className="text-houma-gold text-xl font-light">Confirmed</span>
+                  <span className="text-houma-white/70 text-sm sm:text-base md:text-lg lg:text-xl">Status</span>
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-houma-gold" />
+                    <span className="text-houma-gold text-sm sm:text-base md:text-lg lg:text-xl font-light">Confirmed</span>
                   </div>
                 </motion.div>
                 
                 {paymentIntentId && (
                   <motion.div 
-                    className="flex justify-between items-center py-6 border-b border-houma-white/10"
+                    className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 py-4 sm:py-6 border-b border-houma-white/10"
                     initial={{ opacity: 0, x: -30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 2.0 + 2 * 0.15, duration: 0.8 }}
                   >
-                    <span className="text-houma-white/70 text-xl">Payment ID</span>
-                    <span className="text-houma-gold font-mono text-lg">{paymentIntentId}</span>
+                    <span className="text-houma-white/70 text-sm sm:text-base md:text-lg lg:text-xl">Payment ID</span>
+                    <span className="text-houma-gold font-mono text-xs sm:text-sm md:text-base lg:text-lg break-all">{paymentIntentId}</span>
                   </motion.div>
                 )}
                 
                 <motion.div 
-                  className="flex justify-between items-center py-6 border-b border-houma-white/10"
+                  className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 py-4 sm:py-6 border-b border-houma-white/10"
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 2.0 + 3 * 0.15, duration: 0.8 }}
                 >
-                  <span className="text-houma-white/70 text-xl">Estimated Delivery</span>
-                  <span className="text-houma-white text-xl">3-5 Business Days</span>
+                  <span className="text-houma-white/70 text-sm sm:text-base md:text-lg lg:text-xl">Estimated Delivery</span>
+                  <span className="text-houma-white text-sm sm:text-base md:text-lg lg:text-xl">3-5 Business Days</span>
                 </motion.div>
                 
                 <motion.div 
-                  className="flex justify-between items-center py-6"
+                  className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 py-4 sm:py-6"
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 2.0 + 4 * 0.15, duration: 0.8 }}
                 >
-                  <span className="text-houma-white/70 text-xl">Email Confirmation</span>
-                  <div className="flex items-center gap-3">
-                    <CheckCircleIcon className="w-6 h-6 text-houma-gold" />
-                    <span className="text-houma-white text-xl">Sent</span>
+                  <span className="text-houma-white/70 text-sm sm:text-base md:text-lg lg:text-xl">Email Confirmation</span>
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-houma-gold" />
+                    <span className="text-houma-white text-sm sm:text-base md:text-lg lg:text-xl">Sent</span>
                   </div>
                 </motion.div>
               </div>
@@ -344,16 +344,16 @@ const OrderConfirmation = () => {
 
             {/* Cultural Heritage Message */}
             <motion.div
-              className="mb-20"
+              className="mb-8 sm:mb-12 md:mb-16 lg:mb-20"
               initial={{ opacity: 0 }}
               animate={{ opacity: isVisible ? 1 : 0 }}
               transition={{ delay: 2.5, duration: 1.5 }}
             >
-              <div className="relative max-w-5xl mx-auto">
+              <div className="relative max-w-5xl mx-auto px-4">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-houma-gold/20 to-transparent h-px top-1/2"></div>
-                <div className="bg-houma-black px-16">
+                <div className="bg-houma-black px-4 sm:px-8 md:px-12 lg:px-16">
                   <motion.p 
-                    className="text-2xl text-houma-white/60 italic font-light leading-relaxed"
+                    className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-houma-white/60 italic font-light leading-relaxed"
                     animate={{
                       opacity: [0.6, 1, 0.6]
                     }}
@@ -368,14 +368,14 @@ const OrderConfirmation = () => {
 
             {/* Enhanced Action Buttons */}
             <motion.div
-              className="flex flex-col sm:flex-row gap-8 justify-center items-center mb-20"
+              className="flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-8 justify-center items-center mb-8 sm:mb-12 md:mb-16 lg:mb-20 px-4"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 30 }}
               transition={{ delay: 2.8, duration: 1 }}
             >
-              <Link href="/shop">
+              <Link href="/shop" className="w-full sm:w-auto">
                 <motion.button
-                  className="houma-button group px-16 py-6 text-xl relative overflow-hidden"
+                  className="houma-button group px-6 sm:px-8 md:px-12 lg:px-16 py-3 sm:py-4 md:py-5 lg:py-6 text-sm sm:text-base md:text-lg lg:text-xl relative overflow-hidden w-full sm:w-auto"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, x: -50 }}
@@ -393,16 +393,16 @@ const OrderConfirmation = () => {
                       ease: "linear"
                     }}
                   />
-                  <span className="relative flex items-center">
+                  <span className="relative flex items-center justify-center">
                     CONTINUE SHOPPING
-                    <ArrowRightIcon className="w-6 h-6 ml-4 group-hover:translate-x-2 transition-transform duration-300" />
+                    <ArrowRightIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 ml-2 sm:ml-3 md:ml-4 group-hover:translate-x-2 transition-transform duration-300" />
                   </span>
                 </motion.button>
               </Link>
               
-              <Link href="/">
+              <Link href="/" className="w-full sm:w-auto">
                 <motion.button
-                  className="px-16 py-6 bg-houma-white/8 border border-houma-white/20 text-houma-white hover:bg-houma-white/15 hover:border-houma-gold/40 transition-all duration-500 rounded-xl group text-xl font-light relative overflow-hidden"
+                  className="px-6 sm:px-8 md:px-12 lg:px-16 py-3 sm:py-4 md:py-5 lg:py-6 bg-houma-white/8 border border-houma-white/20 text-houma-white hover:bg-houma-white/15 hover:border-houma-gold/40 transition-all duration-500 rounded-xl group text-sm sm:text-base md:text-lg lg:text-xl font-light relative overflow-hidden w-full sm:w-auto"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, x: 50 }}
@@ -420,7 +420,7 @@ const OrderConfirmation = () => {
                       ease: "linear"
                     }}
                   />
-                  <span className="relative flex items-center">
+                  <span className="relative flex items-center justify-center">
                     RETURN HOME
                   </span>
                 </motion.button>
@@ -429,13 +429,13 @@ const OrderConfirmation = () => {
 
             {/* Social Sharing with Enhanced Design */}
             <motion.div
-              className="mb-20"
+              className="mb-8 sm:mb-12 md:mb-16 lg:mb-20 px-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: isVisible ? 1 : 0 }}
               transition={{ delay: 3.5, duration: 1 }}
             >
               <motion.p 
-                className="text-houma-gold mb-12 text-lg tracking-widest"
+                className="text-houma-gold mb-6 sm:mb-8 md:mb-10 lg:mb-12 text-sm sm:text-base md:text-lg tracking-widest"
                 animate={{
                   opacity: [0.7, 1, 0.7]
                 }}
@@ -443,7 +443,7 @@ const OrderConfirmation = () => {
               >
                 SHARE YOUR EXPERIENCE
               </motion.p>
-              <div className="flex justify-center space-x-8">
+              <div className="flex justify-center space-x-4 sm:space-x-6 md:space-x-8">
                 {[
                   {
                     name: 'Instagram',
@@ -487,7 +487,7 @@ const OrderConfirmation = () => {
                     href={platform.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-8 py-6 bg-houma-white/5 border border-houma-white/10 hover:border-houma-gold/30 transition-all duration-500 rounded-xl relative overflow-hidden group"
+                    className="px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 bg-houma-white/5 border border-houma-white/10 hover:border-houma-gold/30 transition-all duration-500 rounded-xl relative overflow-hidden group"
                     whileHover={{ scale: 1.08, y: -5 }}
                     whileTap={{ scale: 0.95 }}
                     initial={{ opacity: 0, y: 30 }}
@@ -507,7 +507,7 @@ const OrderConfirmation = () => {
                       }}
                     />
                     <span className="relative flex items-center justify-center">
-                      {platform.icon}
+                      <span className="w-5 h-5 sm:w-6 sm:h-6">{platform.icon}</span>
                     </span>
                   </motion.a>
                 ))}

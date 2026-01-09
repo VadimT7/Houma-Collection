@@ -14,7 +14,7 @@ export default async function handler(
   }
 
   try {
-    const { amount, currency = 'usd' } = req.body
+    const { amount, currency = 'cad' } = req.body
 
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({

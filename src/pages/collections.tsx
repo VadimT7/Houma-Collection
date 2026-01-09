@@ -131,11 +131,11 @@ const CollectionsPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            <p className="text-houma-gold text-xs tracking-[0.3em] mb-6">CURATED</p>
-            <h1 className="text-6xl md:text-8xl font-display tracking-wider text-houma-white mb-6">
+            <p className="text-houma-gold text-xs tracking-[0.3em] mb-4 sm:mb-5 md:mb-6 px-4">CURATED</p>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl font-display tracking-wider text-houma-white mb-4 sm:mb-5 md:mb-6 px-4">
               COLLECTIONS
             </h1>
-            <p className="text-xl text-houma-white/80 max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-houma-white/80 max-w-2xl mx-auto px-4">
               Each collection is a chapter in our story. A celebration of heritage, 
               a statement of identity, a vision of the future.
             </p>

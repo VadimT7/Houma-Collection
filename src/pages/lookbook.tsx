@@ -130,11 +130,11 @@ const LookbookPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            <p className="text-houma-gold text-xs tracking-[0.3em] mb-6">EDITORIAL</p>
-            <h1 className="text-6xl md:text-8xl font-display tracking-wider text-houma-white mb-6">
+            <p className="text-houma-gold text-xs tracking-[0.3em] mb-4 sm:mb-5 md:mb-6 px-4">EDITORIAL</p>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl font-display tracking-wider text-houma-white mb-4 sm:mb-5 md:mb-6 px-4">
               LOOKBOOK
             </h1>
-            <p className="text-xl text-houma-white/80 max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-houma-white/80 max-w-2xl mx-auto px-4">
               Visual narratives that transcend fashion. Each editorial is a cultural statement, 
               a story told through fabric and form.
             </p>
@@ -151,9 +151,9 @@ const LookbookPage = () => {
       </section>
 
       {/* Editorial Grid */}
-      <section className="py-20">
-        <div className="houma-container">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <section className="py-12 sm:py-16 md:py-20">
+        <div className="houma-container px-4 sm:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-7 md:gap-8">
             {editorials.map((editorial, index) => (
               <motion.div
                 key={editorial.id}
@@ -210,7 +210,7 @@ const LookbookPage = () => {
       </section>
 
       {/* Behind The Scenes */}
-      <section className="py-20 md:py-32 relative overflow-hidden">
+      <section className="py-12 sm:py-16 md:py-20 lg:py-32 relative overflow-hidden px-4 sm:px-6">
         {/* Background Pattern */}
         <div className="absolute inset-0 pattern-overlay opacity-5" />
         
@@ -232,7 +232,7 @@ const LookbookPage = () => {
               <p className="text-houma-gold text-xs tracking-[0.3em]">PROCESS</p>
               <div className="w-8 h-px bg-houma-gold" />
             </div>
-            <h2 className="text-3xl md:text-5xl font-display tracking-wider text-houma-white mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display tracking-wider text-houma-white mb-3 sm:mb-4">
               BEHIND THE LENS
             </h2>
             <p className="text-sm text-houma-white/60 tracking-[0.2em]">
@@ -350,7 +350,7 @@ const LookbookPage = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-r from-houma-black/50 to-transparent" />
               <div className="absolute bottom-8 left-8">
-                <h3 className="text-3xl font-display text-houma-white mb-2">
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-display text-houma-white mb-2">
                   HERITAGE REIMAGINED
                 </h3>
                 <p className="text-houma-white/70">Spring/Summer 2024</p>
@@ -423,7 +423,7 @@ const LookbookPage = () => {
       </section>
 
       {/* Final Quote Section */}
-      <section className="py-20 relative overflow-hidden">
+      <section className="py-12 sm:py-16 md:py-20 relative overflow-hidden px-4 sm:px-6">
         <div className="houma-container">
           <motion.div
             className="text-center"

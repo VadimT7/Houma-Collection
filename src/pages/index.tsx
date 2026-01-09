@@ -114,17 +114,17 @@ const HomePage = () => {
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             >
               {/* Arabic Text */}
-              <p className="houma-arabic text-5xl md:text-7xl text-houma-gold mb-4 opacity-80">
+              <p className="houma-arabic text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-houma-gold mb-3 sm:mb-4 opacity-80 px-4">
                 حُومة
               </p>
               
               {/* Main Title */}
-              <h1 className="text-6xl md:text-8xl lg:text-9xl font-display tracking-wider text-houma-white mb-6">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl xl:text-9xl font-display tracking-wider text-houma-white mb-4 sm:mb-5 md:mb-6 px-4">
                 <span className="block text-gradient-gold">HOUMA</span>
               </h1>
               
               {/* Tagline */}
-              <p className="text-lg md:text-xl text-houma-white/80 tracking-[0.3em] mb-12 font-light">
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-houma-white/80 tracking-[0.3em] mb-8 sm:mb-10 md:mb-12 font-light px-4">
                 STRENGTH IN HERITAGE
               </p>
 
@@ -155,7 +155,7 @@ const HomePage = () => {
       </section>
 
       {/* Introduction Section */}
-      <section className="py-32 relative overflow-hidden">
+      <section className="py-16 sm:py-20 md:py-24 lg:py-32 relative overflow-hidden">
         <div className="absolute inset-0 pattern-overlay" />
         
         <div className="houma-container relative">
@@ -166,7 +166,7 @@ const HomePage = () => {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl md:text-5xl font-display tracking-wider text-houma-white mb-8">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display tracking-wider text-houma-white mb-6 sm:mb-7 md:mb-8">
               THE CULTURAL <span className="text-gradient-gold">VOICE</span> OF MENA
             </h2>
             <p className="text-lg text-houma-white/70 leading-relaxed mb-6">
@@ -182,7 +182,7 @@ const HomePage = () => {
       </section>
 
       {/* Featured Collection */}
-      <section className="py-20">
+      <section className="py-12 sm:py-16 md:py-20">
         <div className="houma-container">
           <motion.div
             key="el-bidaya"
@@ -221,7 +221,7 @@ const HomePage = () => {
                 <p className="text-houma-gold text-xs tracking-[0.3em] mb-4">
                   ICONS OF IDENTITY
                 </p>
-                <h2 className="text-4xl font-display tracking-wider text-houma-white mb-6">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-display tracking-wider text-houma-white mb-4 sm:mb-5 md:mb-6">
                   EL BIDAYA
                 </h2>
                 <p className="text-lg text-houma-white/70 leading-relaxed mb-8">
@@ -300,7 +300,7 @@ const HomePage = () => {
       </section>
 
       {/* Culture Section */}
-      <section className="py-32 relative overflow-hidden">
+      <section className="py-16 sm:py-20 md:py-24 lg:py-32 relative overflow-hidden">
         <div className="absolute inset-0 noise-overlay" />
         
         <div className="houma-container relative">
@@ -312,7 +312,7 @@ const HomePage = () => {
               viewport={{ once: true }}
             >
               <p className="text-houma-gold text-xs tracking-[0.3em] mb-4">OUR STORY</p>
-              <h2 className="text-4xl md:text-5xl font-display tracking-wider text-houma-white mb-8">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display tracking-wider text-houma-white mb-6 sm:mb-7 md:mb-8">
                 ROOTED IN <span className="text-stroke-gold">CULTURE</span>
               </h2>
               <p className="text-lg text-houma-white/70 leading-relaxed mb-6">
@@ -422,7 +422,7 @@ const HomePage = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4, duration: 0.6 }}
-                      className="text-4xl md:text-5xl font-display tracking-wider text-houma-white"
+                      className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display tracking-wider text-houma-white"
                     >
                       WELCOME TO THE
                     </motion.h2>
@@ -430,7 +430,7 @@ const HomePage = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.6, duration: 0.6 }}
-                      className="text-4xl md:text-5xl font-display tracking-wider text-houma-gold"
+                      className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display tracking-wider text-houma-gold"
                     >
                       HOUMA FAMILY
                     </motion.h3>

@@ -198,7 +198,7 @@ const ContactPage = () => {
             
             {/* Main Title */}
             <motion.h1
-              className="text-6xl md:text-8xl lg:text-9xl font-display tracking-wider text-houma-white mb-8"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl 2xl:text-9xl font-display tracking-wider text-houma-white mb-6 sm:mb-7 md:mb-8 px-4"
               initial={{ opacity: 0, y: 60, scale: 0.8 }}
               animate={{ 
                 opacity: showContent ? 1 : 0, 
@@ -212,7 +212,7 @@ const ContactPage = () => {
             
             {/* Subtitle */}
             <motion.div
-              className="max-w-3xl mx-auto mb-12"
+              className="max-w-3xl mx-auto mb-8 sm:mb-10 md:mb-12 px-4"
               initial={{ opacity: 0, y: 40 }}
               animate={{ 
                 opacity: showContent ? 1 : 0, 
@@ -220,10 +220,10 @@ const ContactPage = () => {
               }}
               transition={{ duration: 1.2, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
-              <p className="text-xl md:text-2xl text-houma-white/90 mb-4 font-light">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-houma-white/90 mb-3 sm:mb-4 font-light">
                 Where tradition meets innovation
               </p>
-              <p className="text-lg text-houma-white/70 font-light">
+              <p className="text-sm sm:text-base md:text-lg text-houma-white/70 font-light">
                 Experience the luxury of connection. Every message is a journey into the heart of Houma.
               </p>
             </motion.div>

@@ -83,11 +83,11 @@ const AboutPage = () => {
             animate={titleInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            <p className="text-houma-gold text-xs tracking-[0.3em] mb-6">OUR STORY</p>
-            <h1 className="text-6xl md:text-8xl font-display tracking-wider text-houma-white mb-6">
+            <p className="text-houma-gold text-xs tracking-[0.3em] mb-4 sm:mb-5 md:mb-6 px-4">OUR STORY</p>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl font-display tracking-wider text-houma-white mb-4 sm:mb-5 md:mb-6 px-4">
               CULTURE IS <span className="text-stroke-gold">LUXURY</span>
             </h1>
-            <p className="text-xl text-houma-white/80 max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-houma-white/80 max-w-2xl mx-auto px-4">
               Where the ancient medinas meet modern runways. Where tradition becomes rebellion.
             </p>
           </motion.div>
@@ -103,11 +103,11 @@ const AboutPage = () => {
       </section>
 
       {/* Manifesto Section */}
-      <section ref={manifestoRef} className="py-32 relative overflow-hidden" id="manifesto">
+      <section ref={manifestoRef} className="py-16 sm:py-20 md:py-24 lg:py-32 relative overflow-hidden" id="manifesto">
         <div className="absolute inset-0 pattern-overlay opacity-20" />
         
         <motion.div
-          className="houma-container relative"
+          className="houma-container relative px-4 sm:px-6"
           style={{ y: manifestoY, scale: manifestoScale }}
         >
           <motion.div
@@ -117,7 +117,7 @@ const AboutPage = () => {
             transition={{ duration: 1 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-5xl font-display tracking-wider text-houma-white text-center mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display tracking-wider text-houma-white text-center mb-8 sm:mb-12 md:mb-16">
               OUR MANIFESTO
             </h2>
 

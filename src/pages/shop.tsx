@@ -249,13 +249,13 @@ const ShopPage = () => {
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
             key={`${selectedCollection}-${selectedFilter}`} // Re-animate when collection or filter changes
           >
-            <h1 className="text-6xl md:text-8xl font-display tracking-wider text-houma-gold mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl font-display tracking-wider text-houma-gold mb-4 sm:mb-5 md:mb-6 px-4">
               {currentHeroData.title}
             </h1>
-            <h2 className="text-6xl md:text-8xl font-display tracking-wider text-houma-white mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl font-display tracking-wider text-houma-white mb-4 sm:mb-5 md:mb-6 px-4">
               {currentHeroData.subtitle}
             </h2>
-            <p className="text-xl text-houma-white/80 max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-houma-white/80 max-w-2xl mx-auto px-4">
               {currentHeroData.description}
             </p>
           </motion.div>

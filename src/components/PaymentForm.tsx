@@ -77,7 +77,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
         },
         body: JSON.stringify({
           amount: Math.round(amount * 100), // Convert to cents
-          currency: 'usd',
+          currency: 'cad',
         }),
       })
 
@@ -140,10 +140,21 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
     }
   }
 
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   const cardElementOptions = {
     style: {
       base: {
-        fontSize: '16px',
+        fontSize: isMobile ? '14px' : '16px',
         color: '#FAFAF8',
         fontFamily: 'Helvetica Neue, sans-serif',
         '::placeholder': {
@@ -162,29 +173,29 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
   // Show loading state if Stripe isn't ready
   if (!stripe || !elements) {
     return (
-      <div className="space-y-6">
-        <div className="p-4 bg-houma-smoke/30 border border-houma-gold/20 rounded">
-          <div className="flex items-center gap-3 mb-2">
-            <CreditCardIcon className="w-5 h-5 text-houma-gold" />
-            <span className="text-sm text-houma-white">Credit / Debit Card</span>
+      <div className="space-y-4 sm:space-y-6">
+        <div className="p-3 sm:p-4 bg-houma-smoke/30 border border-houma-gold/20 rounded">
+          <div className="flex items-center gap-2 sm:gap-3 mb-2">
+            <CreditCardIcon className="w-4 h-4 sm:w-5 sm:h-5 text-houma-gold flex-shrink-0" />
+            <span className="text-xs sm:text-sm text-houma-white">Credit / Debit Card</span>
           </div>
           <p className="text-xs text-houma-white/50">
             Loading secure payment form...
           </p>
         </div>
         <div className="flex justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-houma-gold"></div>
+          <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-houma-gold"></div>
         </div>
       </div>
     )
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="p-4 bg-houma-smoke/30 border border-houma-gold/20 rounded">
-        <div className="flex items-center gap-3 mb-2">
-          <CreditCardIcon className="w-5 h-5 text-houma-gold" />
-          <span className="text-sm text-houma-white">Credit / Debit Card</span>
+    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+      <div className="p-3 sm:p-4 bg-houma-smoke/30 border border-houma-gold/20 rounded">
+        <div className="flex items-center gap-2 sm:gap-3 mb-2">
+          <CreditCardIcon className="w-4 h-4 sm:w-5 sm:h-5 text-houma-gold flex-shrink-0" />
+          <span className="text-xs sm:text-sm text-houma-white">Credit / Debit Card</span>
         </div>
         <p className="text-xs text-houma-white/50">
           All transactions are secure and encrypted
@@ -195,18 +206,18 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
         <label className="block text-xs text-houma-white/50 tracking-[0.2em] mb-2">
           CARD INFORMATION *
         </label>
-        <div className="p-4 bg-transparent border border-houma-white/20 rounded focus-within:border-houma-gold transition-colors">
+        <div className="p-3 sm:p-4 bg-transparent border border-houma-white/20 rounded focus-within:border-houma-gold transition-colors">
           <CardElement options={cardElementOptions} />
         </div>
         {cardError && (
-          <p className="text-red-400 text-sm mt-2">{cardError}</p>
+          <p className="text-red-400 text-xs sm:text-sm mt-2">{cardError}</p>
         )}
       </div>
 
       <button
         type="submit"
         disabled={!stripe || isProcessing}
-        className="w-full bg-houma-gold text-houma-black px-8 py-4 uppercase tracking-widest 
+        className="w-full bg-houma-gold text-houma-black px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base uppercase tracking-widest 
                  hover:bg-houma-gold-light transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isProcessing ? 'Processing Payment...' : 'Pay'}

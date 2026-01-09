@@ -122,11 +122,11 @@ const ProductDetailPage: React.FC = () => {
         <meta property="og:image" content={product.images && product.images.length > 0 ? getImagePath(product.images[0]) : '/images/placeholder.svg'} />
       </Head>
 
-      <section className="pt-24 pb-8">
-        <div className="houma-container">
+      <section className="pt-16 sm:pt-20 md:pt-24 pb-6 sm:pb-8">
+        <div className="houma-container px-4 sm:px-6">
           {/* Breadcrumb */}
-          <nav className="mb-8">
-            <ol className="flex items-center space-x-2 text-sm">
+          <nav className="mb-4 sm:mb-6 md:mb-8">
+            <ol className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm overflow-x-auto pb-2">
               <li>
                 <Link href="/" className="text-houma-white/50 hover:text-houma-gold transition-colors">
                   Home
@@ -152,9 +152,9 @@ const ProductDetailPage: React.FC = () => {
             </ol>
           </nav>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12">
             {/* Image Gallery */}
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {/* Main Image */}
               <div className="relative aspect-square bg-houma-black/50 rounded-lg overflow-hidden group">
                 <AnimatePresence mode="wait">
@@ -215,7 +215,7 @@ const ProductDetailPage: React.FC = () => {
 
               {/* Thumbnail Gallery */}
               {product.images && product.images.length > 1 && (
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4">
                   {product.images.map((image, index) => (
                     <button
                       key={index}
@@ -240,28 +240,28 @@ const ProductDetailPage: React.FC = () => {
             </div>
 
             {/* Product Info */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-5 md:space-y-6">
               {/* Header */}
               <div>
-                <p className="text-houma-gold text-sm tracking-wider mb-2">
+                <p className="text-houma-gold text-xs sm:text-sm tracking-wider mb-2">
                   {product.collection}
                 </p>
-                <h1 className="text-4xl font-display tracking-wider text-houma-white mb-4">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-display tracking-wider text-houma-white mb-3 sm:mb-4">
                   {product.name}
                 </h1>
-                <p className="text-3xl text-houma-gold">
+                <p className="text-2xl sm:text-3xl text-houma-gold">
                   {formatPrice(product.price)}
                 </p>
               </div>
 
               {/* Description */}
-              <p className="text-houma-white/80 leading-relaxed">
+              <p className="text-sm sm:text-base text-houma-white/80 leading-relaxed">
                 {product.description}
               </p>
 
               {/* Size Selection */}
               <div>
-                <label className="block text-sm tracking-wider text-houma-white mb-3">
+                <label className="block text-xs sm:text-sm tracking-wider text-houma-white mb-2 sm:mb-3">
                   SIZE
                 </label>
                 <div className="grid grid-cols-4 gap-2">
@@ -270,7 +270,7 @@ const ProductDetailPage: React.FC = () => {
                       key={size}
                       onClick={() => setSelectedSize(size)}
                       className={cn(
-                        'py-3 border text-sm tracking-wider transition-all',
+                        'py-2 sm:py-3 border text-xs sm:text-sm tracking-wider transition-all',
                         selectedSize === size
                           ? 'border-houma-gold bg-houma-gold text-houma-black'
                           : 'border-houma-white/20 text-houma-white hover:border-houma-gold'
@@ -284,7 +284,7 @@ const ProductDetailPage: React.FC = () => {
 
               {/* Color Selection */}
               <div>
-                <label className="block text-sm tracking-wider text-houma-white mb-3">
+                <label className="block text-xs sm:text-sm tracking-wider text-houma-white mb-2 sm:mb-3">
                   COLOR
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -293,7 +293,7 @@ const ProductDetailPage: React.FC = () => {
                       key={color}
                       onClick={() => setSelectedColor(color)}
                       className={cn(
-                        'px-4 py-2 border text-sm tracking-wider transition-all',
+                        'px-3 sm:px-4 py-1.5 sm:py-2 border text-xs sm:text-sm tracking-wider transition-all',
                         selectedColor === color
                           ? 'border-houma-gold bg-houma-gold/10 text-houma-gold'
                           : 'border-houma-white/20 text-houma-white hover:border-houma-gold'
@@ -306,12 +306,12 @@ const ProductDetailPage: React.FC = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-4">
+              <div className="flex gap-2 sm:gap-3 md:gap-4">
                 <button
                   onClick={handleAddToCart}
                   disabled={!product.inStock}
                   className={cn(
-                    'flex-1 py-4 text-center tracking-wider transition-all',
+                    'flex-1 py-3 sm:py-4 text-xs sm:text-sm md:text-base text-center tracking-wider transition-all',
                     product.inStock
                       ? 'bg-houma-gold text-houma-black hover:bg-houma-gold/90'
                       : 'bg-houma-white/10 text-houma-white/50 cursor-not-allowed'
@@ -321,31 +321,31 @@ const ProductDetailPage: React.FC = () => {
                 </button>
                 <button
                   onClick={handleWishlist}
-                  className="w-14 h-14 border border-houma-white/20 flex items-center justify-center
-                           hover:border-houma-gold transition-colors"
+                  className="w-12 h-12 sm:w-14 sm:h-14 border border-houma-white/20 flex items-center justify-center
+                           hover:border-houma-gold transition-colors flex-shrink-0"
                 >
                   {isWishlisted ? (
-                    <HeartIconSolid className="w-6 h-6 text-houma-gold" />
+                    <HeartIconSolid className="w-5 h-5 sm:w-6 sm:h-6 text-houma-gold" />
                   ) : (
-                    <HeartIcon className="w-6 h-6 text-houma-white" />
+                    <HeartIcon className="w-5 h-5 sm:w-6 sm:h-6 text-houma-white" />
                   )}
                 </button>
                 <button
                   onClick={handleShare}
-                  className="w-14 h-14 border border-houma-white/20 flex items-center justify-center
-                           hover:border-houma-gold transition-colors"
+                  className="w-12 h-12 sm:w-14 sm:h-14 border border-houma-white/20 flex items-center justify-center
+                           hover:border-houma-gold transition-colors flex-shrink-0"
                 >
-                  <ShareIcon className="w-6 h-6 text-houma-white" />
+                  <ShareIcon className="w-5 h-5 sm:w-6 sm:h-6 text-houma-white" />
                 </button>
               </div>
 
               {/* Product Details Tabs */}
-              <div className="border-t border-houma-white/10 pt-6">
-                <div className="flex gap-8 mb-6">
+              <div className="border-t border-houma-white/10 pt-4 sm:pt-6">
+                <div className="flex gap-4 sm:gap-6 md:gap-8 mb-4 sm:mb-6 overflow-x-auto pb-2">
                   <button
                     onClick={() => setActiveTab('details')}
                     className={cn(
-                      'text-sm tracking-wider pb-2 border-b-2 transition-all',
+                      'text-xs sm:text-sm tracking-wider pb-2 border-b-2 transition-all whitespace-nowrap flex-shrink-0',
                       activeTab === 'details'
                         ? 'text-houma-gold border-houma-gold'
                         : 'text-houma-white/50 border-transparent hover:text-houma-white'
@@ -356,7 +356,7 @@ const ProductDetailPage: React.FC = () => {
                   <button
                     onClick={() => setActiveTab('story')}
                     className={cn(
-                      'text-sm tracking-wider pb-2 border-b-2 transition-all',
+                      'text-xs sm:text-sm tracking-wider pb-2 border-b-2 transition-all whitespace-nowrap flex-shrink-0',
                       activeTab === 'story'
                         ? 'text-houma-gold border-houma-gold'
                         : 'text-houma-white/50 border-transparent hover:text-houma-white'
@@ -367,7 +367,7 @@ const ProductDetailPage: React.FC = () => {
                   <button
                     onClick={() => setActiveTab('care')}
                     className={cn(
-                      'text-sm tracking-wider pb-2 border-b-2 transition-all',
+                      'text-xs sm:text-sm tracking-wider pb-2 border-b-2 transition-all whitespace-nowrap flex-shrink-0',
                       activeTab === 'care'
                         ? 'text-houma-gold border-houma-gold'
                         : 'text-houma-white/50 border-transparent hover:text-houma-white'
@@ -426,18 +426,18 @@ const ProductDetailPage: React.FC = () => {
               </div>
 
               {/* Trust Badges */}
-              <div className="grid grid-cols-3 gap-4 pt-6 border-t border-houma-white/10">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 pt-4 sm:pt-6 border-t border-houma-white/10">
                 <div className="flex flex-col items-center text-center">
-                  <ShieldCheckIcon className="w-8 h-8 text-houma-gold mb-2" />
-                  <p className="text-xs text-houma-white/70">Authentic Design</p>
+                  <ShieldCheckIcon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-houma-gold mb-1 sm:mb-2" />
+                  <p className="text-[10px] sm:text-xs text-houma-white/70">Authentic Design</p>
                 </div>
                 <div className="flex flex-col items-center text-center">
-                  <TruckIcon className="w-8 h-8 text-houma-gold mb-2" />
-                  <p className="text-xs text-houma-white/70">Worldwide Shipping</p>
+                  <TruckIcon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-houma-gold mb-1 sm:mb-2" />
+                  <p className="text-[10px] sm:text-xs text-houma-white/70">Worldwide Shipping</p>
                 </div>
                 <div className="flex flex-col items-center text-center">
-                  <ArrowPathIcon className="w-8 h-8 text-houma-gold mb-2" />
-                  <p className="text-xs text-houma-white/70">Easy Returns</p>
+                  <ArrowPathIcon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-houma-gold mb-1 sm:mb-2" />
+                  <p className="text-[10px] sm:text-xs text-houma-white/70">Easy Returns</p>
                 </div>
               </div>
             </div>
@@ -445,11 +445,11 @@ const ProductDetailPage: React.FC = () => {
 
           {/* Related Products */}
           {relatedProducts.length > 0 && (
-            <section className="mt-20">
-              <h2 className="text-3xl font-display tracking-wider text-houma-white mb-8">
+            <section className="mt-12 sm:mt-16 md:mt-20">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-display tracking-wider text-houma-white mb-4 sm:mb-6 md:mb-8">
                 YOU MAY ALSO LIKE
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
                 {relatedProducts.map((relatedProduct, index) => (
                   <ProductCard key={relatedProduct.id} product={relatedProduct} index={index} />
                 ))}
