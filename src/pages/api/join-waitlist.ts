@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Check current count
     const countResult = await query<{ count: string }>('SELECT COUNT(*) as count FROM waitlist')
-    const actualCount = parseInt(countResult[0]?.count || '0')
+    const actualCount = parseInt(countResult[0].count)
     const currentCount = actualCount + FAKE_OFFSET
 
     // Check if waitlist is full
