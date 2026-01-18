@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
+import { put } from '@vercel/blob'
 import formidable from 'formidable'
 import fs from 'fs'
-import path from 'path'
 import { v4 as uuidv4 } from 'uuid'
 
 // Disable body parsing, we'll handle it with formidable
@@ -11,20 +11,11 @@ export const config = {
   },
 }
 
-const UPLOAD_DIR = path.join(process.cwd(), 'public', 'product-images')
-
-// Ensure upload directory exists
-function ensureUploadDir() {
-  if (!fs.existsSync(UPLOAD_DIR)) {
-    fs.mkdirSync(UPLOAD_DIR, { recursive: true })
-  }
-}
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // Simple admin password check (in production, use proper auth)
+  // Simple admin password check
   const adminPassword = req.headers['x-admin-password']
   if (adminPassword !== process.env.ADMIN_PASSWORD && adminPassword !== 'houma-admin-2024') {
     return res.status(401).json({ error: 'Unauthorized' })
@@ -34,10 +25,18 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  ensureUploadDir()
+  // Check for Vercel Blob token
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    console.error('BLOB_READ_WRITE_TOKEN is not configured')
+    return res.status(500).json({ 
+      error: 'Storage not configured', 
+      details: 'BLOB_READ_WRITE_TOKEN environment variable is missing' 
+    })
+  }
 
+  // Use /tmp directory for temporary file storage (works on Vercel)
   const form = formidable({
-    uploadDir: UPLOAD_DIR,
+    uploadDir: '/tmp',
     keepExtensions: true,
     maxFileSize: 10 * 1024 * 1024, // 10MB
   })
@@ -50,25 +49,37 @@ export default async function handler(
       return res.status(400).json({ error: 'No file uploaded' })
     }
 
+    // Read the file from temp storage
+    const fileBuffer = fs.readFileSync(file.filepath)
+    
     // Generate unique filename
-    const ext = path.extname(file.originalFilename || '.jpg')
-    const newFilename = `${uuidv4()}${ext}`
-    const newPath = path.join(UPLOAD_DIR, newFilename)
+    const ext = file.originalFilename?.split('.').pop() || 'jpg'
+    const filename = `product-images/${uuidv4()}.${ext}`
 
-    // Rename file to new unique name
-    fs.renameSync(file.filepath, newPath)
+    // Upload to Vercel Blob
+    const blob = await put(filename, fileBuffer, {
+      access: 'public',
+      contentType: file.mimetype || 'image/jpeg',
+    })
 
-    // Return the public URL
-    const imageUrl = `/product-images/${newFilename}`
+    // Clean up temp file
+    try {
+      fs.unlinkSync(file.filepath)
+    } catch (e) {
+      // Ignore cleanup errors
+    }
 
+    // Return the blob URL
     res.status(200).json({ 
       success: true, 
-      url: imageUrl,
-      filename: newFilename
+      url: blob.url,
+      filename: filename
     })
   } catch (error: any) {
     console.error('Upload error:', error)
-    res.status(500).json({ error: 'Failed to upload file', details: error.message })
+    res.status(500).json({ 
+      error: 'Failed to upload file', 
+      details: error.message 
+    })
   }
 }
-
