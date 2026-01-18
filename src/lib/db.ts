@@ -83,6 +83,20 @@ export async function initializeDatabase(): Promise<void> {
       CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status)
     `)
 
+    // Create waitlist table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS waitlist (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `)
+
+    // Create index on email for faster lookups
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_waitlist_email ON waitlist(email)
+    `)
+
     console.log('Database tables initialized successfully')
   } catch (error) {
     console.error('Error initializing database:', error)

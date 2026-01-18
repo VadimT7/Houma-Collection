@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { sql } from '@/lib/db'
+import { query } from '@/lib/db'
 
 const MAX_SPOTS = 300
 const FAKE_OFFSET = 127 // Faking enrollment to show 173 spots remaining
@@ -25,8 +25,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const normalizedEmail = email.toLowerCase().trim()
 
     // Check current count
-    const countResult = await sql`SELECT COUNT(*) as count FROM waitlist`
-    const actualCount = parseInt(countResult[0].count)
+    const countResult = await query<{ count: string }>('SELECT COUNT(*) as count FROM waitlist')
+    const actualCount = parseInt(countResult[0]?.count || '0')
     const currentCount = actualCount + FAKE_OFFSET
 
     // Check if waitlist is full
@@ -39,10 +39,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Try to insert email
     try {
-      await sql`
-        INSERT INTO waitlist (email) 
-        VALUES (${normalizedEmail})
-      `
+      await query(
+        'INSERT INTO waitlist (email) VALUES ($1)',
+        [normalizedEmail]
+      )
       
       const spotsRemaining = MAX_SPOTS - (currentCount + 1)
 
