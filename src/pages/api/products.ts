@@ -6,6 +6,13 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2023-10-16',
 })
 
+// Stock data structure: { color: { size: quantity } }
+export interface StockData {
+  [color: string]: {
+    [size: string]: number
+  }
+}
+
 export interface StripeProduct {
   id: string
   name: string
@@ -20,13 +27,14 @@ export interface StripeProduct {
   collection: string
   inStock: boolean
   featured?: boolean
+  stock?: StockData  // Stock per size+color combination
 }
 
-// Convert Stripe product to our format
-function convertStripeProduct(
+// Convert Stripe product to our format (async to support database lookup)
+async function convertStripeProduct(
   product: Stripe.Product,
   price: Stripe.Price
-): StripeProduct | null {
+): Promise<StripeProduct | null> {
   // Skip archived or inactive products
   if (!product.active) return null
 
@@ -69,8 +77,8 @@ function convertStripeProduct(
     }
   }
   
-  // Check for locally stored data (from admin dashboard)
-  // Local data takes priority over Stripe metadata
+  // Check for database stored data (from admin dashboard)
+  // Database data takes priority over Stripe metadata
   let localCategory = metadata.category || 'Uncategorized'
   let localCollection = collection
   let localColors = colors
@@ -78,9 +86,10 @@ function convertStripeProduct(
   let localCulturalStory = metadata.culturalStory || ''
   let localFeatured = metadata.featured === 'true'
   let localInStock = metadata.inStock !== 'false'
+  let localStock: StockData | undefined = undefined
   
   try {
-    const localData = getProductImages(product.id)
+    const localData = await getProductImages(product.id)
     if (localData) {
       // If we have local default images, use those
       if (localData.defaultImages && localData.defaultImages.length > 0) {
@@ -98,10 +107,12 @@ function convertStripeProduct(
       if (localData.culturalStory) localCulturalStory = localData.culturalStory
       if (localData.featured !== undefined) localFeatured = localData.featured
       if (localData.inStock !== undefined) localInStock = localData.inStock
+      // Get stock data
+      if (localData.stock) localStock = localData.stock
     }
   } catch (e) {
-    // Ignore errors reading local data - just use Stripe data
-    console.error('Error reading local product data:', e)
+    // Ignore errors reading database data - just use Stripe data
+    console.error('Error reading product data from database:', e)
   }
   
   return {
@@ -118,6 +129,7 @@ function convertStripeProduct(
     collection: localCollection,
     inStock: localInStock,
     featured: localFeatured,
+    stock: localStock,
   }
 }
 
@@ -153,11 +165,11 @@ export default async function handler(
         })
         
         if (prices.data.length > 0) {
-          const converted = convertStripeProduct(product, prices.data[0])
+          const converted = await convertStripeProduct(product, prices.data[0])
           if (converted) formattedProducts.push(converted)
         }
       } else {
-        const converted = convertStripeProduct(product, defaultPrice)
+        const converted = await convertStripeProduct(product, defaultPrice)
         if (converted) formattedProducts.push(converted)
       }
     }

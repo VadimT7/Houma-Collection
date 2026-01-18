@@ -120,8 +120,10 @@ const CheckoutForm = () => {
         orderNumber += chars.charAt(Math.floor(Math.random() * chars.length))
       }
       
-      // Prepare order details for email
+      // Prepare order details for API
       const orderItems = items.map(item => ({
+        productId: item.product.id,
+        productName: item.product.name,
         name: item.product.name,
         quantity: item.quantity,
         price: item.product.price,
@@ -129,6 +131,46 @@ const CheckoutForm = () => {
         color: item.selectedColor,
         image: item.product.images[0] || '',
       }))
+
+      // Create order and deduct stock
+      try {
+        console.log('Creating order and deducting stock...')
+        const orderResponse = await fetch('/api/create-order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            orderNumber,
+            paymentIntentId: paymentIntent.id,
+            items: orderItems,
+            subtotal,
+            shipping,
+            tax,
+            total,
+            shippingAddress: {
+              firstName: shippingInfo.firstName,
+              lastName: shippingInfo.lastName,
+              email: shippingInfo.email,
+              phone: shippingInfo.phone,
+              address: shippingInfo.address,
+              apartment: shippingInfo.apartment,
+              city: shippingInfo.city,
+              postalCode: shippingInfo.postalCode,
+              country: shippingInfo.country,
+            }
+          }),
+        })
+        
+        const orderResult = await orderResponse.json()
+        if (orderResponse.ok) {
+          console.log('Order created successfully:', orderResult)
+        } else {
+          console.error('Failed to create order:', orderResult)
+        }
+      } catch (orderError) {
+        console.error('Error creating order:', orderError)
+      }
       
       // Send order confirmation email
       try {
@@ -170,7 +212,7 @@ const CheckoutForm = () => {
           toast.success('Payment successful! Confirmation email sent.')
         } else {
           console.error('Email sending failed:', emailResult.error)
-          toast.success('Payment successful! Order placed.')
+      toast.success('Payment successful! Order placed.')
         }
       } catch (emailError) {
         console.error('Failed to send email:', emailError)

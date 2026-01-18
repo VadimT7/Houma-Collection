@@ -1,6 +1,13 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+// Stock data structure: { color: { size: quantity } }
+export interface StockData {
+  [color: string]: {
+    [size: string]: number
+  }
+}
+
 export interface Product {
   id: string
   name: string
@@ -15,6 +22,7 @@ export interface Product {
   collection: string
   inStock: boolean
   featured?: boolean
+  stock?: StockData  // Stock per size+color combination
 }
 
 export interface CartItem {

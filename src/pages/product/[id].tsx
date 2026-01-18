@@ -37,6 +37,30 @@ const ProductDetailPage: React.FC = () => {
   const [showZoom, setShowZoom] = useState(false)
   const [activeTab, setActiveTab] = useState<'details' | 'story' | 'care'>('details')
 
+  // Get stock for a specific color+size combination
+  const getStock = (color: string, size: string): number => {
+    if (!product?.stock?.[color]?.[size]) return 0
+    return product.stock[color][size]
+  }
+
+  // Check if selected combo is in stock
+  const isSelectedComboInStock = React.useMemo(() => {
+    if (!product || !selectedColor || !selectedSize) return false
+    // If no stock data exists, fall back to overall inStock status
+    if (!product.stock || Object.keys(product.stock).length === 0) {
+      return product.inStock
+    }
+    return getStock(selectedColor, selectedSize) > 0
+  }, [product, selectedColor, selectedSize])
+
+  // Check if any variant is available (for showing product as available overall)
+  const hasAnyStock = React.useMemo(() => {
+    if (!product?.stock) return product?.inStock ?? false
+    return Object.values(product.stock).some(sizes => 
+      Object.values(sizes).some(qty => qty > 0)
+    )
+  }, [product])
+
   // Load product when ID changes or products are fetched
   useEffect(() => {
     if (id && typeof id === 'string' && products.length > 0) {
@@ -80,8 +104,8 @@ const ProductDetailPage: React.FC = () => {
   const handleAddToCart = () => {
     if (!product) return
     
-    if (!product.inStock) {
-      toast.error('This product is currently out of stock')
+    if (!isSelectedComboInStock) {
+      toast.error('This color/size combination is out of stock')
       return
     }
     
@@ -284,20 +308,35 @@ const ProductDetailPage: React.FC = () => {
                   SIZE
                 </label>
                 <div className="grid grid-cols-4 gap-2">
-                  {product.sizes.map((size) => (
+                  {product.sizes.map((size) => {
+                    // Check if this size is available in the selected color
+                    const sizeStock = selectedColor ? getStock(selectedColor, size) : 0
+                    const hasStockData = product.stock && Object.keys(product.stock).length > 0
+                    const isOutOfStock = hasStockData && sizeStock === 0
+                    const isLowStock = hasStockData && sizeStock > 0 && sizeStock <= 3
+                    
+                    return (
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
                       className={cn(
-                        'py-2 sm:py-3 border text-xs sm:text-sm tracking-wider transition-all',
+                          'py-2 sm:py-3 border text-xs sm:text-sm tracking-wider transition-all relative',
                         selectedSize === size
-                          ? 'border-houma-gold bg-houma-gold text-houma-black'
+                            ? isOutOfStock
+                              ? 'border-red-500/50 bg-red-500/10 text-red-400'
+                              : 'border-houma-gold bg-houma-gold text-houma-black'
+                            : isOutOfStock
+                              ? 'border-houma-white/10 text-houma-white/30 line-through'
                           : 'border-houma-white/20 text-houma-white hover:border-houma-gold'
                       )}
                     >
                       {size}
+                        {isLowStock && !isOutOfStock && (
+                          <span className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-500 rounded-full" title={`Only ${sizeStock} left`} />
+                        )}
                     </button>
-                  ))}
+                    )
+                  })}
                 </div>
               </div>
 
@@ -307,36 +346,71 @@ const ProductDetailPage: React.FC = () => {
                   COLOR
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {product.colors.map((color) => (
+                  {product.colors.map((color) => {
+                    // Check if any size is available in this color
+                    const hasStockData = product.stock && Object.keys(product.stock).length > 0
+                    const colorTotalStock = hasStockData && product.stock?.[color]
+                      ? Object.values(product.stock[color]).reduce((sum, qty) => sum + qty, 0)
+                      : 0
+                    const isColorOutOfStock = hasStockData && colorTotalStock === 0
+                    
+                    return (
                     <button
                       key={color}
                       onClick={() => setSelectedColor(color)}
                       className={cn(
-                        'px-3 sm:px-4 py-1.5 sm:py-2 border text-xs sm:text-sm tracking-wider transition-all',
+                          'px-3 sm:px-4 py-1.5 sm:py-2 border text-xs sm:text-sm tracking-wider transition-all relative',
                         selectedColor === color
-                          ? 'border-houma-gold bg-houma-gold/10 text-houma-gold'
+                            ? isColorOutOfStock
+                              ? 'border-red-500/50 bg-red-500/10 text-red-400'
+                              : 'border-houma-gold bg-houma-gold/10 text-houma-gold'
+                            : isColorOutOfStock
+                              ? 'border-houma-white/10 text-houma-white/30'
                           : 'border-houma-white/20 text-houma-white hover:border-houma-gold'
                       )}
                     >
                       {color}
+                        {isColorOutOfStock && (
+                          <span className="ml-1 text-[10px] text-red-400">(Out)</span>
+                        )}
                     </button>
-                  ))}
+                    )
+                  })}
                 </div>
               </div>
+
+              {/* Stock Status Indicator */}
+              {product.stock && Object.keys(product.stock).length > 0 && (
+                <div className={cn(
+                  'px-3 py-2 rounded text-xs sm:text-sm',
+                  isSelectedComboInStock
+                    ? getStock(selectedColor, selectedSize) <= 3
+                      ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/30'
+                      : 'bg-green-500/10 text-green-400 border border-green-500/30'
+                    : 'bg-red-500/10 text-red-400 border border-red-500/30'
+                )}>
+                  {isSelectedComboInStock
+                    ? getStock(selectedColor, selectedSize) <= 3
+                      ? `Only ${getStock(selectedColor, selectedSize)} left in stock!`
+                      : `${getStock(selectedColor, selectedSize)} in stock`
+                    : 'This combination is out of stock'
+                  }
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="flex gap-2 sm:gap-3 md:gap-4">
                 <button
                   onClick={handleAddToCart}
-                  disabled={!product.inStock}
+                  disabled={!isSelectedComboInStock}
                   className={cn(
                     'flex-1 py-3 sm:py-4 text-xs sm:text-sm md:text-base text-center tracking-wider transition-all',
-                    product.inStock
+                    isSelectedComboInStock
                       ? 'bg-houma-gold text-houma-black hover:bg-houma-gold/90'
                       : 'bg-houma-white/10 text-houma-white/50 cursor-not-allowed'
                   )}
                 >
-                  {product.inStock ? 'ADD TO BAG' : 'OUT OF STOCK'}
+                  {isSelectedComboInStock ? 'ADD TO BAG' : 'OUT OF STOCK'}
                 </button>
                 <button
                   onClick={handleWishlist}

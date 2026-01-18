@@ -16,7 +16,7 @@ export default async function handler(
   if (req.method === 'GET') {
     // Get data for a specific product or all products
     if (productId && typeof productId === 'string') {
-      const data = getProductImages(productId)
+      const data = await getProductImages(productId)
       return res.status(200).json(data || { 
         defaultImages: [], 
         colorImages: {},
@@ -26,10 +26,11 @@ export default async function handler(
         sizes: [],
         culturalStory: '',
         featured: false,
-        inStock: true
+        inStock: true,
+        stock: {}
       })
     } else {
-      const allData = getAllProductImages()
+      const allData = await getAllProductImages()
       return res.status(200).json(allData)
     }
   }
@@ -49,10 +50,11 @@ export default async function handler(
       sizes,
       culturalStory,
       featured,
-      inStock
+      inStock,
+      stock
     } = req.body
 
-    const saved = saveProductImages(productId, {
+    const saved = await saveProductImages(productId, {
       defaultImages: defaultImages || [],
       colorImages: colorImages || {},
       category,
@@ -61,7 +63,8 @@ export default async function handler(
       sizes,
       culturalStory,
       featured,
-      inStock
+      inStock,
+      stock
     })
 
     return res.status(200).json(saved)
@@ -69,4 +72,3 @@ export default async function handler(
 
   return res.status(405).json({ error: 'Method not allowed' })
 }
-
