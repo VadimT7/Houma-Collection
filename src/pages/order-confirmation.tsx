@@ -17,20 +17,31 @@ const OrderConfirmation = () => {
   const router = useRouter()
   const [orderNumber, setOrderNumber] = useState('')
   const [paymentIntentId, setPaymentIntentId] = useState('')
+  const [emailSent, setEmailSent] = useState(false)
+  const [customerEmail, setCustomerEmail] = useState('')
   const [isVisible, setIsVisible] = useState(false)
   const [showParticles, setShowParticles] = useState(false)
   const controls = useAnimation()
 
   useEffect(() => {
-    // Get payment intent ID from URL if available
-    const { payment_intent } = router.query
+    // Get parameters from URL
+    const { payment_intent, order, email, email_sent } = router.query
     if (payment_intent) {
       setPaymentIntentId(payment_intent as string)
     }
-    
-    // Generate a random order number
-    const orderNum = `HOUMA-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
-    setOrderNumber(orderNum)
+    if (order) {
+      setOrderNumber(order as string)
+    } else {
+      // Generate a random order number if not provided
+      const orderNum = `HOUMA-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+      setOrderNumber(orderNum)
+    }
+    if (email) {
+      setCustomerEmail(decodeURIComponent(email as string))
+    }
+    if (email_sent === 'true') {
+      setEmailSent(true)
+    }
     
     // Trigger visibility after a brief delay
     setTimeout(() => setIsVisible(true), 300)
@@ -323,8 +334,11 @@ const OrderConfirmation = () => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 2.0 + 3 * 0.15, duration: 0.8 }}
                 >
-                  <span className="text-houma-white/70 text-sm sm:text-base md:text-lg lg:text-xl">Estimated Delivery</span>
-                  <span className="text-houma-white text-sm sm:text-base md:text-lg lg:text-xl">3-5 Business Days</span>
+                  <span className="text-houma-white/70 text-sm sm:text-base md:text-lg lg:text-xl">Delivery Time</span>
+                  <div className="flex flex-col items-end text-right">
+                    <span className="text-houma-white text-sm sm:text-base md:text-lg lg:text-xl">Canada: 2-6 business days</span>
+                    <span className="text-houma-white/80 text-xs sm:text-sm md:text-base lg:text-lg">International: 5-10 business days</span>
+                  </div>
                 </motion.div>
                 
                 <motion.div 
@@ -334,9 +348,16 @@ const OrderConfirmation = () => {
                   transition={{ delay: 2.0 + 4 * 0.15, duration: 0.8 }}
                 >
                   <span className="text-houma-white/70 text-sm sm:text-base md:text-lg lg:text-xl">Email Confirmation</span>
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-houma-gold" />
-                    <span className="text-houma-white text-sm sm:text-base md:text-lg lg:text-xl">Sent</span>
+                  <div className="flex flex-col items-end">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-houma-gold" />
+                      <span className="text-houma-white text-sm sm:text-base md:text-lg lg:text-xl">
+                        {emailSent ? 'Sent' : 'Pending'}
+                      </span>
+                    </div>
+                    {customerEmail && (
+                      <span className="text-houma-white/50 text-xs sm:text-sm mt-1">{customerEmail}</span>
+                    )}
                   </div>
                 </motion.div>
               </div>

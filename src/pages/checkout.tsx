@@ -113,15 +113,75 @@ const CheckoutForm = () => {
       setIsProcessing(false) // Stop processing state
       setIsRedirecting(true) // Prevent cart empty check from triggering
       
-      // Here you could save the order to your database
-      // For now, we'll just show success and redirect
-      toast.success('Payment successful! Order placed.')
+      // Generate order number
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+      let orderNumber = 'HOUMA-'
+      for (let i = 0; i < 8; i++) {
+        orderNumber += chars.charAt(Math.floor(Math.random() * chars.length))
+      }
+      
+      // Prepare order details for email
+      const orderItems = items.map(item => ({
+        name: item.product.name,
+        quantity: item.quantity,
+        price: item.product.price,
+        size: item.selectedSize,
+        color: item.selectedColor,
+        image: item.product.images[0] || '',
+      }))
+      
+      // Send order confirmation email
+      try {
+        console.log('Sending order confirmation email...')
+        const emailResponse = await fetch('/api/send-order-confirmation', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: shippingInfo.email,
+            orderDetails: {
+              orderNumber,
+              paymentIntentId: paymentIntent.id,
+              items: orderItems,
+              subtotal,
+              shipping,
+              tax,
+              total,
+              shippingAddress: {
+                firstName: shippingInfo.firstName,
+                lastName: shippingInfo.lastName,
+                email: shippingInfo.email,
+                address: shippingInfo.address,
+                apartment: shippingInfo.apartment,
+                city: shippingInfo.city,
+                postalCode: shippingInfo.postalCode,
+                country: shippingInfo.country,
+                phone: shippingInfo.phone,
+              },
+            },
+          }),
+        })
+        
+        const emailResult = await emailResponse.json()
+        console.log('Email result:', emailResult)
+        
+        if (emailResult.success) {
+          toast.success('Payment successful! Confirmation email sent.')
+        } else {
+          console.error('Email sending failed:', emailResult.error)
+          toast.success('Payment successful! Order placed.')
+        }
+      } catch (emailError) {
+        console.error('Failed to send email:', emailError)
+        toast.success('Payment successful! Order placed.')
+      }
       
       // Clear cart first to prevent any state conflicts
       clearCart()
       
-      // Redirect immediately to order confirmation
-      const redirectUrl = `/order-confirmation?payment_intent=${paymentIntent.id}`
+      // Redirect immediately to order confirmation with email status
+      const redirectUrl = `/order-confirmation?payment_intent=${paymentIntent.id}&order=${orderNumber}&email=${encodeURIComponent(shippingInfo.email)}&email_sent=true`
       console.log('Redirecting to:', redirectUrl)
       
       // Use window.location for a clean redirect
@@ -638,6 +698,19 @@ const CheckoutForm = () => {
                                        px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base focus:outline-none focus:border-houma-gold transition-colors"
                             />
                           </div>
+                        </div>
+                      </div>
+                      
+                      {/* Delivery Time Info */}
+                      <div className="mt-6 sm:mt-8 p-4 sm:p-5 bg-houma-white/5 border border-houma-gold/20 rounded">
+                        <p className="text-xs sm:text-sm text-houma-gold tracking-wider mb-3 sm:mb-4">DELIVERY TIME</p>
+                        <div className="space-y-2">
+                          <p className="text-xs sm:text-sm text-houma-white/80">
+                            <span className="text-houma-white">Canada:</span> 2-6 business days
+                          </p>
+                          <p className="text-xs sm:text-sm text-houma-white/80">
+                            <span className="text-houma-white">International:</span> 5-10 business days
+                          </p>
                         </div>
                       </div>
                     </motion.div>

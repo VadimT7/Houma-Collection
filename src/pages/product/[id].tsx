@@ -440,6 +440,19 @@ const ProductDetailPage: React.FC = () => {
                   <p className="text-[10px] sm:text-xs text-houma-white/70">Easy Returns</p>
                 </div>
               </div>
+              
+              {/* Delivery Time Info */}
+              <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-houma-white/10">
+                <p className="text-xs sm:text-sm text-houma-gold tracking-wider mb-2 sm:mb-3">DELIVERY TIME</p>
+                <div className="space-y-1 sm:space-y-2">
+                  <p className="text-xs sm:text-sm text-houma-white/80">
+                    <span className="text-houma-white">Canada:</span> 2-6 business days
+                  </p>
+                  <p className="text-xs sm:text-sm text-houma-white/80">
+                    <span className="text-houma-white">International:</span> 5-10 business days
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 

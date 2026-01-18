@@ -94,7 +94,7 @@ const ContactPage = () => {
   const faqItems = [
     {
       question: 'How long does shipping take?',
-      answer: 'Standard shipping takes 5-7 business days. Express shipping is available for 2-3 business days delivery.',
+      answer: 'Delivery time: Canada 2-6 business days. International: 5-10 business days.',
     },
     {
       question: 'What is your return policy?',
