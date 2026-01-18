@@ -58,6 +58,25 @@ const ProductDetailPage: React.FC = () => {
     }
   }, [id, products, getProductById, getProductsByCategory, isLoading, router])
 
+  // Get images to display based on selected color
+  // If colorImages exist for the selected color, use those; otherwise use default images
+  const displayImages = React.useMemo(() => {
+    if (!product) return []
+    
+    // Check if there are color-specific images for the selected color
+    if (product.colorImages && selectedColor && product.colorImages[selectedColor]) {
+      return product.colorImages[selectedColor]
+    }
+    
+    // Fallback to default product images
+    return product.images.length > 0 ? product.images : ['/placeholder-product.jpg']
+  }, [product, selectedColor])
+
+  // Reset selected image when color changes (to show first image of new color)
+  useEffect(() => {
+    setSelectedImage(0)
+  }, [selectedColor])
+
   const handleAddToCart = () => {
     if (!product) return
     
@@ -89,14 +108,14 @@ const ProductDetailPage: React.FC = () => {
   }
 
   const nextImage = () => {
-    if (product) {
-      setSelectedImage((prev) => (prev + 1) % product.images.length)
+    if (displayImages.length > 0) {
+      setSelectedImage((prev) => (prev + 1) % displayImages.length)
     }
   }
 
   const prevImage = () => {
-    if (product) {
-      setSelectedImage((prev) => (prev - 1 + product.images.length) % product.images.length)
+    if (displayImages.length > 0) {
+      setSelectedImage((prev) => (prev - 1 + displayImages.length) % displayImages.length)
     }
   }
 
@@ -167,7 +186,7 @@ const ProductDetailPage: React.FC = () => {
                     transition={{ duration: 0.3 }}
                   >
                     <Image
-                      src={getImagePath(product.images?.[selectedImage])}
+                      src={getImagePath(displayImages?.[selectedImage])}
                       alt={`${product.name} - View ${selectedImage + 1}`}
                       fill
                       className="object-cover cursor-zoom-in"
@@ -178,7 +197,7 @@ const ProductDetailPage: React.FC = () => {
                 </AnimatePresence>
 
                 {/* Navigation Arrows */}
-                {product.images.length > 1 && (
+                {displayImages.length > 1 && (
                   <>
                     <button
                       onClick={prevImage}
@@ -214,9 +233,9 @@ const ProductDetailPage: React.FC = () => {
               </div>
 
               {/* Thumbnail Gallery */}
-              {product.images && product.images.length > 1 && (
+              {displayImages && displayImages.length > 1 && (
                 <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4">
-                  {product.images.map((image, index) => (
+                  {displayImages.map((image, index) => (
                     <button
                       key={index}
                       onClick={() => setSelectedImage(index)}
@@ -494,7 +513,7 @@ const ProductDetailPage: React.FC = () => {
             <TransformWrapper>
               <TransformComponent>
                 <Image
-                  src={getImagePath(product.images?.[selectedImage])}
+                  src={getImagePath(displayImages?.[selectedImage])}
                   alt={product.name}
                   width={1200}
                   height={1200}

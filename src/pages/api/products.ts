@@ -12,6 +12,7 @@ export interface StripeProduct {
   description: string
   culturalStory?: string
   images: string[]
+  colorImages?: { [color: string]: string[] }  // Color-specific images
   sizes: string[]
   colors: string[]
   category: string
@@ -42,13 +43,39 @@ function convertStripeProduct(
     collection = collection.replace(' Collection', '')
   }
   
+  // Build images array: main Stripe images + additional images from metadata
+  // Stripe Dashboard only allows 1 image upload, so use metadata for additional images
+  // Format in metadata: additionalImages: '["url1","url2","url3"]'
+  let images = product.images || []
+  if (metadata.additionalImages) {
+    try {
+      const additionalImages = JSON.parse(metadata.additionalImages)
+      images = [...images, ...additionalImages]
+    } catch (e) {
+      console.error('Error parsing additionalImages metadata:', e)
+    }
+  }
+  
+  // Parse color-specific images from metadata
+  // Format in metadata: colorImages: '{"Midnight Black":["url1","url2"],"Desert Sand":["url3","url4"]}'
+  // This allows showing different product images when user selects different colors
+  let colorImages: { [color: string]: string[] } | undefined
+  if (metadata.colorImages) {
+    try {
+      colorImages = JSON.parse(metadata.colorImages)
+    } catch (e) {
+      console.error('Error parsing colorImages metadata:', e)
+    }
+  }
+  
   return {
     id: product.id,
     name: product.name,
     price: price.unit_amount ? price.unit_amount / 100 : 0, // Convert from cents
     description: product.description || '',
     culturalStory: metadata.culturalStory || '',
-    images: product.images || [],
+    images,
+    colorImages,
     sizes,
     colors,
     category: metadata.category || 'Uncategorized',

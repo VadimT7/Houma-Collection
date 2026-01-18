@@ -8,6 +8,7 @@ export interface Product {
   description: string
   culturalStory?: string
   images: string[]
+  colorImages?: { [color: string]: string[] }  // Color-specific images
   sizes: string[]
   colors: string[]
   category: string

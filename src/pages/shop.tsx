@@ -73,16 +73,17 @@ const ShopPage = () => {
     // }
   }
 
-  // Map URL category parameters to actual category names
-  const categoryMap: { [key: string]: string } = {
-    'hoodies': 'Hoodies',
-    'jackets': 'Jackets',
-    'pants': 'Pants',
-    't-shirts': 'T-Shirts',
-    'tracksuits': 'Tracksuits',
-    'shirts': 'Shirts',
-    'shorts': 'Shorts',
-    'accessories': 'Accessories',
+  // Map URL category parameters to actual category names (case-insensitive matching)
+  // Note: Multiple URL params can map to the same category for flexibility
+  const categoryMap: { [key: string]: string[] } = {
+    'hoodies': ['Hoodies', 'hoodies', 'Hoodie', 'hoodie'],
+    'jackets': ['Jackets', 'jackets', 'Jacket', 'jacket'],
+    'pants': ['Pants', 'pants', 'Pant', 'pant', 'Trousers', 'trousers'],
+    't-shirts': ['T-Shirts', 't-shirts', 'T-Shirt', 't-shirt', 'Shirts', 'shirts', 'Shirt', 'shirt', 'Tshirts', 'Tshirt'],
+    'tracksuits': ['Tracksuits', 'tracksuits', 'Tracksuit', 'tracksuit'],
+    'shirts': ['Shirts', 'shirts', 'Shirt', 'shirt', 'T-Shirts', 't-shirts', 'T-Shirt', 't-shirt'],
+    'shorts': ['Shorts', 'shorts', 'Short', 'short'],
+    'accessories': ['Accessories', 'accessories', 'Accessory', 'accessory'],
   }
 
   // Handle URL query parameters
@@ -108,9 +109,8 @@ const ShopPage = () => {
       }
       
       if (category && typeof category === 'string') {
-        // Map URL parameter to actual category name
-        const mappedCategory = categoryMap[category] || category
-        setSelectedCategory(mappedCategory)
+        // Store the URL parameter key (will be used to look up matching categories)
+        setSelectedCategory(category)
         
         // Auto-scroll to products section when category filter is applied
         setTimeout(() => {
@@ -177,8 +177,14 @@ const ShopPage = () => {
       // Show all products - no filtering needed
     } else {
       // Category filter (only apply when not in "new arrivals" mode)
+      // Uses the categoryMap to match multiple category name variations
       if (selectedCategory !== 'all') {
-        filtered = filtered.filter(p => p.category === selectedCategory)
+        const matchingCategories = categoryMap[selectedCategory] || [selectedCategory]
+        filtered = filtered.filter(p => 
+          matchingCategories.some(cat => 
+            p.category.toLowerCase() === cat.toLowerCase()
+          )
+        )
       }
 
       // Collection filter (only apply when not in "new arrivals" mode)
@@ -207,7 +213,7 @@ const ShopPage = () => {
     }
 
     return filtered
-  }, [selectedCategory, selectedCollection, selectedFilter, sortBy, priceRange])
+  }, [products, selectedCategory, selectedCollection, selectedFilter, sortBy, priceRange, categoryMap])
 
   const sortOptions = [
     { value: 'featured', label: 'Featured' },
