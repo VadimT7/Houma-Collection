@@ -1,0 +1,72 @@
+{
+  "products": {
+    "prod_ToEuEO3JUXYzbG": {
+      "productId": "prod_ToEuEO3JUXYzbG",
+      "defaultImages": [],
+      "colorImages": {
+        "Midnight Black": [
+          "/product-images/5e427567-2211-4614-9eef-20675f449083.png"
+        ],
+        "Desert Sand": [
+          "/product-images/8038b63c-a602-4a2a-bc0b-b940db4e6a44.png"
+        ],
+        "Atlas White": [
+          "/product-images/7b495f18-29d7-4332-ac03-7dca138fd857.jpeg"
+        ],
+        "Charcoal": [
+          "/product-images/e393d644-9efa-4724-ab70-79a8f132994c.jpeg"
+        ]
+      },
+      "updatedAt": "2026-01-18T10:11:22.151Z",
+      "category": "Shirts",
+      "collection": "EL BIDAYA",
+      "colors": [
+        "Midnight Black",
+        "Desert Sand",
+        "Atlas White",
+        "Charcoal"
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "culturalStory": "Inspired by the elegant traditional garments worn in the medinas of Marrakech and Tunis. This shirt blends classic Maghrebi design elements with contemporary streetwear aesthetics, featuring hand-embroidered geometric motifs that pay homage to centuries-old textile traditions.",
+      "featured": true,
+      "inStock": true
+    },
+    "prod_ToW16Cw7xD2RVu": {
+      "productId": "prod_ToW16Cw7xD2RVu",
+      "defaultImages": [
+        "/product-images/b13714cf-c7b5-478d-a5bf-bfee527135fd.jpg"
+      ],
+      "colorImages": {
+        "Midnight Black": [
+          "/product-images/fb20b245-f6b5-4667-a916-ca010f00eb6f.png",
+          "/product-images/1b3c25ad-55b3-44a7-b2f6-6badf65dfaa3.png"
+        ],
+        "Navy Blue": [
+          "/product-images/d40afd31-b9fe-4847-94aa-2dd4aa113f4b.png",
+          "/product-images/98583fbe-0651-4859-aeac-e8ae92e5ef2d.jpeg"
+        ]
+      },
+      "category": "Hoodies",
+      "collection": "EL BIDAYA",
+      "colors": [
+        "Midnight Black",
+        "Navy Blue"
+      ],
+      "sizes": [
+        "L",
+        "33"
+      ],
+      "culturalStory": "Hello",
+      "featured": false,
+      "inStock": true,
+      "updatedAt": "2026-01-18T10:15:29.099Z"
+    }
+  }
+}

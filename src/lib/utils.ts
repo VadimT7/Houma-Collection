@@ -20,8 +20,14 @@ export function getImagePath(imageName: string | undefined | null): string {
     return '/images/placeholder.svg' // Fallback placeholder
   }
   
-  // If it's already a full URL (Stripe image), return as is
+  // If it's already a full URL (Stripe image or external), return as is
   if (imageName.startsWith('http://') || imageName.startsWith('https://')) {
+    return imageName
+  }
+  
+  // If it's already an absolute path (starts with /), return as is
+  // This handles /product-images/ paths from the admin dashboard
+  if (imageName.startsWith('/')) {
     return imageName
   }
   

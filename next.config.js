@@ -3,7 +3,18 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ['localhost', 'files.stripe.com'],
+    // Using remotePatterns for more flexible external image handling
+    remotePatterns: [
+      { protocol: 'https', hostname: 'localhost' },
+      { protocol: 'https', hostname: 'files.stripe.com' },
+      { protocol: 'https', hostname: 'images.pexels.com' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: '*.blob.core.windows.net' },  // Azure Blob Storage
+      { protocol: 'https', hostname: '*.vercel-storage.com' },     // Vercel Blob
+      { protocol: 'https', hostname: '*.supabase.co' },            // Supabase Storage
+      { protocol: 'https', hostname: 's3.amazonaws.com' },         // AWS S3
+      { protocol: 'https', hostname: '*.s3.amazonaws.com' },       // AWS S3 buckets
+    ],
     formats: ['image/avif', 'image/webp'],
   },
   // Removed experimental optimizeCss to prevent critters dependency issues

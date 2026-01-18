@@ -19,6 +19,9 @@ export default function App({ Component, pageProps }: AppProps) {
   const [showHomepage, setShowHomepage] = useState(false)
   const router = useRouter()
 
+  // Check if on admin page
+  const isAdminPage = router.pathname.startsWith('/admin')
+
   useEffect(() => {
     // Ensure we're on the client side
     setIsClient(true)
@@ -43,6 +46,31 @@ export default function App({ Component, pageProps }: AppProps) {
     setTimeout(() => {
       setShowHomepage(true)
     }, 100)
+  }
+
+  // Render admin pages without layout
+  if (isAdminPage) {
+    return (
+      <>
+        <Component {...pageProps} />
+        <Toaster
+          position="bottom-center"
+          toastOptions={{
+            style: {
+              background: '#0A0A0A',
+              color: '#FAFAF8',
+              border: '1px solid rgba(212, 175, 55, 0.2)',
+            },
+            success: {
+              iconTheme: {
+                primary: '#D4AF37',
+                secondary: '#0A0A0A',
+              },
+            },
+          }}
+        />
+      </>
+    )
   }
 
   return (

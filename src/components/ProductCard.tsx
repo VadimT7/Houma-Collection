@@ -15,9 +15,35 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
   const [isHovered, setIsHovered] = useState(false)
   const [imageIndex, setImageIndex] = useState(0)
 
+  // Get display images - use colorImages if default images are empty
+  const displayImages = React.useMemo(() => {
+    // If we have default product images, use them
+    if (product.images && product.images.length > 0) {
+      return product.images
+    }
+    
+    // Otherwise, try to get the first color's images
+    if (product.colorImages) {
+      const firstColor = product.colors?.[0]
+      if (firstColor && product.colorImages[firstColor]?.length > 0) {
+        return product.colorImages[firstColor]
+      }
+      // Or just get the first available colorImages
+      const colorKeys = Object.keys(product.colorImages)
+      for (const key of colorKeys) {
+        if (product.colorImages[key]?.length > 0) {
+          return product.colorImages[key]
+        }
+      }
+    }
+    
+    // Fallback to placeholder
+    return ['/images/placeholder.svg']
+  }, [product])
+
   const handleMouseEnter = () => {
     setIsHovered(true)
-    if (product.images.length > 1) {
+    if (displayImages.length > 1) {
       setImageIndex(1)
     }
   }
@@ -46,7 +72,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
             <Image
-              src={getImagePath(product.images?.[imageIndex])}
+              src={getImagePath(displayImages[imageIndex])}
               alt={product.name}
               fill
               className="object-cover"

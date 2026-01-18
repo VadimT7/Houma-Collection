@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import Stripe from 'stripe'
+import { getProductImages } from '@/lib/product-images'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2023-10-16',
@@ -68,20 +69,55 @@ function convertStripeProduct(
     }
   }
   
+  // Check for locally stored data (from admin dashboard)
+  // Local data takes priority over Stripe metadata
+  let localCategory = metadata.category || 'Uncategorized'
+  let localCollection = collection
+  let localColors = colors
+  let localSizes = sizes
+  let localCulturalStory = metadata.culturalStory || ''
+  let localFeatured = metadata.featured === 'true'
+  let localInStock = metadata.inStock !== 'false'
+  
+  try {
+    const localData = getProductImages(product.id)
+    if (localData) {
+      // If we have local default images, use those
+      if (localData.defaultImages && localData.defaultImages.length > 0) {
+        images = localData.defaultImages
+      }
+      // If we have local color images, merge/override with those
+      if (localData.colorImages && Object.keys(localData.colorImages).length > 0) {
+        colorImages = { ...colorImages, ...localData.colorImages }
+      }
+      // Override other properties if set locally
+      if (localData.category) localCategory = localData.category
+      if (localData.collection) localCollection = localData.collection
+      if (localData.colors && localData.colors.length > 0) localColors = localData.colors
+      if (localData.sizes && localData.sizes.length > 0) localSizes = localData.sizes
+      if (localData.culturalStory) localCulturalStory = localData.culturalStory
+      if (localData.featured !== undefined) localFeatured = localData.featured
+      if (localData.inStock !== undefined) localInStock = localData.inStock
+    }
+  } catch (e) {
+    // Ignore errors reading local data - just use Stripe data
+    console.error('Error reading local product data:', e)
+  }
+  
   return {
     id: product.id,
     name: product.name,
     price: price.unit_amount ? price.unit_amount / 100 : 0, // Convert from cents
     description: product.description || '',
-    culturalStory: metadata.culturalStory || '',
+    culturalStory: localCulturalStory,
     images,
     colorImages,
-    sizes,
-    colors,
-    category: metadata.category || 'Uncategorized',
-    collection: collection,
-    inStock: metadata.inStock !== 'false', // Default to true unless explicitly false
-    featured: metadata.featured === 'true',
+    sizes: localSizes,
+    colors: localColors,
+    category: localCategory,
+    collection: localCollection,
+    inStock: localInStock,
+    featured: localFeatured,
   }
 }
 
