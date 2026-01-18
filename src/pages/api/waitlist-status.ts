@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { sql } from '@/lib/db'
+import { query } from '@/lib/db'
 
 const MAX_SPOTS = 300
 const FAKE_OFFSET = 127 // Faking enrollment to show 173 spots remaining
@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const result = await sql`SELECT COUNT(*) as count FROM waitlist`
+    const result = await query<{ count: string }>('SELECT COUNT(*) as count FROM waitlist')
     const actualCount = parseInt(result[0].count)
     const currentCount = actualCount + FAKE_OFFSET
     const spotsRemaining = Math.max(0, MAX_SPOTS - currentCount)
