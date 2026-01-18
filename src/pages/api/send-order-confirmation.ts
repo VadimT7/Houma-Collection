@@ -51,27 +51,12 @@ function generateOrderNumber(): string {
   return result
 }
 
-// Generate a placeholder SVG as base64 for email compatibility
-function generatePlaceholderSVG(letter: string): string {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="0 0 70 70">
-    <defs>
-      <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style="stop-color:#1a1a1a"/>
-        <stop offset="100%" style="stop-color:#2d2d2d"/>
-      </linearGradient>
-    </defs>
-    <rect width="70" height="70" rx="8" fill="url(#bg)"/>
-    <text x="35" y="45" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#C9A227" text-anchor="middle">${letter}</text>
-  </svg>`
-  const base64 = Buffer.from(svg).toString('base64')
-  return `data:image/svg+xml;base64,${base64}`
-}
-
 function generateEmailHTML(order: OrderDetails): string {
   const itemsHTML = order.items.map(item => {
-    // Use actual product image if available (must be absolute URL), otherwise show placeholder
-    const hasValidImage = item.image && (item.image.startsWith('http://') || item.image.startsWith('https://'))
-    const imageSrc = hasValidImage ? item.image : generatePlaceholderSVG(item.name.charAt(0))
+    // Use actual product image if available, otherwise show placeholder with first letter
+    const imageCell = item.image && (item.image.startsWith('http://') || item.image.startsWith('https://'))
+      ? `<img src="${item.image}" alt="${item.name}" width="70" height="70" style="width: 70px; height: 70px; border-radius: 8px; object-fit: cover; display: block;" />`
+      : `<div style="width: 70px; height: 70px; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center;"><span style="color: #C9A227; font-size: 24px; font-weight: bold;">${item.name.charAt(0)}</span></div>`
     
     return `
     <tr>
@@ -79,7 +64,7 @@ function generateEmailHTML(order: OrderDetails): string {
         <table cellpadding="0" cellspacing="0" border="0" width="100%">
           <tr>
             <td width="80" style="vertical-align: top;">
-              <img src="${imageSrc}" alt="${item.name}" width="70" height="70" style="width: 70px; height: 70px; border-radius: 8px; object-fit: cover; display: block;" />
+              ${imageCell}
             </td>
             <td style="vertical-align: top; padding-left: 16px;">
               <p style="margin: 0 0 4px 0; font-size: 15px; font-weight: 600; color: #FAFAF8; letter-spacing: 0.5px;">${item.name}</p>
