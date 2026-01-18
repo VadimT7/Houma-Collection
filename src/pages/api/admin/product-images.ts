@@ -7,7 +7,7 @@ export default async function handler(
 ) {
   // Simple admin password check
   const adminPassword = req.headers['x-admin-password']
-  if (adminPassword !== process.env.ADMIN_PASSWORD && adminPassword !== 'houma-admin-2024') {
+  if (adminPassword !== process.env.ADMIN_PASSWORD && adminPassword !== 'Houma2026!') {
     return res.status(401).json({ error: 'Unauthorized' })
   }
 

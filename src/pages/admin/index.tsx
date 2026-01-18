@@ -88,7 +88,7 @@ interface Order {
   trackingNumber?: string
 }
 
-const ADMIN_PASSWORD = 'houma-admin-2024'
+const ADMIN_PASSWORD = 'Houma2026!'
 
 // Predefined options
 const CATEGORIES = ['Shirts', 'T-Shirts', 'Hoodies', 'Jackets', 'Pants', 'Shorts', 'Tracksuits', 'Accessories']
@@ -543,9 +543,6 @@ export default function AdminDashboard() {
                 Login
               </button>
             </form>
-            <p className="text-houma-white/40 text-sm mt-4 text-center">
-              Default password: houma-admin-2024
-            </p>
           </motion.div>
         </div>
         <Toaster position="top-right" />
